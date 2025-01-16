@@ -53,14 +53,14 @@ static int cmd_c(char *args) {
 static int cmd_q(char *args) {
   return -1;
 }
-
 static int cmd_help(char *args);
-
 static int cmd_si(char *args);
-
 static int cmd_info(char *args); //C 语言要求在使用函数指针之前，必须先声明该函数的原型。
-
-
+static int cmd_x(char *args); 
+static int cmd_p(char *args); 
+static int cmd_w(char *args); 
+static int cmd_d(char *args);
+ 
 
 static struct {
   const char *name;
@@ -72,11 +72,11 @@ static struct {
   { "q", "Exit NEMU", cmd_q },
   { "si", "Let the program execute N instructions in a single step and then pause,When N is not given, the default is 1", cmd_si },
   { "info", "Print register status/Print monitoring point information", cmd_info },
- /* { "x", "Find the value of the expression EXPR, use the result as the starting memory address, and output N consecutive 4-byte values in hexadecimal format", cmd_x },
+  { "x", "Find the value of the expression EXPR, use the result as the starting memory address, and output N consecutive 4-byte values in hexadecimal format", cmd_x },
   { "p", "Evaluate the expression EXPR", cmd_p },
   { "w", "When the value of expression EXPR changes, the program execution is paused.", cmd_w },
   { "d", "Delete the monitoring point with sequence number N", cmd_d },
-*/
+
 };
 
 #define NR_CMD ARRLEN(cmd_table)
@@ -135,8 +135,8 @@ static int cmd_info(char *args){
 
 
 
-/*  static int cmd_x(char *args) {
-  if (args == NULL) {
+  static int cmd_x(char *args) {
+  /*if (args == NULL) {
     printf("Error: Missing arguments. Use 'x N EXPR'.\n");
     return 0;
   }
@@ -151,8 +151,8 @@ static int cmd_info(char *args){
   }
 
   bool success;
-  word_t addr = expr_eval(expr, &success); // 假设有 expr_eval 实现表达式求值
-  free(expr);
+ // word_t addr = expr(expr, &success); // 假设有 expr实现表达式求值
+  free(expr);  
   if (!success) {
     printf("Error: Failed to evaluate expression.\n");
     return 0;
@@ -160,48 +160,48 @@ static int cmd_info(char *args){
 
   for (int i = 0; i < n; i++) {
     printf("0x%08lx: 0x%08x\n", addr + i * 4, vaddr_read(addr + i * 4, 4)); // 假设 vaddr_read 实现内存读取!!parre_read??
-  }
+  }    */    
   return 0;
 }
 
 
 static int cmd_p(char *args) {      //表达式求值p EXPR
-  if (args == NULL) {
+  /* if (args == NULL) {
     printf("Error: Missing expression.\n");
     return 0;
   }
 
   bool success;
-  word_t result = expr(args, &success); // expr.c=>expr()实现表达式求值
+ // word_t result = expr(args, &success); // expr.c=>expr()实现表达式求值
   if (!success) {
     printf("Error: Failed to evaluate expression.\n");
   } else {
     printf("Result = %ld\n", result);
-  }
-  return 0;
+  }   */
+  return 0;  
 }
 
 static int cmd_w(char *args) {
-  if (args == NULL) {
+/*  if (args == NULL) {
     printf("Error: Missing expression for watchpoint.\n");
     return 0;
   }
-  set_wp(args); // 假设 set_wp 实现了设置监视点
-  return 0;
+  set_wp(args); // 假设 set_wp 实现了设置监视点   */
+  return 0;  
 }
 
 static int cmd_d(char *args) {
-  if (args == NULL) {
+/*  if (args == NULL) {
     printf("Error: Missing watchpoint number.\n");
     return 0;
   }    
 
   int wp_num = atoi(args);//focus on atoi!!
-  if (!delete_wp(wp_num)) { // 假设 delete_wp 实现了删除监视点!!!
+ if (!delete_wp(wp_num)) { // 假设 delete_wp 实现了删除监视点!!!
     printf("Error: Watchpoint %d does not exist.\n", wp_num);
-  }
+  }   */
   return 0;    
-}    */
+}    
 
 
 
