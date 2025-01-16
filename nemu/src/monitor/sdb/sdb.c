@@ -28,6 +28,8 @@
 
 static int is_batch_mode = false;
 
+typedef uint32_t word_t; //
+
 void init_regex();
 void init_wp_pool();
  
