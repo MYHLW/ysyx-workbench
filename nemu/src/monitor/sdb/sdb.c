@@ -191,18 +191,19 @@ static int cmd_x(char *args) {
 
 
 static int cmd_p(char *args) {      //表达式求值p EXPR
-  /* if (args == NULL) {
+  char *arg = strtok(args," ");
+  if (args == NULL) {
     printf("Error: Missing expression.\n");
     return 0;
   }
 
   bool success;
- // word_t result = expr(args, &success); // expr.c=>expr()实现表达式求值
+  word_t result = expr(arg, &success); // expr.c=>expr()实现表达式求值
   if (!success) {
     printf("Error: Failed to evaluate expression.\n");
   } else {
-    printf("Result = %ld\n", result);
-  }   */
+    printf("Result = %d\n", result);
+  }   
   return 0;  
 }
 
