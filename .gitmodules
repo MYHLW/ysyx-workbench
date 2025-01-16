@@ -1,3 +1,6 @@
 [submodule "verilator1/verilator"]
 	path = verilator1/verilator
 	url = https://github.com/verilator/verilator.git
+[submodule "yosys-sta"]
+	path = yosys-sta
+	url = https://github.com/yosys-sta.git
