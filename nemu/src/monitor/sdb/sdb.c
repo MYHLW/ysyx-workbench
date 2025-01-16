@@ -21,11 +21,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdint.h>
+#include <assert.h>
+#include "vaddr_read.h" // 包含 vaddr_read 的声明
+#include <memory/vaddr.h>
 
 static int is_batch_mode = false;
 
 void init_regex();
 void init_wp_pool();
+ 
 
 /* We use the `readline' library to provide more flexibility to read from stdin. */
 static char* rl_gets() {
@@ -121,13 +126,13 @@ static int cmd_si(char *args) {
 
 static int cmd_info(char *args) {
   if (args == NULL) {
-    printf("Error: Missing argument. Use 'info r' or 'info w'.\n");
+    printf("Error: Missing argument. Use 'info r' or'info y'or 'info w'.\n");
     return 0;
   }
 
   if (strcmp(args, "r") == 0) {
     isa_reg_display();  // 打印所有寄存器状态
-  } else if (strcmp(args, "w") == 0) {
+  }/* else if (strcmp(args, "y") == 0) {
     // 使用 isa_reg_str2val 获取寄存器值
     char reg_name[16];  // 假设寄存器名称长度不会超过 15 个字符
     bool success = false;
@@ -145,39 +150,44 @@ static int cmd_info(char *args) {
     }
   } else {
     printf("Error: Unknown argument '%s'. Use 'info r' or 'info w'.\n", args);
-  }
-
+  }}  */
+  else if (strcmp(args, "w") == 0){
+   display_wp();
+   }
   return 0;
 }
 
 static int cmd_x(char *args) {
-  /*if (args == NULL) {
+  if (args == NULL) {
     printf("Error: Missing arguments. Use 'x N EXPR'.\n");
     return 0;
   }
-
   int n;
-  char *expr = NULL;
-  sscanf(args, "%d %ms", &n, &expr); // 解析参数 N 和 EXPR
-  if (expr == NULL || n <= 0) {
+  char *expr_str = NULL;
+  // 解析参数 N 和 EXPR
+  if (sscanf(args, "%d %ms", &n, &expr_str) != 2 || n <= 0) {
     printf("Error: Invalid arguments. Use 'x N EXPR'.\n");
-    free(expr);
+    free(expr_str); 
     return 0;
   }
+// 解析表达式
+  bool success = false;
+  word_t addr = expr(expr_str, &success);
+  free(expr_str);
 
-  bool success;
- // word_t addr = expr(expr, &success); // 假设有 expr实现表达式求值
-  free(expr);  
   if (!success) {
     printf("Error: Failed to evaluate expression.\n");
     return 0;
   }
-
+ // 输出内存内容
+  printf("Memory content from address 0x%08x:\n", addr);
   for (int i = 0; i < n; i++) {
-    printf("0x%08lx: 0x%08x\n", addr + i * 4, vaddr_read(addr + i * 4, 4)); // 假设 vaddr_read 实现内存读取!!parre_read??
-  }    */    
+    word_t data = vaddr_read(addr + i * 4, 4); //!!!
+    printf("0x%08x: 0x%08x\n", addr + i * 4, data);
+  }
   return 0;
 }
+
 
 
 static int cmd_p(char *args) {      //表达式求值p EXPR
@@ -273,3 +283,15 @@ void init_sdb() {
   /* Initialize the watchpoint pool. */
   init_wp_pool();
 }
+
+
+
+
+
+
+
+
+
+
+
+

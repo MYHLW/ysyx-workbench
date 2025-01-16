@@ -14,6 +14,8 @@
 ***************************************************************************************/
 
 #include "sdb.h"
+#include <stdio.h>
+
 
 #define NR_WP 32
 
@@ -22,7 +24,8 @@ typedef struct watchpoint {
   struct watchpoint *next;
 
   /* TODO: Add more members if necessary */
-
+  char expr[128]; // 表达式
+  word_t value;   // 当前值
 } WP;
 
 static WP wp_pool[NR_WP] = {};
@@ -40,4 +43,22 @@ void init_wp_pool() {
 }
 
 /* TODO: Implement the functionality of watchpoint */
+
+void display_wp() {
+  if (head == NULL) {
+    printf("No watchpoints.\n");
+    return;
+  }
+
+  printf("Num\tType\t\tExpression\t\tValue\n");
+  for (WP *wp = head; wp != NULL; wp = wp->next) {
+    printf("%d\twatchpoint\t%s\t\t0x%x\n", wp->NO, wp->expr, wp->value);
+  }
+}
+
+
+
+
+
+
 

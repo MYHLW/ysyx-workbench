@@ -20,4 +20,18 @@
 
 word_t expr(char *e, bool *success);
 
+// 声明监测点池初始化函数
+void init_wp_pool();
+
+// 声明打印监测点的函数
+void display_wp();
+
+// 声明设置监测点的函数
+void set_wp(char *expr);
+
+// 声明删除监测点的函数
+bool delete_wp(int wp_no);
+
+
+
 #endif
