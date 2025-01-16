@@ -44,6 +44,7 @@ static struct rule {
   const char *regex;
   int token_type;
 } rules[] = {
+  {"0[xX][0-9a-fA-F]+", TK_HEX_NUMBER}, // 十六进制数字
   {" +", TK_NOTYPE},    // spaces
   {"\\+", TK_PLUS},         // plus
   {"==", TK_EQ},        // equal
@@ -55,7 +56,6 @@ static struct rule {
   {"\\(", TK_LPAREN},      // left parenthesis
   {"\\)", TK_RPAREN},      // right parenthesis
   {"[0-9]+", TK_NUMBER},   // 十进制数字
-  {"0[xX][0-9a-fA-F]+", TK_HEX_NUMBER}, // 十六进制数字
   {"&&", TK_AND},         // logical AND
   {"\\|\\|", TK_OR},      // logical OR
   {"!", TK_NOT},         // logical NOT
