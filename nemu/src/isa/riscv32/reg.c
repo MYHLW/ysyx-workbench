@@ -16,13 +16,13 @@
 #include <isa.h>
 #include "local-include/reg.h"
 #include <stdio.h>
+#include <string.h> // 添加此头文件以支持 strcmp
 
-/*   typedef uint32_t word_t; // 定义 word_t 类型
-typedef struct {
-  word_t gpr[32]; // 通用寄存器
-} CPU_State;
+typedef uint32_t word_t; // 定义 word_t 类型
+extern CPU_state cpu;
+// 通过头文件声明的外部变量访问全局 cpu
 
-CPU_state cpu = {
+/*CPU_state cpu = {
   .gpr = {
     0, 1, 2, 3, 4, 5, 6, 7,
     8, 9, 10, 11, 12, 13, 14, 15,
@@ -54,7 +54,7 @@ sp     0x00000002
 */
 
 //I fix the module
-/*word_t isa_reg_str2val(const char *s, bool *success) {
+word_t isa_reg_str2val(const char *s, bool *success) {
    for (int i = 0; i < 32; i++) {
     if (strcmp(s, regs[i]) == 0) {
       *success = true;
@@ -63,4 +63,4 @@ sp     0x00000002
   }
   *success = false;
   return 0; // 如果未找到，返回 0
-}  */
+}  
