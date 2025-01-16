@@ -18,6 +18,8 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 #include "sdb.h"
+#include <stdio.h>
+#include <stdlib.h>
 
 static int is_batch_mode = false;
 
@@ -54,6 +56,55 @@ static int cmd_q(char *args) {
 
 static int cmd_help(char *args);
 
+static int cmd_si(char *args);
+
+static int cmd_info(char *args); //C 语言要求在使用函数指针之前，必须先声明该函数的原型。
+
+
+
+static struct {
+  const char *name;
+  const char *description;
+  int (*handler) (char *);
+} cmd_table [] = {
+  { "help", "Display information about all supported commands", cmd_help },
+  { "c", "Continue the execution of the program", cmd_c },
+  { "q", "Exit NEMU", cmd_q },
+  { "si", "Let the program execute N instructions in a single step and then pause,When N is not given, the default is 1", cmd_si },
+  { "info", "Print register status/Print monitoring point information", cmd_info },
+ /* { "x", "Find the value of the expression EXPR, use the result as the starting memory address, and output N consecutive 4-byte values in hexadecimal format", cmd_x },
+  { "p", "Evaluate the expression EXPR", cmd_p },
+  { "w", "When the value of expression EXPR changes, the program execution is paused.", cmd_w },
+  { "d", "Delete the monitoring point with sequence number N", cmd_d },
+*/
+};
+
+#define NR_CMD ARRLEN(cmd_table)
+
+static int cmd_help(char *args) {
+  /* extract the first argument */
+  //char *arg = strtok(NULL, " ");
+  char *arg = strtok(args, " ");
+  int i; //size_t??
+
+  if (arg == NULL) {
+    /* no argument given */
+    for (i = 0; i < NR_CMD; i ++) {
+      printf("%s - %s\n", cmd_table[i].name, cmd_table[i].description);
+    }
+  }
+  else {
+    for (i = 0; i < NR_CMD; i ++) {
+      if (strcmp(arg, cmd_table[i].name) == 0) {
+        printf("%s - %s\n", cmd_table[i].name, cmd_table[i].description);
+        return 0;
+      }
+    }
+    printf("Unknown command '%s'\n", arg);
+  }
+  return 0;
+}
+
 static int cmd_si(char *args) {
        int n = 1; // 默认单步执行 1 条指令
        if (args != NULL) {
@@ -75,7 +126,7 @@ static int cmd_info(char *args){
 	if (strcmp(args,"r") == 0){
 		isa_reg_display();
 	}else if (strcmp(args,"w") == 0){
-		 print_wp_info(); // 打印监视点信息，假设有该函数!!!
+	//	 print_wp_info(); // 打印监视点信息，假设有该函数!!!
 	}else{
 		 printf("Error: Unknown argument '%s'. Use 'info r' or 'info w'.\n", args);
         }
@@ -84,7 +135,7 @@ static int cmd_info(char *args){
 
 
 
-static int cmd_x(char *args) {
+/*  static int cmd_x(char *args) {
   if (args == NULL) {
     printf("Error: Missing arguments. Use 'x N EXPR'.\n");
     return 0;
@@ -113,21 +164,6 @@ static int cmd_x(char *args) {
   return 0;
 }
 
-static int cmd_p(char *args) {
-  if (args == NULL) {
-    printf("Error: Missing expression.\n");
-    return 0;
-  }
-
-  bool success;
-  word_t result = expr_eval(args, &success); // 假设有 expr_eval 实现表达式求值
-  if (!success) {
-    printf("Error: Failed to evaluate expression.\n");
-  } else {
-    printf("Result = %ld\n", result);
-  }
-  return 0;
-}
 
 static int cmd_p(char *args) {      //表达式求值p EXPR
   if (args == NULL) {
@@ -158,58 +194,20 @@ static int cmd_d(char *args) {
   if (args == NULL) {
     printf("Error: Missing watchpoint number.\n");
     return 0;
-  }
+  }    
 
   int wp_num = atoi(args);//focus on atoi!!
   if (!delete_wp(wp_num)) { // 假设 delete_wp 实现了删除监视点!!!
     printf("Error: Watchpoint %d does not exist.\n", wp_num);
   }
-  return 0;
-}
+  return 0;    
+}    */
 
-static struct {
-  const char *name;
-  const char *description;
-  int (*handler) (char *);
-} cmd_table [] = {
-  { "help", "Display information about all supported commands", cmd_help },
-  { "c", "Continue the execution of the program", cmd_c },
-  { "q", "Exit NEMU", cmd_q },
 
-  /* TODO: Add more commands */
-  { "si", "Let the program execute N instructions in a single step and then pause,When N is not given, the default is 1", cmd_si },
-  { "info", "Print register status/Print monitoring point information", cmd_info },
-  { "x", "Find the value of the expression EXPR, use the result as the starting memory address, and output N consecutive 4-byte values in hexadecimal format", cmd_x },
-  { "p", "Evaluate the expression EXPR", cmd_p },
-  { "w", "When the value of expression EXPR changes, the program execution is paused.", cmd_w },
-  { "d", "Delete the monitoring point with sequence number N", cmd_d },
 
-};
 
-#define NR_CMD ARRLEN(cmd_table)
 
-static int cmd_help(char *args) {
-  /* extract the first argument */
-  char *arg = strtok(NULL, " ");
-  int i;
 
-  if (arg == NULL) {
-    /* no argument given */
-    for (i = 0; i < NR_CMD; i ++) {
-      printf("%s - %s\n", cmd_table[i].name, cmd_table[i].description);
-    }
-  }
-  else {
-    for (i = 0; i < NR_CMD; i ++) {
-      if (strcmp(arg, cmd_table[i].name) == 0) {
-        printf("%s - %s\n", cmd_table[i].name, cmd_table[i].description);
-        return 0;
-      }
-    }
-    printf("Unknown command '%s'\n", arg);
-  }
-  return 0;
-}
 
 void sdb_set_batch_mode() {
   is_batch_mode = true;
