@@ -167,7 +167,7 @@ static int cmd_x(char *args) {
   int n;
   char *expr_str = NULL;
   // 解析参数 N 和 EXPR
-  if (sscanf(args, "%d %ms", &n, &expr_str) != 2 || n <= 0) {
+  if (sscanf(args, "%d %[^\n]", &n, expr_str) != 2 || n <= 0) {
     printf("Error: Invalid arguments. Use 'x N EXPR'.\n");
     free(expr_str); 
     return 0;
