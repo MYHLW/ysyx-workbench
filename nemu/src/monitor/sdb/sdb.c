@@ -172,9 +172,15 @@ static int cmd_x(char *args) {
     free(expr_str); 
     return 0;
   }
+  char* arg = strtok(expr_str," ");
+  char expr_str1[256] = "";
+  while(arg != NULL){
+  strcat(expr_str,arg);
+  arg = strtok(NULL," ");
+  }
 // 解析表达式
   bool success = false;
-  word_t addr = expr(expr_str, &success);
+  word_t addr = expr(expr_str1, &success);
   free(expr_str);
 
   if (!success) {
