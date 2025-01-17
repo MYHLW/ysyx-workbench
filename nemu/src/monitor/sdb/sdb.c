@@ -164,37 +164,36 @@ static int cmd_x(char *args) {
     printf("Error: Missing arguments. Use 'x N EXPR'.\n");
     return 0;
   }
+
   int n;
-  char *expr_str = NULL;
-  // 解析参数 N 和 EXPR
+  char expr_str[256];  // 使用静态数组来存储表达式
+  // 解析参数 N 和 EXPR，确保能正确读取整个表达式（包括空格）
   if (sscanf(args, "%d %[^\n]", &n, expr_str) != 2 || n <= 0) {
     printf("Error: Invalid arguments. Use 'x N EXPR'.\n");
-    free(expr_str); 
     return 0;
   }
-  char* arg = strtok(expr_str," ");
+  // 去除表达式中的多余空格并拼接
   char expr_str1[256] = "";
-  while(arg != NULL){
-  strcat(expr_str1,arg);
-  arg = strtok(NULL," ");
+  char *arg = strtok(expr_str, " ");  // 使用 strtok 分割字符串
+  while (arg != NULL) {
+    strcat(expr_str1, arg);  // 拼接无空格的表达式
+    arg = strtok(NULL, " ");  // 继续获取下一个部分
   }
-// 解析表达式
+  // 解析表达式
   bool success = false;
   word_t addr = expr(expr_str1, &success);
-  free(expr_str);
-
   if (!success) {
     printf("Error: Failed to evaluate expression.\n");
     return 0;
   }
- // 输出内存内容
   printf("Memory content from address 0x%08x:\n", addr);
   for (int i = 0; i < n; i++) {
-    word_t data = vaddr_read(addr + i * 4, 4); //!!!
+    word_t data = vaddr_read(addr + i * 4, 4); // 读取内存数据
     printf("0x%08x: 0x%08x\n", addr + i * 4, data);
   }
   return 0;
 }
+
 
 
 
