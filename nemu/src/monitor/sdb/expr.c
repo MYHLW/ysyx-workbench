@@ -96,7 +96,10 @@ static int nr_token __attribute__((used))  = 0;
 
 
 static bool make_token(char *c) {   //c->e
-  char *e = strtok(c," ");    //按空格分割表达式
+  char *e = strtok(c, " ");    //按空格分割表达式
+   for (int i = 0; e[i] != '\0'; i++) {  // 直到遇到结束符'\0'
+        printf("%c", e[i]);  // 打印每个字符
+    }    
   int position = 0;
   int i;
   regmatch_t pmatch;
