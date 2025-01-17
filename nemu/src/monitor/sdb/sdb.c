@@ -175,7 +175,7 @@ static int cmd_x(char *args) {
   char* arg = strtok(expr_str," ");
   char expr_str1[256] = "";
   while(arg != NULL){
-  strcat(expr_str,arg);
+  strcat(expr_str1,arg);
   arg = strtok(NULL," ");
   }
 // 解析表达式
