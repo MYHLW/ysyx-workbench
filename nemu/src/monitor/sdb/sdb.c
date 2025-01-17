@@ -193,14 +193,21 @@ static int cmd_x(char *args) {
 
 
 static int cmd_p(char *args) {      //表达式求值p EXPR
-  char *arg = strtok(args," ");
-  if (args == NULL) {
+  char *arg = strtok(args," ");  
+   if (args == NULL) {
     printf("Error: Missing expression.\n");
     return 0;
   }
+    char expr_str[256] = "";  // 用来保存最终的表达式
+   while (arg != NULL) {
+     strcat(expr_str, arg);  // 将每个子字符串连接起来
+     arg = strtok(NULL, " ");  // 继续获取下一个分割的部分
+    }
+  // 打印拼接后的字符串
+  printf("Expression: %s\n", expr_str);
 
   bool success;
-  word_t result = expr(arg, &success); // expr.c=>expr()实现表达式求值
+  word_t result = expr(expr_str, &success); // expr.c=>expr()实现表达式求值
   if (!success) {
     printf("Error: Failed to evaluate expression.\n");
   } else {
