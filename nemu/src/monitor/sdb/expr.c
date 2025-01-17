@@ -95,15 +95,13 @@ static Token tokens[32] __attribute__((used)) = {};
 static int nr_token __attribute__((used))  = 0;
 
 
-static bool make_token(char *e) {
+static bool make_token(char *c) {   //c->e
+  char *e = strtok(c," ");    //按空格分割表达式
   int position = 0;
   int i;
   regmatch_t pmatch;
-
-
   nr_token = 0;
-
-
+  
   while (e[position]!= '\0') {
     for (i = 0; i < NR_REGEX; i ++) {
       if (regexec(&re[i], e + position, 1, &pmatch, 0) == 0 && pmatch.rm_so == 0) {
