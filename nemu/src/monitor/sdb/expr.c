@@ -91,7 +91,7 @@ typedef struct token {
 } Token;
 
 
-static Token tokens[1024] __attribute__((used)) = {};  //TOO SMALL?
+static Token tokens[65536] __attribute__((used)) = {};  //TOO SMALL?
 static int nr_token __attribute__((used))  = 0;
 
 
