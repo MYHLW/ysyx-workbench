@@ -91,12 +91,11 @@ typedef struct token {
 } Token;
 
 
-static Token tokens[32] __attribute__((used)) = {};
+static Token tokens[128] __attribute__((used)) = {};  //TOO SMALL?
 static int nr_token __attribute__((used))  = 0;
 
 
-static bool make_token(char *e) {   //c->e
- // char *e = strtok(c, " ");    //按空格分割表达式
+static bool make_token(char *e) {   
   
   int position = 0;
   int i;
