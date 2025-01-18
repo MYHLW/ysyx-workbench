@@ -15,6 +15,7 @@
 
 #include "sdb.h"
 #include <stdio.h>
+#include <assert.h>
 
 
 #define NR_WP 32
@@ -25,11 +26,11 @@ typedef struct watchpoint {
 
   /* TODO: Add more members if necessary */
   char expr[128]; // 表达式
-  word_t value;   // 当前值
+  uint32_t value;   // 当前值
 } WP;
 
-static WP wp_pool[NR_WP] = {};
-static WP *head = NULL, *free_ = NULL;
+static WP wp_pool[NR_WP] = {};  //监视点结构的池
+static WP *head = NULL, *free_ = NULL;  //还有两个链表head和free_, 其中head用于组织使用中的监视点结构, free_用于组织空闲的监视点结构,
 
 void init_wp_pool() {
   int i;
@@ -43,6 +44,41 @@ void init_wp_pool() {
 }
 
 /* TODO: Implement the functionality of watchpoint */
+WP* new_wp() {
+  if (free_ == NULL) {
+    assert(0);
+    }
+  WP *wp = free_;// 获取空闲的监视点 
+  // 将free_链表中的第一个元素移出
+  free_ = free_->next;
+  // 将该监视点结构添加到使用中的链表head中
+  wp->next = head;
+  head = wp;
+  
+  return wp;
+}
+
+void free_wp(WP *wp) {
+  if (wp == NULL) {
+    return;  
+  }
+  // 从使用中的链表中移除wp
+  WP **pp = &head;
+  while (*pp != NULL && *pp != wp) {
+    pp = &(*pp)->next;
+  }
+
+  if (*pp != NULL) {
+    *pp = wp->next;  // 将wp从链表中移除
+  }
+
+  // 将wp归还到free_链表
+  wp->next = free_;
+  free_ = wp;
+}
+
+
+
 
 void display_wp() {
   if (head == NULL) {
