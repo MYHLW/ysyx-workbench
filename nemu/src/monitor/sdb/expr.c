@@ -225,13 +225,6 @@ int find_main_op(int p, int q) {
     // 只有在括号平衡的情况下才能考虑运算符
     if (paren_count == 0) {
         int current_priority = 7;  // 默认较高优先级
-
- /*       // 根据运算符类型设定优先级
-        if (tokens[i].type == TK_PLUS || tokens[i].type == TK_MINUS) {
-          current_priority = 1;  // 加减优先级较低
-        } else if (tokens[i].type == TK_MULTIPLY || tokens[i].type == TK_DIVIDE || tokens[i].type == TK_MODULO) {
-          current_priority = 2;  // 乘除优先级较高
-        }      */
                // 设置优先级
         if (tokens[i].type == TK_PLUS || tokens[i].type == TK_MINUS)
           current_priority = 4;// 加减

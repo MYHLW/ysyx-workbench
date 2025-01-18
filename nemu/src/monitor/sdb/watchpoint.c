@@ -20,6 +20,8 @@
 
 #define NR_WP 32
 
+extern uint32_t expr(char *e, bool *success); //
+
 typedef struct watchpoint {
   int NO;
   struct watchpoint *next;
@@ -71,13 +73,10 @@ void free_wp(WP *wp) {
   if (*pp != NULL) {
     *pp = wp->next;  // 将wp从链表中移除
   }
-
-  // 将wp归还到free_链表
+ // 将wp归还到free_链表
   wp->next = free_;
   free_ = wp;
 }
-
-
 
 
 void display_wp() {
@@ -92,7 +91,28 @@ void display_wp() {
   }
 }
 
+WP* create_watchpoint(char *expr_str) {
+  WP *wp = new_wp();  // 从监视点池申请一个新的监视点
+  strncpy(wp->expr, expr_str, sizeof(wp->expr) - 1);  // 保存表达式
+  wp->expr[sizeof(wp->expr) - 1] = '\0';  // 确保字符串以NULL结尾
+  wp->value = expr(wp->expr, NULL);  // 计算表达式的初始值并存储
+  return wp;
+}
 
+void delete_watchpoint(int wp_num) {
+  WP **pp = &head;
+  while (*pp != NULL) {
+    if ((*pp)->NO == wp_num) {
+      WP *to_free = *pp;
+      *pp = to_free->next;  // 从链表中移除该监视点
+      free_wp(to_free);  // 将监视点归还到空闲池
+      printf("Watchpoint %d deleted.\n", wp_num);
+      return;
+    }
+    pp = &(*pp)->next;
+  }
+  printf("Watchpoint %d not found.\n", wp_num);
+}
 
 
 

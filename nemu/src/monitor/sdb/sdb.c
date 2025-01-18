@@ -25,6 +25,7 @@
 #include <assert.h>
 #include "vaddr_read.h" // 包含 vaddr_read 的声明
 #include <memory/vaddr.h>
+#include "watchpoint.h"
 
 static int is_batch_mode = false;
 
@@ -223,30 +224,45 @@ static int cmd_p(char *args) {      //表达式求值p EXPR
 }
 
 static int cmd_w(char *args) {
-/*  if (args == NULL) {
-    printf("Error: Missing expression for watchpoint.\n");
+char *arg = strtok(args," ");  
+   if (args == NULL) {
+    printf("Error: Missing expression.\n");
     return 0;
   }
-  set_wp(args); // 假设 set_wp 实现了设置监视点   */
-  return 0;  
+    char expr_str[256] = "";  
+   while (arg != NULL) {
+     strcat(expr_str, arg); 
+     arg = strtok(NULL, " ");  
+    }
+
+  printf("Expression: %s\n", expr_str);
+
+  WP *wp = create_watchpoint(expr_str);
+
+  if (wp != NULL) {
+    printf("Watchpoint created: %d\n", wp->NO);
+  } else {
+    printf("Error: Failed to create watchpoint.\n");
+  }
+  return 0;
 }
 
 static int cmd_d(char *args) {
-/*  if (args == NULL) {
-    printf("Error: Missing watchpoint number.\n");
+  if (args == NULL || *args == '\0') {
+    printf("Error: No watchpoint number provided.\n");
     return 0;
-  }    
+  }
+  // 解析用户输入的监视点编号
+  int wp_num;
+  if (sscanf(args, "%d", &wp_num) != 1) {
+    printf("Error: Invalid watchpoint number.\n");
+    return 0;
+  }
+// 删除指定的监视点
+  delete_watchpoint(wp_num);
 
-  int wp_num = atoi(args);//focus on atoi!!
- if (!delete_wp(wp_num)) { // 假设 delete_wp 实现了删除监视点!!!
-    printf("Error: Watchpoint %d does not exist.\n", wp_num);
-  }   */
-  return 0;    
-}    
-
-
-
-
+  return 0;
+}
 
 
 
