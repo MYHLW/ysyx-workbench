@@ -47,7 +47,7 @@ static struct rule {
   const char *regex;
   int token_type;
 } rules[] = {
-  {"\\*", TK_DEREF},      // pointer dereference
+
   {"0[xX][0-9a-fA-F]+", TK_HEX_NUMBER}, // 十六进制数字
   {" +", TK_NOTYPE},    // spaces
   {"\\+", TK_PLUS},         // plus
@@ -55,6 +55,7 @@ static struct rule {
   {"!=", TK_NE},        // not equal
   {"-", TK_MINUS},         // minus
   {"\\*", TK_MULTIPLY},    // multiply
+  {"\\*", TK_DEREF},      // pointer dereference
   {"/", TK_DIVIDE},        // divide
   {"%", TK_MODULO},        // modulo
   {"\\(", TK_LPAREN},      // left parenthesis
