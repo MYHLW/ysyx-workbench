@@ -196,12 +196,20 @@ int find_main_op(int p, int q) {
     if (tokens[i].type == TK_RPAREN) paren_count++;
     if (tokens[i].type == TK_LPAREN) paren_count--;
     if (paren_count == 0) {
-      if ((tokens[i].type == TK_PLUS || tokens[i].type == TK_MINUS) && (op_priority <= 1)) {
+     /* if ((tokens[i].type == TK_PLUS || tokens[i].type == TK_MINUS) && (op_priority <= 1)) {
         main_op = i;
         op_priority = 1;
       } else if ((tokens[i].type == TK_MULTIPLY || tokens[i].type == TK_DIVIDE || tokens[i].type == TK_MODULO) && (op_priority <= 2)) {
         main_op = i;
+        op_priority = 2; */
+        if ((tokens[i].type == TK_MULTIPLY || tokens[i].type == TK_DIVIDE || tokens[i].type == TK_MODULO) && (op_priority < 2)) {
+        main_op = i;
         op_priority = 2;
+      }
+      // 然后处理加减法运算符（优先级1）
+      else if ((tokens[i].type == TK_PLUS || tokens[i].type == TK_MINUS) && (op_priority < 1)) {
+        main_op = i;
+        op_priority = 1;
       }
     }
   }
