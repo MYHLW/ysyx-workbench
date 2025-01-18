@@ -264,7 +264,9 @@ long long eval(int p, int q) {
       		return atoll(tokens[p].str);
     } else if (tokens[p].type == TK_HEX_NUMBER) {
       		return hex_to_decimal(tokens[p].str);
-    } else if(tokens[p].type == TK_REG)  {value = isa_reg_str2val(tokens[p].str,&success_reg);
+    } else if(tokens[p].type == TK_REG)  {
+    printf("%s",tokens[p].str); //!!
+    value = isa_reg_str2val(tokens[p].str,&success_reg);
       		return value; }  //fix the reg
     else {
       printf("Invalid token in eval!\n");
