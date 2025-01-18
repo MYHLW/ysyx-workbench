@@ -60,10 +60,10 @@ word_t isa_reg_str2val(const char *s, bool *success) {
     if (strcmp(s, regs[i]) == 0) {
       *success = true;
       printf("The REG is %s",regs[i]);
-      printf("%p",success);
       return cpu.gpr[i];
     }
   }
+  printf("1");
   *success = false;
   return 0; // 如果未找到，返回 0
 }  
