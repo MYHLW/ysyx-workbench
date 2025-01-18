@@ -212,7 +212,7 @@ static int cmd_p(char *args) {      //表达式求值p EXPR
   printf("Expression: %s\n", expr_str);
 
   bool success;
-  word_t result = expr(expr_str, &success); // expr.c=>expr()实现表达式求值
+  uint32_t result = expr(expr_str, &success); // expr.c=>expr()实现表达式求值
   if (!success) {
     printf("Error: Failed to evaluate expression.\n");
   } else {
