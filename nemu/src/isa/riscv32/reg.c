@@ -56,10 +56,11 @@ sp     0x00000002
 //I fix the module
 word_t isa_reg_str2val(const char *s, bool *success) {
    size_t len = strlen(s);
-   char reg[10] = "";
+   char reg[] = "";
    for (size_t i = 0; i < len-1; i++) {
         reg[i] = s[i+1];
         }
+    printf("%s\n", reg);
        //remove $
    for (int i = 0; i < 32; i++) {
     if (strcmp(reg, regs[i]) == 0) {
