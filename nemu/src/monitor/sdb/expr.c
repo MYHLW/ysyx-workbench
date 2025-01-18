@@ -39,7 +39,9 @@ enum {
   TK_NOT,          //!
   TK_UNARY_MINUS,   // 一元 -
   TK_HEX_NUMBER,    // 十六进制数
-  TK_LT,TK_LE,TK_GT,TK_GE,TK_DEREF,TK_REG
+  TK_LT,TK_LE,TK_GT,TK_GE,
+  TK_DEREF = 276,
+  TK_REG
 };
 
 
@@ -267,7 +269,7 @@ long long eval(int p, int q) {
     } else if (tokens[p].type == TK_HEX_NUMBER) {
       return hex_to_decimal(tokens[p].str);
     } else {
-      printf("Invalid token in eval\n");
+      printf("Invalid token in eval!\n");
       exit(1);
     }
   } else if (check_parentheses(p, q) == true) {
