@@ -188,7 +188,7 @@ bool check_parentheses(int p, int q) {
 
 
 // 找到主运算符
-int find_main_op(int p, int q) {
+/*int find_main_op(int p, int q) {
   int paren_count = 0;
   int main_op = -1;
   int op_priority = 0;
@@ -196,25 +196,51 @@ int find_main_op(int p, int q) {
     if (tokens[i].type == TK_RPAREN) paren_count++;
     if (tokens[i].type == TK_LPAREN) paren_count--;
     if (paren_count == 0) {
-     /* if ((tokens[i].type == TK_PLUS || tokens[i].type == TK_MINUS) && (op_priority <= 1)) {
+      if ((tokens[i].type == TK_PLUS || tokens[i].type == TK_MINUS) && (op_priority <= 1)) {
         main_op = i;
         op_priority = 1;
       } else if ((tokens[i].type == TK_MULTIPLY || tokens[i].type == TK_DIVIDE || tokens[i].type == TK_MODULO) && (op_priority <= 2)) {
         main_op = i;
-        op_priority = 2; */
-        if ((tokens[i].type == TK_MULTIPLY || tokens[i].type == TK_DIVIDE || tokens[i].type == TK_MODULO) && (op_priority < 2)) {
-        main_op = i;
-        op_priority = 2;
-      }
-      // 然后处理加减法运算符（优先级1）
-      else if ((tokens[i].type == TK_PLUS || tokens[i].type == TK_MINUS) && (op_priority < 1)) {
-        main_op = i;
-        op_priority = 1;
+        op_priority = 2; 
+      
       }
     }
   }
   return main_op;
+}  */
+
+int find_main_op(int p, int q) {
+  int paren_count = 0;
+  int main_op = -1;
+  int op_priority = 3;  // 设定一个较高的初始优先级
+  // 从左到右扫描token
+  for (int i = p; i <= q; i++) {
+    if (tokens[i].type == TK_LPAREN) paren_count++;
+    if (tokens[i].type == TK_RPAREN) paren_count--;
+    
+    // 只有在括号平衡的情况下才能考虑运算符
+    if (paren_count == 0) {
+      int current_priority = 3;  // 默认较高优先级
+
+      // 根据运算符类型设定优先级
+      if (tokens[i].type == TK_PLUS || tokens[i].type == TK_MINUS) {
+        current_priority = 1;  // 加减优先级较低
+      } else if (tokens[i].type == TK_MULTIPLY || tokens[i].type == TK_DIVIDE || tokens[i].type == TK_MODULO) {
+        current_priority = 2;  // 乘除优先级较高
+      }     
+      // 选择当前运算符作为主运算符的条件：
+      // 1. 当前运算符的优先级比之前选中的运算符低
+      // 2. 如果当前优先级与已选择的相同，选择最后出现的运算符
+      if (current_priority <= op_priority) {
+        op_priority = current_priority;
+        main_op = i;
+      }
+    }
+  }
+
+  return main_op;
 }
+
 
 
 // 表达式求值的递归函数
