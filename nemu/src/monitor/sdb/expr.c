@@ -250,9 +250,10 @@ int find_main_op(int p, int q) {
       if (current_priority <= op_priority) {
           op_priority = current_priority;
           main_op = i;
-          printf("main_op(i) = %d",main_op);  //
+          
       }
     }
+  printf("main_op(i) = %d\n",main_op);  //
   return main_op;
 }
 
