@@ -217,17 +217,16 @@ int find_main_op(int p, int q) {
   int paren_count = 0;
   int main_op = -1;
   int op_priority = 7; 
-  int current_priority = 7;
   // 从左到右扫描token
   for (int i = p; i <= q; i++) {
     if (tokens[i].type == TK_LPAREN) paren_count++;
     if (tokens[i].type == TK_RPAREN) paren_count--;
     
-  /*  // 只有在括号平衡的情况下才能考虑运算符
+    // 只有在括号平衡的情况下才能考虑运算符
     if (paren_count == 0) {
-        int current_priority = 3;  // 默认较高优先级
+        int current_priority = 7;  // 默认较高优先级
 
-        // 根据运算符类型设定优先级
+ /*       // 根据运算符类型设定优先级
         if (tokens[i].type == TK_PLUS || tokens[i].type == TK_MINUS) {
           current_priority = 1;  // 加减优先级较低
         } else if (tokens[i].type == TK_MULTIPLY || tokens[i].type == TK_DIVIDE || tokens[i].type == TK_MODULO) {
@@ -250,7 +249,7 @@ int find_main_op(int p, int q) {
       if (current_priority <= op_priority) {
           op_priority = current_priority;
           main_op = i;
-          
+        }  
       }
     }
   printf("main_op(i) = %d\n",main_op);  //
