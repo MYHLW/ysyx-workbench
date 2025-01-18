@@ -253,16 +253,20 @@ int find_main_op(int p, int q) {
 
 // 表达式求值的递归函数
 long long eval(int p, int q) {
+  uint32_t value;
   if (p > q) {
     // Bad expression
     return 0;
   } else if (p == q) {
     // Single token. For now this token should be a number.
+    bool success_reg;
     if (tokens[p].type == TK_NUMBER) {
-      return atoll(tokens[p].str);
+      		return atoll(tokens[p].str);
     } else if (tokens[p].type == TK_HEX_NUMBER) {
-      return hex_to_decimal(tokens[p].str);
-    } else {
+      		return hex_to_decimal(tokens[p].str);
+    } else if(tokens[p].type == TK_REG)  {value = isa_reg_str2val(tokens[p].str,&success_reg);
+      		return value; }  //fix the reg
+    else {
       printf("Invalid token in eval!\n");
       exit(1);
     }
