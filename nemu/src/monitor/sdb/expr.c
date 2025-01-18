@@ -278,8 +278,8 @@ long long eval(int p, int q) {
     return eval(p + 1, q - 1);
   } else {
     int op = find_main_op(p, q);
-    long long val1 = eval(p, op - 1);
-    long long val2 = eval(op + 1, q);
+    uint32_t val1 = eval(p, op - 1);
+    uint32_t val2 = eval(op + 1, q);
 
 
     switch (tokens[op].type) {
