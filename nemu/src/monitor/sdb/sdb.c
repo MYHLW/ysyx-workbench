@@ -216,7 +216,7 @@ static int cmd_p(char *args) {      //表达式求值p EXPR
   if (!success) {
     printf("Error: Failed to evaluate expression.\n");
   } else {
-    printf("Result = %d\n", result);
+    printf("Result = 0x%08x\n", result);
   }   
   return 0;  
 }
