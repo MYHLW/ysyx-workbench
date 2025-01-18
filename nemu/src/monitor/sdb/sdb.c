@@ -217,7 +217,7 @@ static int cmd_p(char *args) {      //表达式求值p EXPR
     printf("Error: Failed to evaluate expression.\n");
   } else {
     printf("HEX Result = 0x%08x\n", result);
-    printf("DEC Result = %d\n", result);
+    printf("DEC Result = %u\n", result);  //%u 用于输出无符号整数
   }   
   return 0;  
 }
