@@ -252,7 +252,7 @@ int find_main_op(int p, int q) {
         }  
       }
     }
-  printf("main_op(i) = %d\n",main_op);  //
+  //printf("main_op(i) = %d\n",main_op);  
   return main_op;
 }
 
@@ -323,7 +323,7 @@ word_t expr(char *e, bool *success) {
 	if (tokens[i].type == TK_MULTIPLY && (i == 0 || tokens[i - 1].type == '('||tokens[i - 1].type==TK_EQ||tokens[i - 1].type==TK_NE)) {
         	tokens[i].type = TK_DEREF;
     		printf(" i = %d\n",i);
-    		printf(" The type is: %d\n",tokens[i].type);
+    	//	printf(" The type is: %d\n",tokens[i].type);
   }
 }
 
