@@ -1,18 +1,6 @@
-/***************************************************************************************
-* Copyright (c) 2014-2024 Zihao Yu, Nanjing University
-*
-* NEMU is licensed under Mulan PSL v2.
-* You can use this software according to the terms and conditions of the Mulan PSL v2.
-* You may obtain a copy of Mulan PSL v2 at:
-*          http://license.coscl.org.cn/MulanPSL2
-*
-* THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
-* EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
-* MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
-*
-* See the Mulan PSL v2 for more details.
-***************************************************************************************/
-
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include <isa.h>
 #include <regex.h>
 #include <stdio.h>
@@ -275,4 +263,52 @@ void free_tokens() {
   for (int i = 0; i < nr_token; i++) {
     free(tokens[i].str);
   }
+}
+
+
+
+int main() {
+    FILE *fp = fopen("input", "r");
+    if (fp == NULL) {
+        perror("Failed to open input file");
+        return 1;
+    }
+
+    char line[2048];
+    while (fgets(line, sizeof(line), fp)!= NULL) {
+        // 查找空格位置，将一行拆分为预期结果和表达式
+        char *space = strchr(line,' ');
+        if (space == NULL) {
+            fprintf(stderr, "Invalid line format: %s\n", line);
+            continue;
+        }
+
+
+        // 将空格替换为字符串结束符，得到预期结果
+        *space = '\0';
+        int expected_result = atoi(line);
+
+
+        // 去掉表达式前面的空格
+        char *expression = space + 1;
+        while (*expression =='') {
+            expression++;
+        }
+
+
+        // 调用 expr 函数计算表达式结果
+        int result = expr(expression);
+
+
+        // 比较计算结果和预期结果
+        if (result == expected_result) {
+            printf("Test passed for expression: %s\n", expression);
+        } else {
+            printf("Test failed for expression: %s. Expected: %d, Got: %d\n", expression, expected_result, result);
+        }
+    }
+
+
+    fclose(fp);
+    return 0;
 }

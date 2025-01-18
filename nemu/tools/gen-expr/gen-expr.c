@@ -13,6 +13,21 @@
 * See the Mulan PSL v2 for more details.
 ***************************************************************************************/
 
+/***************************************************************************************
+* Copyright (c) 2014-2024 Zihao Yu, Nanjing University
+*
+* NEMU is licensed under Mulan PSL v2.
+* You can use this software according to the terms and conditions of the Mulan PSL v2.
+* You may obtain a copy of Mulan PSL v2 at:
+*          http://license.coscl.org.cn/MulanPSL2
+*
+* THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
+* EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
+* MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+*
+* See the Mulan PSL v2 for more details.
+***************************************************************************************/
+
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -20,105 +35,113 @@
 #include <assert.h>
 #include <string.h>
 
-// Define the maximum buffer size
-#define BUF_SIZE 65536
-static char buf[BUF_SIZE] = {};  // Buffer to hold the expression
-static char code_buf[BUF_SIZE + 128] = {}; // A little larger than `buf`
-// Code template for the C program to evaluate the expression
+// this should be enough
+static char buf[65536] = {};
+static char code_buf[65536 + 128] = {}; // a little larger than `buf`
 static char *code_format =
 "#include <stdio.h>\n"
 "int main() { "
 "  unsigned result = %s; "
 "  printf(\"%%u\", result); "
-"  return 0; "
+"  return 0;"
 "}";
+#define MAX_DEPTH 20
+int k = 0;  
+int depth=0;
+//int last_was_num = 0;  
+//int last_was_paren = 0;  
+//int last_was_op =1;
 
-// Safely concatenate strings to avoid buffer overflow
-void safe_strcat(char *dest, const char *src) {
-    if (strlen(dest) + strlen(src) < BUF_SIZE - 1) {
-        strcat(dest, src);
-    }
+static void gen_space(){
+	if(rand()%2)
+	 buf[k++]=' ';
+}
+static void gen_num(){
+	gen_space();
+// if(buf[k-1]==')')	return;
+ uint32_t rand_num=rand();
+  k+=sprintf(buf+k,"%u",rand_num);
+  gen_space();
+  //last_was_num=1;
+  //last_was_op=0;
+//  last_was_paren=0;
 }
 
-// Function to generate random expressions
-void gen_rand_expr() {
-    buf[0] = '\0';  // Clear the buffer
+static void gen_rand_op(){
+	//if(last_was_op) return;
+	int choose_op = rand()%4;
+	if(k==0) {
+			gen_num();
+	}
+	else{	
+	switch(choose_op){
+    case 0 :buf[k++] = '+';break;
+	case 1 :buf[k++] = '-';break;
+	case 2 :buf[k++] = '*';break;
+	default:buf[k++] = '/';break;
+	}
+}
+	//last_was_op=1;
+	//last_was_num=0;
+    //last_was_paren=0;
+ }
 
-    switch (rand() % 3) {
-        case 0: {
-            // Case 1: Generate a number
-            sprintf(buf, "%d", rand() % 100);  // Random number between 0 and 99
-            break;
-        }
-        case 1: {
-            // Case 2: Generate a sub-expression with parentheses
-            safe_strcat(buf, "(");
-            gen_rand_expr();
-            safe_strcat(buf, ")");
-            break;
-        }
-        default: {
-            // Case 3: Generate an expression with a random operator
-            gen_rand_expr();
-            char op = "+-*/"[rand() % 4];  // Choose a random operator
-            if (op == '/') {
-                // Ensure no division by zero
-                int denominator = rand() % 100;
-                if (denominator == 0) {
-                    denominator = 1;  // Prevent division by zero
-                }
-                sprintf(buf + strlen(buf), " / %d", denominator);
-            } else {
-                char expr[64];
-                int space_chance = rand() % 2;  // Randomly decide whether to insert a space
-                if (space_chance) {
-                    sprintf(expr, " %c ", op);   // Add space around operator
-                } else {
-                    sprintf(expr, "%c", op);     // No space around operator
-                }
-                safe_strcat(buf, expr);
-                gen_rand_expr();
-            }
-            break;
-        }
+static void gen(char arg){
+  //  if(arg==')') last_was_paren=1;
+	buf[k++]=arg;
+	//last_was_num=0;
+//	last_was_op=0;
+
+}
+static void gen_rand_expr() {
+	if (depth > MAX_DEPTH) {  // 控制递归深度
+        gen_num();
+        return;
     }
+	depth++;
+ int choose = rand()%3;
+  switch (choose) {
+    case 0: gen_num();break;
+    case 1:// if((last_was_paren)||(last_was_num)) return; 
+			gen('('); gen_rand_expr(); gen(')');
+			break;
+    case 2: gen_rand_expr(); gen_rand_op(); gen_rand_expr(); break;
+  }
+  depth--;
 }
 
 int main(int argc, char *argv[]) {
-    int seed = time(0);
-    srand(seed);  // Initialize random number generator with current time
-    int loop = 1;
-    if (argc > 1) {
-        sscanf(argv[1], "%d", &loop);  // Read the number of iterations from command line argument
-    }
+  int seed = time(0);
+  srand(seed);
+  int loop = 1;
+  if (argc > 1) {
+    sscanf(argv[1], "%d", &loop);
+  }
+  int i;
+  for (i = 0; i < loop; i ++) {
+    //last_was_num = 0;
+   // last_was_paren = 0;
+    //last_was_op =1;
+    depth=0;
+	k=0;
+	memset(buf, 0, sizeof(buf));  
+    gen_rand_expr();
+    sprintf(code_buf, code_format, buf);
+    FILE *fp = fopen("/tmp/.code.c", "w");
+    assert(fp != NULL);
+    fputs(code_buf, fp);
+    fclose(fp);
+	int ret = system("gcc /tmp/.code.c -Wall -Werror -o /tmp/.expr");
+    if (ret != 0) continue;
 
-    for (int i = 0; i < loop; i++) {
-        gen_rand_expr();  // Generate a random expression
+    fp = popen("/tmp/.expr", "r");
+    assert(fp != NULL);
 
-        // Prepare the C code with the generated expression
-        sprintf(code_buf, code_format, buf);
+    uint32_t result;
+    ret = fscanf(fp, "%u", &result);
+    pclose(fp);
 
-        // Write the C code to a temporary file
-        FILE *fp = fopen("/tmp/.code.c", "w");
-        assert(fp != NULL);
-        fputs(code_buf, fp);
-        fclose(fp);
-
-        // Compile the C code using gcc
-        int ret = system("gcc /tmp/.code.c -o /tmp/.expr");
-        if (ret != 0) continue;  // If compilation fails, skip this iteration
-
-        // Run the compiled C program and get the result
-        fp = popen("/tmp/.expr", "r");
-        assert(fp != NULL);
-
-        unsigned result;
-        ret = fscanf(fp, "%u", &result);  // Read the result from the program's output
-        pclose(fp);
-
-        // Print the result along with the generated expression
-        printf("%u %s\n", result, buf);
-    }
-    return 0;
+    printf("%u %s\n", result, buf);
+  }
+  return 0;
 }
-
