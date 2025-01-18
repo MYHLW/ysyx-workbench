@@ -18,6 +18,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "vaddr_read.h"
+#include <memory/vaddr.h>
 
 
 enum {
@@ -36,7 +38,8 @@ enum {
   TK_OR,           // ||
   TK_NOT,          //!
   TK_UNARY_MINUS,   // 一元 -
-  TK_HEX_NUMBER    // 十六进制数
+  TK_HEX_NUMBER,    // 十六进制数
+  TK_LT,TK_LE,TK_GT,TK_GE,TK_DEREF,TK_REG
 };
 
 
@@ -44,22 +47,34 @@ static struct rule {
   const char *regex;
   int token_type;
 } rules[] = {
-  {"0[xX][0-9a-fA-F]+", TK_HEX_NUMBER}, // 十六进制数字
+ {"0[xX][0-9a-fA-F]+", TK_HEX_NUMBER}, // 十六进制数字
   {" +", TK_NOTYPE},    // spaces
   {"\\+", TK_PLUS},         // plus
   {"==", TK_EQ},        // equal
+  {"!=", TK_NE},        // not equal
   {"-", TK_MINUS},         // minus
   {"\\*", TK_MULTIPLY},    // multiply
   {"/", TK_DIVIDE},        // divide
   {"%", TK_MODULO},        // modulo
-  {"!=", TK_NE},           // not equal
   {"\\(", TK_LPAREN},      // left parenthesis
   {"\\)", TK_RPAREN},      // right parenthesis
-  {"[0-9]+", TK_NUMBER},   // 十进制数字
+  {"[0-9]+", TK_NUMBER},   // DECIMAL NUM
   {"&&", TK_AND},         // logical AND
   {"\\|\\|", TK_OR},      // logical OR
-  {"!", TK_NOT},         // logical NOT
-  {"^-", TK_UNARY_MINUS}   // unary minus
+//  {"!", TK_NOT},         // logical NOT
+//  {"<<", TK_LSHIFT},      // bitwise left shift
+//  {">>", TK_RSHIFT},      // bitwise right shift
+//  {"&", TK_BITAND},       // bitwise AND
+//  {"\\|", TK_BITOR},      // bitwise OR
+//  {"\\^", TK_BITXOR},     // bitwise XOR
+//  {"~", TK_BITNOT},       // bitwise NOT
+  {"<", TK_LT},           // less than
+  {"<=", TK_LE},          // less than or equal
+  {">", TK_GT},           // greater than
+  {">=", TK_GE},          // greater than or equal
+  {"\\*", TK_DEREF},      // pointer dereference
+//  {"^-", TK_UNARY_MINUS}   // unary minus
+  {"\\$[a-zA-Z0-9]+", TK_REG},
 };
 
 
@@ -127,6 +142,13 @@ static bool make_token(char *e) {
              tokens[nr_token].str[substr_len] = '\0';
              nr_token++;
              break;
+          case TK_LT:
+          case TK_LE:
+          case TK_GT:
+          case TK_GE:
+          case TK_DEREF:
+          case TK_REG:
+           
           case TK_PLUS:
           case TK_MINUS:
           case TK_MULTIPLY:
@@ -138,8 +160,8 @@ static bool make_token(char *e) {
           case TK_RPAREN:
           case TK_AND:
           case TK_OR:
-          case TK_NOT:
-          case TK_UNARY_MINUS:
+        //  case TK_NOT:
+        //  case TK_UNARY_MINUS:
              tokens[nr_token].type = rules[i].token_type;
              tokens[nr_token].str = (char *)malloc(strlen(rules[i].regex) + 1);
              if (tokens[nr_token].str == NULL) {
@@ -188,56 +210,45 @@ bool check_parentheses(int p, int q) {
 
 
 // 找到主运算符
-/*int find_main_op(int p, int q) {
-  int paren_count = 0;
-  int main_op = -1;
-  int op_priority = 0;
-  for (int i = q; i >= p; i--) {
-    if (tokens[i].type == TK_RPAREN) paren_count++;
-    if (tokens[i].type == TK_LPAREN) paren_count--;
-    if (paren_count == 0) {
-      if ((tokens[i].type == TK_PLUS || tokens[i].type == TK_MINUS) && (op_priority <= 1)) {
-        main_op = i;
-        op_priority = 1;
-      } else if ((tokens[i].type == TK_MULTIPLY || tokens[i].type == TK_DIVIDE || tokens[i].type == TK_MODULO) && (op_priority <= 2)) {
-        main_op = i;
-        op_priority = 2; 
-      
-      }
-    }
-  }
-  return main_op;
-}  */
-
 int find_main_op(int p, int q) {
   int paren_count = 0;
   int main_op = -1;
-  int op_priority = 3;  // 设定一个较高的初始优先级
+  int op_priority = 7; 
+  int current_priority = 7;
   // 从左到右扫描token
   for (int i = p; i <= q; i++) {
     if (tokens[i].type == TK_LPAREN) paren_count++;
     if (tokens[i].type == TK_RPAREN) paren_count--;
     
-    // 只有在括号平衡的情况下才能考虑运算符
+  /*  // 只有在括号平衡的情况下才能考虑运算符
     if (paren_count == 0) {
-      int current_priority = 3;  // 默认较高优先级
+        int current_priority = 3;  // 默认较高优先级
 
-      // 根据运算符类型设定优先级
-      if (tokens[i].type == TK_PLUS || tokens[i].type == TK_MINUS) {
-        current_priority = 1;  // 加减优先级较低
-      } else if (tokens[i].type == TK_MULTIPLY || tokens[i].type == TK_DIVIDE || tokens[i].type == TK_MODULO) {
-        current_priority = 2;  // 乘除优先级较高
-      }     
-      // 选择当前运算符作为主运算符的条件：
-      // 1. 当前运算符的优先级比之前选中的运算符低
-      // 2. 如果当前优先级与已选择的相同，选择最后出现的运算符
+        // 根据运算符类型设定优先级
+        if (tokens[i].type == TK_PLUS || tokens[i].type == TK_MINUS) {
+          current_priority = 1;  // 加减优先级较低
+        } else if (tokens[i].type == TK_MULTIPLY || tokens[i].type == TK_DIVIDE || tokens[i].type == TK_MODULO) {
+          current_priority = 2;  // 乘除优先级较高
+        }      */
+               // 设置优先级
+        if (tokens[i].type == TK_PLUS || tokens[i].type == TK_MINUS)
+          current_priority = 4;// 加减
+        else if (tokens[i].type == TK_MULTIPLY || tokens[i].type == TK_DIVIDE || tokens[i].type == TK_MODULO)
+          current_priority = 5; // 乘除
+        else if (tokens[i].type == TK_LT || tokens[i].type == TK_LE || tokens[i].type == TK_GT || tokens[i].type == TK_GE || tokens[i].type == TK_EQ || tokens[i].type == TK_NE)
+          current_priority = 3;  // 比较运算符
+        else if (tokens[i].type == TK_AND)
+          current_priority = 2;  // 逻辑与
+        else if (tokens[i].type == TK_OR)
+          current_priority = 1;  // 逻辑或
+        else if (tokens[i].type == TK_DEREF)
+          current_priority = 6;  //pointer
+           // 选择当前运算符作为主运算符的条件:1. 当前运算符的优先级比之前选中的运算符低2. 如果当前优先级与已选择的相同，选择最后出现的运算符
       if (current_priority <= op_priority) {
-        op_priority = current_priority;
-        main_op = i;
+          op_priority = current_priority;
+          main_op = i;
       }
     }
-  }
-
   return main_op;
 }
 
@@ -284,6 +295,13 @@ long long eval(int p, int q) {
           exit(1);
         }
         return val1 % val2;
+      case  TK_EQ: if(val1 == val2) return 1;else return 0;
+      case  TK_NE: if(val1 != val2) return 1;else return 0;
+      case  TK_DEREF: return vaddr_read(val2,4);  //!!!
+      case  TK_LT: if(val1 < val2) return 1;else return 0;  
+      case  TK_GT: if(val1 > val2) return 1;else return 0; 
+      case  TK_GE: if(val1 >= val2) return 1;else return 0;
+      case  TK_LE: if(val1 <= val2) return 1;else return 0; 
       default:
         printf("Invalid operator in eval\n");
         exit(1);
@@ -297,7 +315,12 @@ word_t expr(char *e, bool *success) {
     *success = false;
     return 0;
   }
-
+  for (int i = 0; i <NR_REGEX; i++) {
+	if (tokens[i].type == TK_MULTIPLY && (i == 0 || tokens[i - 1].type == '('||tokens[i - 1].type==TK_EQ||tokens[i - 1].type==TK_NE)) {
+	printf(" i = %d\n",i);
+    tokens[i].type = TK_DEREF;
+  }
+}
 
   *success = true;
   return eval(0, nr_token - 1);
