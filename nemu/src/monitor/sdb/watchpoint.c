@@ -112,7 +112,7 @@ void delete_watchpoint(int wp_num) {
     pp = &(*pp)->next;
   }
   printf("Watchpoint %d not found.\n", wp_num);
-}
+}   
 
 
 
