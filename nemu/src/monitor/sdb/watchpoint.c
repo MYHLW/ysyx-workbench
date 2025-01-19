@@ -99,8 +99,10 @@ WP* create_watchpoint(char *expr_str) {
   WP *wp = new_wp();  // 从监视点池申请一个新的监视点
   
   strncpy(wp->expr, expr_str, sizeof(wp->expr) - 1);  // 保存表达式
-  printf("1"); 
+  
   wp->expr[sizeof(wp->expr) - 1] = '\0';  // 确保字符串以NULL结尾
+  printf("1"); 
+  
   wp->value = expr(wp->expr, NULL);  // 计算表达式的初始值并存储
   printf("1");  
   
