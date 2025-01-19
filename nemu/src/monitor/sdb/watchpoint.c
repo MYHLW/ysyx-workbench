@@ -102,8 +102,8 @@ WP* create_watchpoint(char *expr_str) {
   
   wp->expr[sizeof(wp->expr) - 1] = '\0';  // 确保字符串以NULL结尾
   printf("2"); 
-  
-  wp->value = expr(wp->expr, NULL);  // 计算表达式的初始值并存储
+  bool success;
+  wp->value = expr(wp->expr, &success);  // 计算表达式的初始值并存储
   printf("1");  
   
   return wp; 
