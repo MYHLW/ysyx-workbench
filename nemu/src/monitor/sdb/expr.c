@@ -264,7 +264,7 @@ long long eval(int p, int q) {
     } else if (tokens[p].type == TK_HEX_NUMBER) {
       		return hex_to_decimal(tokens[p].str);
     } else if(tokens[p].type == TK_REG)  {
-   printf("%s",tokens[p].str); //!!
+   printf("%s\n",tokens[p].str); //!!
     value = isa_reg_str2val(tokens[p].str,&success_reg);
       		return value; }  //fix the bug
     else {
@@ -321,7 +321,6 @@ word_t expr(char *e, bool *success) {
 	if (tokens[i].type == TK_MULTIPLY && (i == 0 || tokens[i - 1].type == '('||tokens[i - 1].type==TK_EQ||tokens[i - 1].type==TK_NE)) {
         	tokens[i].type = TK_DEREF;
     		printf(" i = %d\n",i);
-    	//	printf(" The type is: %d\n",tokens[i].type);
   }
 }
 
