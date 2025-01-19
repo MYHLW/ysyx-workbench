@@ -17,6 +17,8 @@
 #include <cpu/decode.h>
 #include <cpu/difftest.h>
 #include <locale.h>
+#include "watchpoint.h"
+#include <../src/monitor/sdb/sdb.h>
 
 /* The assembly code of instructions executed is only output to the screen
  * when the number of instructions executed is less than this value.
@@ -34,11 +36,31 @@ void device_update();
 
 static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
 #ifdef CONFIG_ITRACE_COND
+  bool ITRACE_COND = 1; //FIX?
   if (ITRACE_COND) { log_write("%s\n", _this->logbuf); }
 #endif
   if (g_print_step) { IFDEF(CONFIG_ITRACE, puts(_this->logbuf)); }
   IFDEF(CONFIG_DIFFTEST, difftest_step(_this->pc, dnpc));
+/*#ifdef CONFIG_WATCHPOINT
+  // 遍历所有监视点
+  for (WP *wp = head; wp != NULL; wp = wp->next) {
+    bool success = false;
+    uint32_t new_value = expr(wp->expr, &success);  // 计算当前表达式的值
+
+    // 如果表达式求值成功且值发生变化，则触发监视点
+    if (success && new_value != wp->value) {
+      wp->value = new_value;  // 更新监视点的值
+      nemu_state.state = NEMU_STOP;  // 暂停模拟
+      printf("Watchpoint %d triggered: %s, new value = 0x%x\n", wp->NO, wp->expr, wp->value);
+      return;
+    }
+  }
+#endif */
+    if(CONFIG_WATCHPOINT) { scan_watchpoint();}
+
+
 }
+
 
 static void exec_once(Decode *s, vaddr_t pc) {
   s->pc = pc;
@@ -115,7 +137,6 @@ void cpu_exec(uint64_t n) {
 
   switch (nemu_state.state) {
     case NEMU_RUNNING: nemu_state.state = NEMU_STOP; break;
-
     case NEMU_END: case NEMU_ABORT:
       Log("nemu: %s at pc = " FMT_WORD,
           (nemu_state.state == NEMU_ABORT ? ANSI_FMT("ABORT", ANSI_FG_RED) :

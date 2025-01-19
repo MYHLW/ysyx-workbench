@@ -1,5 +1,15 @@
 mainmenu "NEMU Configuration Menu"
 
+config WATCHPOINT
+  bool "Enable watchpoint feature"
+  default n
+  help
+    Enable watchpoint functionality to check expressions during simulation.
+    Disable this option to improve performance when watchpoints are not needed.
+
+
+
+
 choice
   prompt "Base ISA"
   default ISA_riscv

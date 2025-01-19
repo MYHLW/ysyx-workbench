@@ -16,6 +16,9 @@
 #include "sdb.h"
 #include <stdio.h>
 #include <assert.h>
+#include <string.h>
+#include <cpu/cpu.h>
+
 
 
 #define NR_WP 32
@@ -115,6 +118,19 @@ void delete_watchpoint(int wp_num) {
 }   
 
 
+void scan_watchpoint(){
+  for (WP *wp = head; wp != NULL; wp = wp->next) {
+    bool success = false;
+    uint32_t new_value = expr(wp->expr, &success);  // 计算当前表达式的值
 
+    // 如果表达式求值成功且值发生变化，则触发监视点
+    if (success && new_value != wp->value) {
+      wp->value = new_value;  // 更新监视点的值
+      nemu_state.state = NEMU_STOP;  // 暂停模拟
+      printf("Watchpoint %d triggered: %s, new value = 0x%x\n", wp->NO, wp->expr, wp->value);
+      return;
+    }
+  }
+}
 
 

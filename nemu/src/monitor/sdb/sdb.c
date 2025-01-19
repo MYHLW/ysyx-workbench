@@ -135,25 +135,7 @@ static int cmd_info(char *args) {
 
   if (strcmp(args, "r") == 0) {
     isa_reg_display();  // 打印所有寄存器状态
-  }/* else if (strcmp(args, "y") == 0) {
-    // 使用 isa_reg_str2val 获取寄存器值
-    char reg_name[16];  // 假设寄存器名称长度不会超过 15 个字符
-    bool success = false;
-
-    printf("Enter the register name to check its value: ");
-    if (scanf("%15s", reg_name) == 1) {
-      word_t reg_val = isa_reg_str2val(reg_name, &success);
-      if (success) {
-        printf("Value of register %s: 0x%x\n", reg_name, reg_val);
-      } else {
-        printf("Error: Invalid register name '%s'.\n", reg_name);
-      }
-    } else {
-      printf("Error: Failed to read register name.\n");
-    }
-  } else {
-    printf("Error: Unknown argument '%s'. Use 'info r' or 'info w'.\n", args);
-  }}  */
+  }
   else if (strcmp(args, "w") == 0){
    display_wp();
    }
