@@ -135,6 +135,7 @@ static bool make_token(char *e) {
                 break;
            case TK_NUMBER:
            case TK_HEX_NUMBER:
+           case TK_REG:    //fix the bug
              tokens[nr_token].type = rules[i].token_type;
              tokens[nr_token].str = (char *)malloc(substr_len + 1);
              if (tokens[nr_token].str == NULL) {
@@ -149,9 +150,7 @@ static bool make_token(char *e) {
           case TK_LE:
           case TK_GT:
           case TK_GE:
-          case TK_DEREF:
-          case TK_REG:
-           
+          case TK_DEREF:        
           case TK_PLUS:
           case TK_MINUS:
           case TK_MULTIPLY:
@@ -265,9 +264,9 @@ long long eval(int p, int q) {
     } else if (tokens[p].type == TK_HEX_NUMBER) {
       		return hex_to_decimal(tokens[p].str);
     } else if(tokens[p].type == TK_REG)  {
-    printf("%s",tokens[p].str); //!!
+   printf("%s",tokens[p].str); //!!
     value = isa_reg_str2val(tokens[p].str,&success_reg);
-      		return value; }  //fix the reg
+      		return value; }  //fix the bug
     else {
       printf("Invalid token in eval!\n");
       exit(1);
