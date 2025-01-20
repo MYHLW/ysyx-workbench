@@ -250,7 +250,7 @@ static int cmd_d(char *args) {
 
 static int cmd_t(char *args){
 //	printf("1");
-	int test();
+	test();
 	return 0;
 }
 
