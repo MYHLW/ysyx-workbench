@@ -249,8 +249,9 @@ static int cmd_d(char *args) {
 
 
 static int cmd_t(char *args){
-int test();
-return 0;
+	printf("1");
+	int test();
+	return 0;
 }
 
 
