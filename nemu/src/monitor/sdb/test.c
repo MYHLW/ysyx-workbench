@@ -4,8 +4,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
-
-extern uint32_t expr(const char *expr_str, bool *success);
+#include "watchpoint.h"
+#include "sdb.h"
 
 int test(){
 	FILE *fp = fopen("~/ysyx-workbench/nemu/tools/gen-expr/input.txt","r");

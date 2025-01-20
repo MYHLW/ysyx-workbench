@@ -26,6 +26,7 @@
 #include "vaddr_read.h" // 包含 vaddr_read 的声明
 #include <memory/vaddr.h>
 #include "watchpoint.h"
+#include "test.h"
 
 static int is_batch_mode = false;
 
@@ -69,7 +70,7 @@ static int cmd_x(char *args);
 static int cmd_p(char *args); 
 static int cmd_w(char *args); 
 static int cmd_d(char *args);
- 
+static int cmd_t(char *args); 
 
 static struct {
   const char *name;
@@ -85,7 +86,7 @@ static struct {
   { "p", "Evaluate the expression EXPR", cmd_p },
   { "w", "When the value of expression EXPR changes, the program execution is paused.", cmd_w },
   { "d", "Delete the monitoring point with sequence number N", cmd_d },
-
+  { "t", " Test the expr" ,cmd_t },
 };
 
 #define NR_CMD ARRLEN(cmd_table)
@@ -246,6 +247,11 @@ static int cmd_d(char *args) {
   return 0;
 }
 
+
+static int cmd_t(char *args){
+int test();
+return 0;
+}
 
 
 void sdb_set_batch_mode() {
