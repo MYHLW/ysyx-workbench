@@ -8,7 +8,7 @@
 #include "sdb.h"
 
 int test(){
-	FILE *fp = fopen("~/ysyx-workbench/nemu/tools/gen-expr/input.txt","r");
+	FILE *fp = fopen("/home/wang/ysyx-workbench/nemu/tools/gen-expr/input.txt","r");
 	if (fp == NULL){
 		assert(0);
 		}
