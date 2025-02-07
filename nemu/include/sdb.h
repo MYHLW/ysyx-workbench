@@ -13,23 +13,25 @@
 * See the Mulan PSL v2 for more details.
 ***************************************************************************************/
 
+#ifndef __SDB_H__
+#define __SDB_H__
+
 #include <common.h>
 
-void init_monitor(int, char *[]);
-void am_init_monitor();
-void engine_start();
-int is_exit_status_bad();
+word_t expr(char *e, bool *success);
 
-int main(int argc, char *argv[]) {
-  /* Initialize the monitor. */
-#ifdef CONFIG_TARGET_AM
-  am_init_monitor();
-#else
-  init_monitor(argc, argv);
+// 声明监测点池初始化函数
+void init_wp_pool();
+
+// 声明打印监测点的函数
+void display_wp();
+
+// 声明设置监测点的函数
+void set_wp(char *expr);
+
+// 声明删除监测点的函数
+bool delete_wp(int wp_no);
+
+
+
 #endif
-
-  /* Start engine. */
-  engine_start();
-
-  return is_exit_status_bad();
-}
