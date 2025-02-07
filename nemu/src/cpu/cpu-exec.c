@@ -56,7 +56,11 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
     }
   }
 #endif */
-    if(CONFIG_WATCHPOINT) { scan_watchpoint();}   //fix
+    #ifdef CONFIG_WATCHPOINT
+  if (CONFIG_WATCHPOINT) { 
+    scan_watchpoint();  // 只有在定义了 CONFIG_WATCHPOINT 时才调用 scan_watchpoint()
+  }
+#endif
 
 
 }
