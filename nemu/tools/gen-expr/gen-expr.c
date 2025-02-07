@@ -21,16 +21,15 @@
 #include <string.h>
 
 // 函数声明
-static void gen_rand_expr(void);
+static void gen_rand_expr(int depth);
 static void gen(char c);
-static void gen_num(void);
-static void gen_rand_op(void);
+static void gen_num(int non_zero);
+static char gen_rand_op(void);
 static int choose(int n);
-static int gen_non_zero_num();
 
-static char buf[655369] = {};    // 表达式存储数组
-static int index_buf = 0;       // 当前索引
-static char code_buf[655369 + 128] = {};  // 用于存储生成的代码
+static char buf[655369] = {};
+static int index_buf = 0;
+static char code_buf[655369 + 128] = {};
 static char *code_format =
 "#include <stdio.h>\n"
 "int main() { "
@@ -39,78 +38,75 @@ static char *code_format =
 "  return 0; "
 "}";
 
-// 用于生成随机表达式
-static void gen_rand_expr(void) {
-    // 防止索引超出 buf 长度
+// 生成随机表达式，确保分母非零和括号匹配
+static void gen_rand_expr(int depth) {
     if (index_buf >= sizeof(buf) - 10) {
-        printf("Buffer overflow prevented!\n");
-        return; // 如果超过最大长度，停止生成
+        return;
     }
-    
-    switch (choose(3)) {
-        case 0: gen_num(); break;
-        case 1: gen('('); gen_rand_expr(); gen(')'); break;
-        default: gen_rand_expr(); gen_rand_op(); gen_rand_expr(); break;
+    if (depth > 10) { // 超过深度时生成数字避免无效括号
+        gen_num(0);
+        return;
+    }
+
+    switch (choose(4)) {
+        case 0: gen_num(0); break;
+        case 1: 
+            gen('('); 
+            gen_rand_expr(depth + 1); 
+            gen(')'); 
+            break;
+        case 2: 
+            gen_rand_expr(depth + 1);
+            char op = gen_rand_op();
+            if (op == '/') {
+                gen_num(1); // 分母为非零
+            } else {
+                gen_rand_expr(depth + 1);
+            }
+            break;
+        case 3: 
+            gen_num(0);
+            char op2 = gen_rand_op();
+            if (op2 == '/') {
+                gen_num(1);
+            } else {
+                gen_num(0);
+            }
+            break;
     }
 }
 
-// 随机选择一个值
 int choose(int n) {
     return rand() % n;
 }
 
-// 向 buf 中添加一个字符
 static void gen(char c) {
-    if (index_buf < sizeof(buf) - 1) {  // 确保不会超出 buf 的大小
+    if (index_buf < sizeof(buf) - 1) {
         buf[index_buf++] = c;
+    }
+}
+
+// 生成数字，non_zero控制是否非零
+static void gen_num(int non_zero) {
+    unsigned num;
+    if (non_zero) {
+        num = (rand() % 99) + 1; // 1-99
     } else {
-        printf("Buffer overflow prevented!\n");
+        num = rand() % 100; // 0-99
+    }
+    char num_str[10];
+    sprintf(num_str, "%u", num);
+    for (int i = 0; num_str[i] != '\0'; i++) {
+        gen(num_str[i]);
     }
 }
 
-// 生成一个随机数字
-static void gen_num(void) {
-    unsigned num = rand() % 100;  // 使用无符号类型
-    int len = 0, tmp = num;
-    while (tmp) {
-        tmp /= 10;
-        len++;
-    }
-
-    int x;
-    if (len <= 1) x = 1;
-    else x = (len - 1) * 10;
-
-    while (num) {
-        char c = num / x + '0';
-        if (index_buf < sizeof(buf) - 1) {  // 确保不会超出 buf 的大小
-            buf[index_buf++] = c;
-        } else {
-            printf("Buffer overflow prevented!\n");
-            return;
-        }
-        num %= x;
-        x /= 10;
-    }
-}
-
-// 生成一个随机运算符
-static void gen_rand_op(void) {
-    char op[4] = {'+', '-', '*', '/'};
+// 生成运算符并返回
+static char gen_rand_op(void) {
+    char op[] = {'+', '-', '*', '/'};
     int pos = rand() % 4;
-    if (index_buf < sizeof(buf) - 1) {  // 确保不会超出 buf 的大小
-        buf[index_buf++] = op[pos];
-    } else {
-        printf("Buffer overflow prevented!\n");
-    }
-}
-
-static int gen_non_zero_num() {
-    int num;
-    do {
-        num = rand() % 100;
-    } while (num == 0);
-    return num;
+    gen(op[pos]);
+    return op[pos];
 }
 
 int main(int argc, char *argv[]) {
@@ -120,19 +116,17 @@ int main(int argc, char *argv[]) {
     if (argc > 1) {
         sscanf(argv[1], "%d", &loop);
     }
-    int i;
-    for (i = 0; i < loop; i++) {
-        index_buf = 0;  // 重置索引
-        memset(buf, 0, sizeof(buf));  // 清空 buf
-        gen_rand_expr();  // 生成表达式
-	for (int j = 0; j < index_buf; j++) {
-            if (buf[j] == '/') {
-                int num = gen_non_zero_num();
-                sprintf(buf + j + 1, "%d", num);
-                j += strlen(buf +j +1) - 1;
-            } 
+    for (int i = 0; i < loop; i++) {
+        index_buf = 0;
+        memset(buf, 0, sizeof(buf));
+        gen_rand_expr(0);
+
+        // 确保表达式非空
+        if (index_buf == 0) {
+            gen_num(0);
         }
-        // 防止生成的表达式超过 buf 限制
+
+        // 生成代码
         if (index_buf < sizeof(buf) - 1) {
             sprintf(code_buf, code_format, buf);
         } else {
@@ -141,23 +135,34 @@ int main(int argc, char *argv[]) {
         }
 
         FILE *fp = fopen("/tmp/.code.c", "w");
-        assert(fp != NULL);
+        if (fp == NULL) {
+            perror("Failed to open file");
+            continue;
+        }
         fputs(code_buf, fp);
         fclose(fp);
 
-        int ret = system("gcc /tmp/.code.c -o /tmp/.expr");
-        if (ret != 0) continue;
+        int ret = system("gcc /tmp/.code.c -o /tmp/.expr 2>/dev/null");
+        if (ret != 0) {
+            printf("Compilation failed, skipping...\n");
+            continue;
+        }
 
         fp = popen("/tmp/.expr", "r");
-        assert(fp != NULL);
+        if (!fp) {
+            perror("Failed to run expr");
+            continue;
+        }
 
-        unsigned result;  // 使用无符号整数
-        ret = fscanf(fp, "%u", &result);  // 读取无符号整数
+        unsigned result;
+        if (fscanf(fp, "%u", &result) != 1) {
+            pclose(fp);
+            printf("Read result failed\n");
+            continue;
+        }
         pclose(fp);
-
-        printf("%u %s\n", result, buf);  // 打印无符号整数
+        printf("%u %s\n", result, buf);
     }
-
     return 0;
 }
 
