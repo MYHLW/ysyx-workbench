@@ -38,7 +38,7 @@ int main(int argc, char *argv[]) {
   /* 新增：通过命令行参数选择模式 */
   int test_mode = 0;
   for (int i = 1; i < argc; ++i) {
-    if (strcmp(argv[i], "--test-expr") == 0) {
+    if (strcmp(argv[i], "test") == 0) {
       test_mode = 1;
       break;
     }
