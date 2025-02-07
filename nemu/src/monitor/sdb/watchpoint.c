@@ -19,11 +19,14 @@
 #include <string.h>
 #include <cpu/cpu.h>
 
+#include <isa.h>
 
 
 #define NR_WP 32
 
 extern uint32_t expr(char *e, bool *success); //
+
+extern CPU_state cpu;
 
 typedef struct watchpoint {
   int NO;
@@ -132,7 +135,13 @@ void scan_watchpoint(){
       wp->value = new_value;  // 更新监视点的值
       nemu_state.state = NEMU_STOP;  // 暂停模拟
       printf("Watchpoint %d triggered: %s, new value = 0x%x\n", wp->NO, wp->expr, wp->value);
-      return;
+      return; }
+      
+     // 触发断点：如果监视点的值与cpu.pc相等，暂停模拟
+    if (success && new_value == cpu.pc) {
+      nemu_state.state = NEMU_STOP;  // 暂停模拟
+      printf("Watchpoint %d triggered at pc = 0x%x: %s, new value = 0x%x\n", wp->NO, cpu.pc, wp->expr, wp->value);
+      return;  // 一旦触发断点，退出函数
     }
   }
 }

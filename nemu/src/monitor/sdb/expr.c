@@ -299,7 +299,9 @@ long long eval(int p, int q) {
         return val1 % val2;
       case  TK_EQ: if(val1 == val2) return 1;else return 0;
       case  TK_NE: if(val1 != val2) return 1;else return 0;
+      
       case  TK_DEREF: return vaddr_read(val2,4);  //!!!
+      
       case  TK_LT: if(val1 < val2) return 1;else return 0;  
       case  TK_GT: if(val1 > val2) return 1;else return 0; 
       case  TK_GE: if(val1 >= val2) return 1;else return 0;
