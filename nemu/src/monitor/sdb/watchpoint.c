@@ -140,7 +140,7 @@ void scan_watchpoint(){
      // 触发断点：如果监视点的值与cpu.pc相等，暂停模拟
     if (success && new_value == cpu.pc) {
       nemu_state.state = NEMU_STOP;  // 暂停模拟
-      printf("Watchpoint %d triggered at pc = 0x%x", wp->NO, cpu.pc);
+      printf("Watchpoint %d triggered at pc = 0x%x\n", wp->NO, cpu.pc);
       return;  // 一旦触发断点，退出函数
     }
   }
