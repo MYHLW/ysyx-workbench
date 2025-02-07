@@ -34,7 +34,7 @@ typedef struct watchpoint {
   uint32_t value;   // 当前值
 } WP;
 
-static WP wp_pool[NR_WP] = {};  //监视点结构的池
+static WP wp_pool[NR_WP] = {};  //一个固定大小的数组（大小为 NR_WP，即 32），用来存储监视点结构体（WP）
 static WP *head = NULL, *free_ = NULL;  //还有两个链表head和free_, 其中head用于组织使用中的监视点结构, free_用于组织空闲的监视点结构,
 
 void init_wp_pool() {

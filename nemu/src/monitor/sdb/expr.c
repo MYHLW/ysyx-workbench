@@ -190,7 +190,7 @@ static bool make_token(char *e) {
 }
 
 
-// 辅助函数：将十六进制字符串转换为整数
+// 将十六进制字符串转换为整数
 long long hex_to_decimal(char *hex_str) {
   return strtoll(hex_str, NULL, 16);
 }
@@ -226,9 +226,9 @@ int find_main_op(int p, int q) {
         int current_priority = 7;  // 默认较高优先级
                // 设置优先级
         if (tokens[i].type == TK_PLUS || tokens[i].type == TK_MINUS)
-          current_priority = 4;// 加减
+          current_priority = 4;
         else if (tokens[i].type == TK_MULTIPLY || tokens[i].type == TK_DIVIDE || tokens[i].type == TK_MODULO)
-          current_priority = 5; // 乘除
+          current_priority = 5; // 
         else if (tokens[i].type == TK_LT || tokens[i].type == TK_LE || tokens[i].type == TK_GT || tokens[i].type == TK_GE || tokens[i].type == TK_EQ || tokens[i].type == TK_NE)
           current_priority = 3;  // 比较运算符
         else if (tokens[i].type == TK_AND)
@@ -257,7 +257,7 @@ long long eval(int p, int q) {
     // Bad expression
     return 0;
   } else if (p == q) {
-    // Single token. For now this token should be a number.
+    // Single token. 
     bool success_reg;
     if (tokens[p].type == TK_NUMBER) {
       		return atoll(tokens[p].str);
