@@ -117,15 +117,15 @@ static int cmd_help(char *args) {
 }
 
 static int cmd_si(char *args) {
-       int n = 1; // 默认单步执行 1 条指令
+       int n = 1; // 默认 1 条指令
        if (args != NULL) {
-        	sscanf(args, "%d", &n); // 解析参数 N
+        	sscanf(args, "%d", &n); 
        if (n <= 0) {
                 printf("Error: Invalid argument for si. Must be a positive integer.\n");
       return 0;
     }
   }
-  cpu_exec(n); // 执行 N 条指令
+  cpu_exec(n); // 执行 N 条
   return 0;
 }
 
@@ -287,7 +287,7 @@ void sdb_mainloop() {
     int i;
     for (i = 0; i < NR_CMD; i ++) {
       if (strcmp(cmd, cmd_table[i].name) == 0) {
-        if (cmd_table[i].handler(args) < 0) { return; }
+        if (cmd_table[i].handler(args) < 0) { return; } //!
         break;
       }
     }
