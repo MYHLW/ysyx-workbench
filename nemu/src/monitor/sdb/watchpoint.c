@@ -103,9 +103,9 @@ WP* create_watchpoint(char *expr_str) {
   
   strncpy(wp->expr, expr_str, sizeof(wp->expr) - 1);  // 保存表达式
   
-  wp->expr[sizeof(wp->expr) - 1] = '\0';  // 确保字符串以NULL结尾 
+  wp->expr[sizeof(wp->expr) - 1] = '\0';  
   bool success;
-  wp->value = expr(wp->expr, &success);  // 计算表达式的初始值并存储  
+  wp->value = expr(wp->expr, &success);  // 计算表达式存储  
   return wp; 
 }
 
@@ -114,8 +114,8 @@ void delete_watchpoint(int wp_num) {
   while (*pp != NULL) {
     if ((*pp)->NO == wp_num) {
       WP *to_free = *pp;
-      *pp = to_free->next;  // 从链表中移除该监视点
-      free_wp(to_free);  // 将监视点归还到空闲池
+      *pp = to_free->next; 
+      free_wp(to_free);  // 将监视点归还
       printf("Watchpoint %d deleted.\n", wp_num);
       return;
     }
@@ -132,16 +132,16 @@ void scan_watchpoint(){
 
     // 如果表达式求值成功且值发生变化，则触发监视点
     if (success && new_value != wp->value) {
-      wp->value = new_value;  // 更新监视点的值
-      nemu_state.state = NEMU_STOP;  // 暂停模拟
+      wp->value = new_value;  
+      nemu_state.state = NEMU_STOP; 
       printf("Watchpoint %d triggered: %s, new value = 0x%x\n", wp->NO, wp->expr, wp->value);
       return; }
       
-     // 触发断点：如果监视点的值与cpu.pc相等，暂停模拟
+     // 触发断点
     if (success && new_value == cpu.pc) {
-      nemu_state.state = NEMU_STOP;  // 暂停模拟
+      nemu_state.state = NEMU_STOP;  
       printf("Watchpoint %d triggered at pc = 0x%x\n", wp->NO, cpu.pc);
-      return;  // 一旦触发断点，退出函数
+      return;  
     }
   }
 }
