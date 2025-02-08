@@ -4,9 +4,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
-#include "sdb.h"
 #include "watchpoint.h"
-#include <common.h>
+#include "sdb.h"
 
 
 extern uint32_t expr(char *e, bool *success); //
