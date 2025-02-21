@@ -250,38 +250,30 @@ int find_main_op(int p, int q) {
 
 
 
-// 表达式求值的递归函数
-long long eval(int p, int q) {
-  uint32_t value;
+static int64_t eval(int p, int q) {  // 改为64位有符号整数
+ // int64_t value;  // 改为有符号类型
   if (p > q) {
-    // Bad expression
     return 0;
   } else if (p == q) {
-    // Single token. 
     bool success_reg;
     if (tokens[p].type == TK_NUMBER) {
-      		return atoll(tokens[p].str);
+      return atoll(tokens[p].str);
     } else if (tokens[p].type == TK_HEX_NUMBER) {
-      		return hex_to_decimal(tokens[p].str);
-    } else if(tokens[p].type == TK_REG)  {
-   printf("%s\n",tokens[p].str); //!!
-    value = isa_reg_str2val(tokens[p].str,&success_reg);
-      		return value; }  //fix the bug
-    else {
+      return hex_to_decimal(tokens[p].str);
+    } else if (tokens[p].type == TK_REG) {
+      // ========== 关键修改2：寄存器值符号扩展 ==========
+      uint32_t reg_val = isa_reg_str2val(tokens[p].str, &success_reg);
+      return (int64_t)(int32_t)reg_val; // 32位符号扩展到64位
+    } else {
       printf("Invalid token in eval!\n");
       exit(1);
     }
-  } else if (check_parentheses(p, q) == true) {
-    // The expression is surrounded by a matched pair of parentheses.
-    // If that is the case, just throw away the parentheses.
+  } else if (check_parentheses(p, q)) {
     return eval(p + 1, q - 1);
   } else {
     int op = find_main_op(p, q);
-  /*  uint32_t val1 = eval(p, op - 1);
-    uint32_t val2 = eval(op + 1, q); */
-    long long val1 = eval(p, op - 1);
-    long long val2 = eval(op + 1, q);
-
+    int64_t val1 = eval(p, op - 1);  // 改为有符号
+    int64_t val2 = eval(op + 1, q);  // 改为有符号
 
     switch (tokens[op].type) {
       case TK_PLUS: return val1 + val2;
@@ -292,32 +284,24 @@ long long eval(int p, int q) {
           printf("Division by zero\n");
           exit(1);
         }
-        return val1 / val2;
+        return val1 / val2;  // 有符号除法
       case TK_MODULO:
         if (val2 == 0) {
           printf("Division by zero\n");
           exit(1);
         }
-        return val1 % val2;
-      /*case  TK_EQ: if(val1 == val2) return 1;else return 0;
-      case  TK_NE: if(val1 != val2) return 1;else return 0;
-      
-      case  TK_DEREF: return vaddr_read(val2,4);  //!!!
-      
-      case  TK_LT: if(val1 < val2) return 1;else return 0;  
-      case  TK_GT: if(val1 > val2) return 1;else return 0; 
-      case  TK_GE: if(val1 >= val2) return 1;else return 0;
-      case  TK_LE: if(val1 <= val2) return 1;else return 0; */
+        return val1 % val2;  // 有符号取模
+      case TK_DEREF:
+        // ========== 关键修改3：内存读取符号扩展 ==========
+        return (int64_t)(int32_t)vaddr_read((uint32_t)val2, 4);
       case TK_EQ: return val1 == val2 ? 1 : 0;
       case TK_NE: return val1 != val2 ? 1 : 0;
-      case TK_DEREF: return vaddr_read(val2, 4);
       case TK_LT: return val1 < val2 ? 1 : 0;
       case TK_GT: return val1 > val2 ? 1 : 0;
       case TK_GE: return val1 >= val2 ? 1 : 0;
       case TK_LE: return val1 <= val2 ? 1 : 0;
-      case TK_AND: return val1 && val2;  // 处理 && 运算符
-      case TK_OR: return val1 || val2;   // 处理 || 运算符
-     
+      case TK_AND: return val1 && val2;
+      case TK_OR: return val1 || val2;
       default:
         printf("Invalid operator in eval\n");
         exit(1);
@@ -325,21 +309,23 @@ long long eval(int p, int q) {
   }
 }
 
-
+// ================ 关键修改4：最终结果转换 ================
 word_t expr(char *e, bool *success) {
   if (!make_token(e)) {
     *success = false;
     return 0;
   }
-  for (int i = 0; i <NR_REGEX; i++) {
-	if (tokens[i].type == TK_MULTIPLY && (i == 0 || tokens[i - 1].type == '('||tokens[i - 1].type==TK_EQ||tokens[i - 1].type==TK_NE)) {
-        	tokens[i].type = TK_DEREF;
-  //  		printf(" i = %d\n",i);
+  for (int i = 0; i < nr_token; i++) {  // 修改循环条件
+    if (tokens[i].type == TK_MULTIPLY && 
+        (i == 0 || tokens[i-1].type == TK_LPAREN || 
+         tokens[i-1].type == TK_EQ || tokens[i-1].type == TK_NE)) {
+      tokens[i].type = TK_DEREF;
+    }
   }
-}
-
+  
+  int64_t signed_result = eval(0, nr_token - 1);
   *success = true;
-  return eval(0, nr_token - 1);
+  return (uint32_t)signed_result;  // 转换为无符号结果
 }
 
 
