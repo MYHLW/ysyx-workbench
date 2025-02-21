@@ -12,7 +12,7 @@ extern uint32_t expr(char *e, bool *success); //
 
 
 int test(){
-        int count = 1;
+        int count = 0;
         int number = 0;
 	//FILE *fp = fopen("/home/wang/ysyx-workbench/nemu/tools/gen-expr/input.txt","r");
 	FILE *fp = fopen("/home/wang/ysyx-workbench/nemu/tools/gen-expr/input","r");
