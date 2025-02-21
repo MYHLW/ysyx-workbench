@@ -72,11 +72,6 @@ static struct rule {
 //  {"\\|", TK_BITOR},      // bitwise OR
 //  {"\\^", TK_BITXOR},     // bitwise XOR
 //  {"~", TK_BITNOT},       // bitwise NOT
-/*  {"<", TK_LT},           // less than
-  {"<=", TK_LE},          // less than or equal
-  {">", TK_GT},           // greater than
-  {">=", TK_GE},          // greater than or equal  */
-
   {"<=", TK_LE},          // less than or equal
   {"<", TK_LT},           // less than
   {">=", TK_GE},          // greater than or equal
