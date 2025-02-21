@@ -261,7 +261,7 @@ static int64_t eval(int p, int q) {  // 改为64位有符号整数
     } else if (tokens[p].type == TK_HEX_NUMBER) {
       return hex_to_decimal(tokens[p].str);
     } else if (tokens[p].type == TK_REG) {
-      // ========== 关键修改2：寄存器值符号扩展 ==========
+
       uint32_t reg_val = isa_reg_str2val(tokens[p].str, &success_reg);
       return (int64_t)(int32_t)reg_val; // 32位符号扩展到64位
     } else {
@@ -292,7 +292,6 @@ static int64_t eval(int p, int q) {  // 改为64位有符号整数
         }
         return val1 % val2;  // 有符号取模
       case TK_DEREF:
-        // ========== 关键修改3：内存读取符号扩展 ==========
         return (int64_t)(int32_t)vaddr_read((uint32_t)val2, 4);
       case TK_EQ: return val1 == val2 ? 1 : 0;
       case TK_NE: return val1 != val2 ? 1 : 0;
@@ -309,7 +308,7 @@ static int64_t eval(int p, int q) {  // 改为64位有符号整数
   }
 }
 
-// ================ 关键修改4：最终结果转换 ================
+
 word_t expr(char *e, bool *success) {
   if (!make_token(e)) {
     *success = false;

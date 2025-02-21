@@ -40,6 +40,6 @@ int test(){
             			printf("THE NUBER OF %d FAIL: %s = %u, expected %u\n", number,expr_str, result, expected_result);
           }	
       }number++;
-  }printf("THE PASS NUMBER:%d\n",count);
+  }//printf("THE PASS NUMBER:%d\n",count);
   return 0;
 }
