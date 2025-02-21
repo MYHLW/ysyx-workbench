@@ -297,7 +297,7 @@ long long eval(int p, int q) {
           exit(1);
         }
         return val1 % val2;
-      case  TK_EQ: if(val1 == val2) return 1;else return 0;
+      /*case  TK_EQ: if(val1 == val2) return 1;else return 0;
       case  TK_NE: if(val1 != val2) return 1;else return 0;
       
       case  TK_DEREF: return vaddr_read(val2,4);  //!!!
@@ -305,7 +305,17 @@ long long eval(int p, int q) {
       case  TK_LT: if(val1 < val2) return 1;else return 0;  
       case  TK_GT: if(val1 > val2) return 1;else return 0; 
       case  TK_GE: if(val1 >= val2) return 1;else return 0;
-      case  TK_LE: if(val1 <= val2) return 1;else return 0; 
+      case  TK_LE: if(val1 <= val2) return 1;else return 0; */
+      case TK_EQ: return val1 == val2 ? 1 : 0;
+      case TK_NE: return val1 != val2 ? 1 : 0;
+      case TK_DEREF: return vaddr_read(val2, 4);
+      case TK_LT: return val1 < val2 ? 1 : 0;
+      case TK_GT: return val1 > val2 ? 1 : 0;
+      case TK_GE: return val1 >= val2 ? 1 : 0;
+      case TK_LE: return val1 <= val2 ? 1 : 0;
+      case TK_AND: return val1 && val2;  // 处理 && 运算符
+      case TK_OR: return val1 || val2;   // 处理 || 运算符
+     
       default:
         printf("Invalid operator in eval\n");
         exit(1);
