@@ -13,6 +13,7 @@ extern uint32_t expr(char *e, bool *success); //
 
 int test(){
         int count = 0;
+        int number = 0;
 	//FILE *fp = fopen("/home/wang/ysyx-workbench/nemu/tools/gen-expr/input.txt","r");
 	FILE *fp = fopen("/home/wang/ysyx-workbench/nemu/tools/gen-expr/input","r");
 	if (fp == NULL){
@@ -33,12 +34,12 @@ int test(){
         
         		// 打印对比结果
         		if (success && result == expected_result) {
-            			printf("PASS: %s = %u\n", expr_str, result);
+            			//printf("PASS: %s = %u\n", expr_str, result);
             			count++;
         		} else {
-            			printf("FAIL: %s = %u, expected %u\n", expr_str, result, expected_result);
+            			printf("THE NUBER OF %d FAIL: %s = %u, expected %u\n", number,expr_str, result, expected_result);
           }	
-      }
-  }printf("THE PASS NUMBER:%d",count);
+      }number++;
+  }printf("THE PASS NUMBER:%d\n",count);
   return 0;
 }
