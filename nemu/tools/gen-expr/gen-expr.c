@@ -20,7 +20,7 @@
 #include <assert.h>
 #include <string.h>
 
-// 函数声明
+
 static void gen_rand_expr(int depth);
 static void gen(char c);
 static void gen_num(int non_zero);
