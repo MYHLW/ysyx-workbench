@@ -250,7 +250,7 @@ int find_main_op(int p, int q) {
 
 
 
-static int64_t eval(int p, int q) {  // 改为64位有符号整数
+static int64_t eval(int p, int q) {  
  // int64_t value;  // 改为有符号类型
   if (p > q) {
     return 0;
@@ -263,7 +263,7 @@ static int64_t eval(int p, int q) {  // 改为64位有符号整数
     } else if (tokens[p].type == TK_REG) {
 
       uint32_t reg_val = isa_reg_str2val(tokens[p].str, &success_reg);
-      return (int64_t)(int32_t)reg_val; // 32位符号扩展到64位
+      return (int64_t)(int32_t)reg_val; 
     } else {
       printf("Invalid token in eval!\n");
       exit(1);
@@ -284,13 +284,13 @@ static int64_t eval(int p, int q) {  // 改为64位有符号整数
           printf("Division by zero\n");
           exit(1);
         }
-        return val1 / val2;  // 有符号除法
+        return val1 / val2;  
       case TK_MODULO:
         if (val2 == 0) {
           printf("Division by zero\n");
           exit(1);
         }
-        return val1 % val2;  // 有符号取模
+        return val1 % val2;  
       case TK_DEREF:
         return (int64_t)(int32_t)vaddr_read((uint32_t)val2, 4);
       case TK_EQ: return val1 == val2 ? 1 : 0;
