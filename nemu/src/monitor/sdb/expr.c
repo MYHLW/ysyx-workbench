@@ -272,7 +272,7 @@ static int64_t eval(int p, int q) {
     return eval(p + 1, q - 1);
   } else {
     int op = find_main_op(p, q);
-    int64_t val1 = eval(p, op - 1);  // 改为有符号
+    int64_t val1 = eval(p, op - 1);  
     int64_t val2 = eval(op + 1, q);  // 改为有符号
 
     switch (tokens[op].type) {
