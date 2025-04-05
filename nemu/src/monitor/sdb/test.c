@@ -34,7 +34,7 @@ int test(){
         
         		// 打印对比结果
         		if (success && result == expected_result) {
-            			printf("PASS: %s = %u\n", expr_str, result);
+            			//printf("PASS: %s = %u\n", expr_str, result);
             			count++;
         		} else {
             			printf("THE NUBER OF %d FAIL: %s = %u, expected %u\n", number,expr_str, result, expected_result);
