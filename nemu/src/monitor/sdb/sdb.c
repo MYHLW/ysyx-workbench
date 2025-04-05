@@ -87,7 +87,8 @@ static struct {
   { "p", "Evaluate the expression EXPR", cmd_p },
   { "w", "When the value of expression EXPR changes, the program execution is paused.", cmd_w },
   { "d", "Delete the monitoring point with sequence number N", cmd_d },
-  { "t", "Test the expr" ,cmd_t },
+  //{ "t", "Test the expr" ,cmd_t },
+  { "ext", "Test the expr" ,cmd_t },
 };
 
 #define NR_CMD ARRLEN(cmd_table)
