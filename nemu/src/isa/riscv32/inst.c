@@ -120,7 +120,7 @@ static int decode_exec(Decode *s) {
 
   // 特殊指令
   INSTPAT("??????? ????? ????? ??? ????? 01101 11", lui    , U, R(rd) = imm);  // U-type
-  INSTPAT("0000000 00000 00000 000 00000 11100 11", ecall  , N, NEMUTRAP(s->pc, R(10)));
+  //INSTPAT("0000000 00000 00000 000 00000 11100 11", ecall  , N, NEMUTRAP(s->pc, R(10)));
   INSTPAT_END();
 
   R(0) = 0; // reset $zero to 0
