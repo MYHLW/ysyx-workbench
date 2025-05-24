@@ -44,11 +44,12 @@ enum {
 } while(0)
 
 #define immB() do { \
-  *imm = (SEXT(BITS(i, 31, 31), 1) << 12) | \
-         (BITS(i, 30, 25) << 5) | \
-         (BITS(i, 11, 8) << 1) | \
-         (BITS(i, 7, 7) << 11); \
-  *imm = SEXT(*imm, 13); \
+  /* 按照B型指令格式组装立即数: imm[12] | imm[10:5] | imm[4:1] | imm[11] */ \
+  *imm = (SEXT(BITS(i, 31, 31), 1) << 12) |  /* 符号位 */ \
+         (BITS(i, 30, 25) << 5) |             /* 高6位 */ \
+         (BITS(i, 11, 8) << 1) |              /* 低4位 */ \
+         (BITS(i, 7, 7) << 11);               /* 第11位 */ \
+  *imm = SEXT(*imm, 13);                      /* 符号扩展到32位 */ \
 } while(0)
 
 
@@ -93,8 +94,8 @@ static int decode_exec(Decode *s) {
 
   INSTPAT("??????? ????? ????? 011 ????? 00100 11", sltiu  , I, R(rd) = (src1 < imm)  ? 1 : 0);
   INSTPAT("??????? ????? ????? 010 ????? 00100 11", slti   , I, R(rd) = ((int32_t)src1 < (int32_t)imm)  ? 1 : 0);
-  INSTPAT("0000000 ????? ????? 011 ????? 00100 11", sltu   , R, R(rd) = ((int32_t)src1 < (int32_t)src2) ? 1 : 0);
-  INSTPAT("0000000 ????? ????? 001 ????? 00100 11", slt    , R, R(rd) = (src1 < src2) ? 1 : 0);
+  INSTPAT("0000000 ????? ????? 011 ????? 00100 11", sltu   , R, R(rd) = (src1 < src2) ? 1 : 0);
+  INSTPAT("0000000 ????? ????? 001 ????? 00100 11", slt    , R, R(rd) = ((int32_t)src1 < (int32_t)src2) ? 1 : 0);
 
 
   // 算术指令
