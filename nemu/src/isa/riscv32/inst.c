@@ -50,6 +50,9 @@ static void decode_operand(Decode *s, int *rd, word_t *src1, word_t *src2, word_
     case TYPE_I: src1R();          immI(); break;
     case TYPE_U:                   immU(); break;
     case TYPE_S: src1R(); src2R(); immS(); break;
+    
+    case TYPE_J:                   immJ(); break; // J-Type 不需要源寄存器
+
     case TYPE_N: break;
     default: panic("unsupported type = %d", type);
   }
