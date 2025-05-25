@@ -3,7 +3,7 @@
 #include <klib-macros.h>
 #include <stdarg.h>
 
-static void itoa(char *buf, int base, int value);
+
 
 #if !defined(__ISA_NATIVE__) || defined(__NATIVE_USE_KLIB__)
 
@@ -16,58 +16,69 @@ int vsprintf(char *out, const char *fmt, va_list ap) {
 }
 
 int sprintf(char *out, const char *fmt, ...) {
-  //panic("Not implemented");
-  va_list ap;
-    char *p = out;
-    char buf[32]; // 临时缓冲区，用于数字转换
+    va_list ap;
+    va_start(ap, fmt);  // 初始化可变参数列表
 
-    va_start(ap, fmt); // 初始化可变参数列表
+    char *ptr = out;    // 指向输出缓冲区的指针
+    const char *str;    // 临时存储字符串参数
+    int num;            // 临时存储整数参数
+    char num_buf[32];   // 存储整数转换后的字符串
 
     while (*fmt) {
         if (*fmt != '%') {
-            *p++ = *fmt++; // 直接复制普通字符
+            *ptr++ = *fmt++;  // 普通字符直接复制
             continue;
         }
 
-        fmt++; // 跳过%
+        fmt++;  // 跳过 '%'
         switch (*fmt) {
-            case 'd': // 十进制整数
-                itoa(buf, 10, va_arg(ap, int));
-                strcpy(p, buf);
-                p += strlen(buf);
+            case 's':  // 处理 %s
+                str = va_arg(ap, char*);
+                while (*str) {
+                    *ptr++ = *str++;
+                }
+                fmt++;
                 break;
 
-            case 'x': // 十六进制整数（小写）
-                itoa(buf, 16, va_arg(ap, unsigned int));
-                strcpy(p, buf);
-                p += strlen(buf);
+            case 'd':  // 处理 %d
+                num = va_arg(ap, int);
+                // 将整数转换为字符串（反向存储）
+                char *p = num_buf + sizeof(num_buf) - 1;
+                *p = '\0';
+                int is_negative = 0;
+
+                if (num < 0) {
+                    is_negative = 1;
+                    num = -num;
+                }
+
+                do {
+                    *--p = '0' + (num % 10);
+                    num /= 10;
+                } while (num > 0);
+
+                if (is_negative) {
+                    *--p = '-';
+                }
+
+                // 将转换后的数字复制到输出缓冲区
+                while (*p) {
+                    *ptr++ = *p++;
+                }
+                fmt++;
                 break;
 
-            case 's': // 字符串
-                strcpy(p, va_arg(ap, char*));
-                p += strlen((char*)p); // 直接使用目标指针计算长度（避免重复计算）
-                break;
-
-            case 'c': // 字符
-                *p++ = (char)va_arg(ap, int); // 恢复为char类型
-                break;
-
-            case '%': // 转义%
-                *p++ = '%';
-                break;
-
-            default: // 未知格式，保留%和原始字符
-                *p++ = '%';
-                *p++ = *fmt;
+            default:  // 不支持的格式，直接复制 '%' 和后面的字符
+                *ptr++ = '%';
+                *ptr++ = *fmt++;
                 break;
         }
-        fmt++; // 移动到下一个格式字符
     }
 
-    *p = '\0'; // 添加字符串终止符
-    va_end(ap); // 清理可变参数列表
+    *ptr = '\0';  // 确保字符串以 '\0' 结尾
+    va_end(ap);   // 清理可变参数列表
 
-    return p - out; // 返回写入的字符数（不含终止符）
+    return ptr - out;  // 返回写入的字符数（不包括 '\0'）
 }
 
 int snprintf(char *out, size_t n, const char *fmt, ...) {
@@ -80,37 +91,3 @@ int vsnprintf(char *out, size_t n, const char *fmt, va_list ap) {
 
 #endif
 
-// 辅助函数：整数转字符串（支持十进制和十六进制）
-static void itoa(char *buf, int base, int value) {
-    char *p = buf;
-    char *start = buf;
-    unsigned int num;
-    int is_negative = 0;
-
-    // 处理负数（仅十进制）
-    if (base == 10 && value < 0) {
-        is_negative = 1;
-        num = -value;
-        *p++ = '-';
-    } else {
-        num = (unsigned int)value;
-    }
-
-    // 转换数字
-    do {
-        int rem = num % base;
-        *p++ = (rem < 10) ? rem + '0' : rem - 10 + 'a';
-    } while (num /= base);
-
-    // 反转字符串
-    if (is_negative) start++; // 跳过负号
-    char *end = p - 1;
-    while (start < end) {
-        char tmp = *start;
-        *start = *end;
-        *end = tmp;
-        start++;
-        end--;
-    }
-    *p = '\0'; // 终止符
-}
