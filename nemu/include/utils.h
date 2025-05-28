@@ -91,4 +91,12 @@ void trace_inst(word_t pc, uint32_t inst);
 void display_inst();
 #endif
 
+// ----------- memory trace -----------
+#ifdef CONFIG_MTRACE
+
+void display_pread(paddr_t addr, int len);
+
+void display_pwrite(paddr_t addr, int len, word_t data);
+#endif
+
 #endif
