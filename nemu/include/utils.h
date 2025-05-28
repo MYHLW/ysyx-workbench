@@ -73,5 +73,22 @@ uint64_t get_time();
     log_write(__VA_ARGS__); \
   } while (0)
 
+// ----------- instruction trace ring buffer -----------
+
+#ifdef CONFIG_ITRACE
+#define MAX_IRINGBUF 16
+
+typedef struct {
+  word_t pc;
+  uint32_t inst;
+} ItraceNode;
+
+extern ItraceNode iringbuf[MAX_IRINGBUF];
+extern int p_cur;
+extern bool full;
+
+void trace_inst(word_t pc, uint32_t inst);
+void display_inst();
+#endif
 
 #endif
