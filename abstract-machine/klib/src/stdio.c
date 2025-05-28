@@ -110,58 +110,57 @@ int vsprintf(char *out, const char *fmt, va_list ap) {
 }
 
 int sprintf(char *out, const char *fmt, ...) {
-    // va_list ap;
-    // char *p = out;
-    // char buf[32]; // 临时缓冲区，用于数字转换
+    va_list ap;
+    char *p = out;
+    char buf[32]; // 临时缓冲区，用于数字转换
 
-    // va_start(ap, fmt); // 初始化可变参数列表
+    va_start(ap, fmt); // 初始化可变参数列表
 
-    // while (*fmt) {
-    //     if (*fmt != '%') {
-    //         *p++ = *fmt++; // 直接复制普通字符
-    //         continue;
-    //     }
+    while (*fmt) {
+        if (*fmt != '%') {
+            *p++ = *fmt++; // 直接复制普通字符
+            continue;
+        }
 
-    //     fmt++; // 跳过%
-    //     switch (*fmt) {
-    //         case 'd': // 十进制整数
-    //             itoa(buf, 10, va_arg(ap, int));
-    //             strcpy(p, buf);
-    //             p += strlen(buf);
-    //             break;
+        fmt++; // 跳过%
+        switch (*fmt) {
+            case 'd': // 十进制整数
+                itoa(buf, 10, va_arg(ap, int));
+                strcpy(p, buf);
+                p += strlen(buf);
+                break;
 
-    //         case 'x': // 十六进制整数（小写）
-    //             itoa(buf, 16, va_arg(ap, unsigned int));
-    //             strcpy(p, buf);
-    //             p += strlen(buf);
-    //             break;
+            case 'x': // 十六进制整数（小写）
+                itoa(buf, 16, va_arg(ap, unsigned int));
+                strcpy(p, buf);
+                p += strlen(buf);
+                break;
 
-    //         case 's': // 字符串
-    //             strcpy(p, va_arg(ap, char*));
-    //             p += strlen((char*)p); // 直接使用目标指针计算长度（避免重复计算）
-    //             break;
+            case 's': // 字符串
+                strcpy(p, va_arg(ap, char*));
+                p += strlen((char*)p); // 直接使用目标指针计算长度（避免重复计算）
+                break;
 
-    //         case 'c': // 字符
-    //             *p++ = (char)va_arg(ap, int); // 恢复为char类型
-    //             break;
+            case 'c': // 字符
+                *p++ = (char)va_arg(ap, int); // 恢复为char类型
+                break;
 
-    //         case '%': // 转义%
-    //             *p++ = '%';
-    //             break;
+            case '%': // 转义%
+                *p++ = '%';
+                break;
 
-    //         default: // 未知格式，保留%和原始字符
-    //             *p++ = '%';
-    //             *p++ = *fmt;
-    //             break;
-    //     }
-    //     fmt++; // 移动到下一个格式字符
-    // }
+            default: // 未知格式，保留%和原始字符
+                *p++ = '%';
+                *p++ = *fmt;
+                break;
+        }
+        fmt++; // 移动到下一个格式字符
+    }
 
-    // *p = '\0'; // 添加字符串终止符
-    // va_end(ap); // 清理可变参数列表
+    *p = '\0'; // 添加字符串终止符
+    va_end(ap); // 清理可变参数列表
 
-    // return p - out; // 返回写入的字符数（不含终止符）
-    panic("Not implemented");
+    return p - out; // 返回写入的字符数（不含终止符）
 }
 
 int snprintf(char *out, size_t n, const char *fmt, ...) {
