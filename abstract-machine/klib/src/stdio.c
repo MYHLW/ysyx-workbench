@@ -164,76 +164,77 @@ int sprintf(char *out, const char *fmt, ...) {
 }
 
 int snprintf(char *out, size_t n, const char *fmt, ...) {
-    va_list ap;
-    char *p = out;
-    char buf[32];
-    size_t remaining = n; // 剩余可用空间
+    // va_list ap;
+    // char *p = out;
+    // char buf[32];
+    // size_t remaining = n; // 剩余可用空间
 
-    va_start(ap, fmt);
+    // va_start(ap, fmt);
 
-    while (*fmt && remaining > 0) { // 确保不超过 n 字节
-        if (*fmt != '%') {
-            if (remaining > 1) { // 保留空间给终止符
-                *p++ = *fmt++;
-                remaining--;
-            }
-            continue;
-        }
+    // while (*fmt && remaining > 0) { // 确保不超过 n 字节
+    //     if (*fmt != '%') {
+    //         if (remaining > 1) { // 保留空间给终止符
+    //             *p++ = *fmt++;
+    //             remaining--;
+    //         }
+    //         continue;
+    //     }
 
-        fmt++; // 跳过%
-        switch (*fmt) {
-            case 'd': case 'x': // 数字转换
-                itoa(buf, *fmt == 'd' ? 10 : 16, 
-                     *fmt == 'd' ? va_arg(ap, int) : va_arg(ap, unsigned int));
-                size_t len = strlen(buf);
-                if (remaining > len + 1) { // 剩余空间足够
-                    strcpy(p, buf);
-                    p += len;
-                    remaining -= len;
-                } else { // 空间不足，填充剩余空间
-                    if (remaining > 1) *p = '\0'; // 确保终止符
-                    goto end;
-                }
-                break;
+    //     fmt++; // 跳过%
+    //     switch (*fmt) {
+    //         case 'd': case 'x': // 数字转换
+    //             itoa(buf, *fmt == 'd' ? 10 : 16, 
+    //                  *fmt == 'd' ? va_arg(ap, int) : va_arg(ap, unsigned int));
+    //             size_t len = strlen(buf);
+    //             if (remaining > len + 1) { // 剩余空间足够
+    //                 strcpy(p, buf);
+    //                 p += len;
+    //                 remaining -= len;
+    //             } else { // 空间不足，填充剩余空间
+    //                 if (remaining > 1) *p = '\0'; // 确保终止符
+    //                 goto end;
+    //             }
+    //             break;
 
-            case 's': // 字符串复制
-                char *s = va_arg(ap, char*);
-                size_t slen = strlen(s);
-                size_t copy_len = (slen < remaining - 1) ? slen : remaining - 1;
-                strncpy(p, s, copy_len);
-                p += copy_len;
-                remaining -= copy_len;
-                break;
+    //         case 's': // 字符串复制
+    //             char *s = va_arg(ap, char*);
+    //             size_t slen = strlen(s);
+    //             size_t copy_len = (slen < remaining - 1) ? slen : remaining - 1;
+    //             strncpy(p, s, copy_len);
+    //             p += copy_len;
+    //             remaining -= copy_len;
+    //             break;
 
-            case 'c': // 字符
-                if (remaining > 1) {
-                    *p++ = (char)va_arg(ap, int);
-                    remaining--;
-                }
-                break;
+    //         case 'c': // 字符
+    //             if (remaining > 1) {
+    //                 *p++ = (char)va_arg(ap, int);
+    //                 remaining--;
+    //             }
+    //             break;
 
-            case '%': // 转义%
-                if (remaining > 1) {
-                    *p++ = '%';
-                    remaining--;
-                }
-                break;
+    //         case '%': // 转义%
+    //             if (remaining > 1) {
+    //                 *p++ = '%';
+    //                 remaining--;
+    //             }
+    //             break;
 
-            default: // 未知格式
-                if (remaining > 1) {
-                    *p++ = '%';
-                    *p++ = *fmt;
-                    remaining -= 2;
-                }
-                break;
-        }
-        fmt++;
-    }
+    //         default: // 未知格式
+    //             if (remaining > 1) {
+    //                 *p++ = '%';
+    //                 *p++ = *fmt;
+    //                 remaining -= 2;
+    //             }
+    //             break;
+    //     }
+    //     fmt++;
+    // }
 
-    end:
-    if (remaining > 0) *p = '\0'; // 确保以'\0'结尾
-    va_end(ap);
-    return p - out; // 返回实际写入长度（不含终止符）
+    // end:
+    // if (remaining > 0) *p = '\0'; // 确保以'\0'结尾
+    // va_end(ap);
+    // return p - out; // 返回实际写入长度（不含终止符）
+    panic("Not implemented");
 }
 
 int vsnprintf(char *out, size_t n, const char *fmt, va_list ap) {
