@@ -110,131 +110,131 @@ int vsprintf(char *out, const char *fmt, va_list ap) {
 }
 
 int sprintf(char *out, const char *fmt, ...) {
-    va_list ap;
-    char *p = out;
-    char buf[32]; // 临时缓冲区，用于数字转换
-
-    va_start(ap, fmt); // 初始化可变参数列表
-
-    while (*fmt) {
-        if (*fmt != '%') {
-            *p++ = *fmt++; // 直接复制普通字符
-            continue;
-        }
-
-        fmt++; // 跳过%
-        switch (*fmt) {
-            case 'd': // 十进制整数
-                itoa(buf, 10, va_arg(ap, int));
-                strcpy(p, buf);
-                p += strlen(buf);
-                break;
-
-            case 'x': // 十六进制整数（小写）
-                itoa(buf, 16, va_arg(ap, unsigned int));
-                strcpy(p, buf);
-                p += strlen(buf);
-                break;
-
-            case 's': // 字符串
-                strcpy(p, va_arg(ap, char*));
-                p += strlen((char*)p); // 直接使用目标指针计算长度（避免重复计算）
-                break;
-
-            case 'c': // 字符
-                *p++ = (char)va_arg(ap, int); // 恢复为char类型
-                break;
-
-            case '%': // 转义%
-                *p++ = '%';
-                break;
-
-            default: // 未知格式，保留%和原始字符
-                *p++ = '%';
-                *p++ = *fmt;
-                break;
-        }
-        fmt++; // 移动到下一个格式字符
-    }
-
-    *p = '\0'; // 添加字符串终止符
-    va_end(ap); // 清理可变参数列表
-
-    return p - out; // 返回写入的字符数（不含终止符）
-}
-
-int snprintf(char *out, size_t n, const char *fmt, ...) {
     // va_list ap;
     // char *p = out;
-    // char buf[32];
-    // size_t remaining = n; // 剩余可用空间
+    // char buf[32]; // 临时缓冲区，用于数字转换
 
-    // va_start(ap, fmt);
+    // va_start(ap, fmt); // 初始化可变参数列表
 
-    // while (*fmt && remaining > 0) { // 确保不超过 n 字节
+    // while (*fmt) {
     //     if (*fmt != '%') {
-    //         if (remaining > 1) { // 保留空间给终止符
-    //             *p++ = *fmt++;
-    //             remaining--;
-    //         }
+    //         *p++ = *fmt++; // 直接复制普通字符
     //         continue;
     //     }
 
     //     fmt++; // 跳过%
     //     switch (*fmt) {
-    //         case 'd': case 'x': // 数字转换
-    //             itoa(buf, *fmt == 'd' ? 10 : 16, 
-    //                  *fmt == 'd' ? va_arg(ap, int) : va_arg(ap, unsigned int));
-    //             size_t len = strlen(buf);
-    //             if (remaining > len + 1) { // 剩余空间足够
-    //                 strcpy(p, buf);
-    //                 p += len;
-    //                 remaining -= len;
-    //             } else { // 空间不足，填充剩余空间
-    //                 if (remaining > 1) *p = '\0'; // 确保终止符
-    //                 goto end;
-    //             }
+    //         case 'd': // 十进制整数
+    //             itoa(buf, 10, va_arg(ap, int));
+    //             strcpy(p, buf);
+    //             p += strlen(buf);
     //             break;
 
-    //         case 's': // 字符串复制
-    //             char *s = va_arg(ap, char*);
-    //             size_t slen = strlen(s);
-    //             size_t copy_len = (slen < remaining - 1) ? slen : remaining - 1;
-    //             strncpy(p, s, copy_len);
-    //             p += copy_len;
-    //             remaining -= copy_len;
+    //         case 'x': // 十六进制整数（小写）
+    //             itoa(buf, 16, va_arg(ap, unsigned int));
+    //             strcpy(p, buf);
+    //             p += strlen(buf);
+    //             break;
+
+    //         case 's': // 字符串
+    //             strcpy(p, va_arg(ap, char*));
+    //             p += strlen((char*)p); // 直接使用目标指针计算长度（避免重复计算）
     //             break;
 
     //         case 'c': // 字符
-    //             if (remaining > 1) {
-    //                 *p++ = (char)va_arg(ap, int);
-    //                 remaining--;
-    //             }
+    //             *p++ = (char)va_arg(ap, int); // 恢复为char类型
     //             break;
 
     //         case '%': // 转义%
-    //             if (remaining > 1) {
-    //                 *p++ = '%';
-    //                 remaining--;
-    //             }
+    //             *p++ = '%';
     //             break;
 
-    //         default: // 未知格式
-    //             if (remaining > 1) {
-    //                 *p++ = '%';
-    //                 *p++ = *fmt;
-    //                 remaining -= 2;
-    //             }
+    //         default: // 未知格式，保留%和原始字符
+    //             *p++ = '%';
+    //             *p++ = *fmt;
     //             break;
     //     }
-    //     fmt++;
+    //     fmt++; // 移动到下一个格式字符
     // }
 
-    // end:
-    // if (remaining > 0) *p = '\0'; // 确保以'\0'结尾
-    // va_end(ap);
-    // return p - out; // 返回实际写入长度（不含终止符）
+    // *p = '\0'; // 添加字符串终止符
+    // va_end(ap); // 清理可变参数列表
+
+    // return p - out; // 返回写入的字符数（不含终止符）
     panic("Not implemented");
+}
+
+int snprintf(char *out, size_t n, const char *fmt, ...) {
+    va_list ap;
+    char *p = out;
+    char buf[32];
+    size_t remaining = n; // 剩余可用空间
+
+    va_start(ap, fmt);
+
+    while (*fmt && remaining > 0) { // 确保不超过 n 字节
+        if (*fmt != '%') {
+            if (remaining > 1) { // 保留空间给终止符
+                *p++ = *fmt++;
+                remaining--;
+            }
+            continue;
+        }
+
+        fmt++; // 跳过%
+        switch (*fmt) {
+            case 'd': case 'x': // 数字转换
+                itoa(buf, *fmt == 'd' ? 10 : 16, 
+                     *fmt == 'd' ? va_arg(ap, int) : va_arg(ap, unsigned int));
+                size_t len = strlen(buf);
+                if (remaining > len + 1) { // 剩余空间足够
+                    strcpy(p, buf);
+                    p += len;
+                    remaining -= len;
+                } else { // 空间不足，填充剩余空间
+                    if (remaining > 1) *p = '\0'; // 确保终止符
+                    goto end;
+                }
+                break;
+
+            case 's': // 字符串复制
+                char *s = va_arg(ap, char*);
+                size_t slen = strlen(s);
+                size_t copy_len = (slen < remaining - 1) ? slen : remaining - 1;
+                strncpy(p, s, copy_len);
+                p += copy_len;
+                remaining -= copy_len;
+                break;
+
+            case 'c': // 字符
+                if (remaining > 1) {
+                    *p++ = (char)va_arg(ap, int);
+                    remaining--;
+                }
+                break;
+
+            case '%': // 转义%
+                if (remaining > 1) {
+                    *p++ = '%';
+                    remaining--;
+                }
+                break;
+
+            default: // 未知格式
+                if (remaining > 1) {
+                    *p++ = '%';
+                    *p++ = *fmt;
+                    remaining -= 2;
+                }
+                break;
+        }
+        fmt++;
+    }
+
+    end:
+    if (remaining > 0) *p = '\0'; // 确保以'\0'结尾
+    va_end(ap);
+    return p - out; // 返回实际写入长度（不含终止符）
 }
 
 int vsnprintf(char *out, size_t n, const char *fmt, va_list ap) {
