@@ -40,4 +40,3 @@ void display_inst() {
     }  
   } while ((i = (i+1)%MAX_IRINGBUF) != end);  
 }  
-

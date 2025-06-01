@@ -19,7 +19,6 @@
 #include <locale.h>
 #include "watchpoint.h"
 #include <../src/monitor/sdb/sdb.h>
-#include <utils.h>
 
 /* The assembly code of instructions executed is only output to the screen
  * when the number of instructions executed is less than this value.
@@ -119,7 +118,6 @@ static void statistic() {
 }
 
 void assert_fail_msg() {
-  display_inst(); // Display the most recently executed instructions
   isa_reg_display();
   statistic();
 }
