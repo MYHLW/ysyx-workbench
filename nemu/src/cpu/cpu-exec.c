@@ -118,8 +118,9 @@ static void statistic() {
 }
 
 void assert_fail_msg() {
-  isa_reg_display();
-  statistic();
+  display_inst(); //显示指令
+  isa_reg_display(); //显示寄存器
+  statistic(); //统计
 }
 
 /* Simulate how the CPU works. */
