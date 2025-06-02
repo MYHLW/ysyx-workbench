@@ -1,17 +1,21 @@
-#ifdef CONFIG_FTRACE
+//#ifdef CONFIG_FTRACE 1
+
+#include <common.h>
 #include <elf.h>
 
-typedef struct ElfFunc {
-    uint32_t addr;  // 函数起始地址
-    uint32_t size;  // 函数体的大小
-    char* name;  // 函数名
-} ElfFunc;
+
+// tyedef struct ElfFunc {
+//     uint32_t addr;  // 函数起始地址
+//     uint32_t size;  // 函数体的大小
+//     char* name;  // 函数名
+// } ElfFunc;
+// 移除 typedef struct ElfFunc 定义，直接使用 utils.h 中的类型
 
 
-static ElfFunc* elfuncs = NULL;  // 函数项数组
-static int elfunc_num = 0; // 函数项的个数
-static char* elfunc_strtab = NULL;  // string table
-
+// 去掉 static 关键字，与 utils.h 中的 extern 声明保持一致
+ElfFunc* elfuncs = NULL;  // 函数项数组
+int elfunc_num = 0;       // 函数项的个数
+char* elfunc_strtab = NULL;  // string table
 
 void read_elf(const char* elf_path) {
     // 读取elf文件
@@ -73,7 +77,7 @@ void read_elf(const char* elf_path) {
     free(elf);
 }
 
-static int print_ftrace_level = 0;
+int print_ftrace_level = 0;
 
 void print_ftrace(uint32_t inst_addr, uint32_t func_addr, int is_enter) {
     printf("0x%08x: ", inst_addr);
@@ -99,4 +103,4 @@ void print_ftrace(uint32_t inst_addr, uint32_t func_addr, int is_enter) {
     printf("???\n");
 }
 
-#endif
+//#endif
