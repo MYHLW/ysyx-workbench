@@ -84,4 +84,30 @@ void display_pread(paddr_t addr, int len);
 void display_pwrite(paddr_t addr, int len, word_t data);
 #endif
 
+// ----------- function trace -----------
+#ifdef CONFIG_FTRACE
+#include <elf.h>
+
+typedef struct ElfFunc {
+    uint32_t addr;  // 函数起始地址
+    uint32_t size;  // 函数体的大小
+    char* name;     // 函数名
+} ElfFunc;
+
+extern ElfFunc* elfuncs;      // 函数项数组
+extern int elfunc_num;        // 函数项的个数
+extern char* elfunc_strtab;   // string table
+extern int print_ftrace_level;
+
+// 初始化函数追踪，需传入ELF文件路径
+void ftrace_init(const char* elf_path);
+// 追踪函数调用
+void trace_func(word_t pc);
+// 显示函数追踪信息
+void display_ftrace();
+// 设置函数追踪级别
+void set_ftrace_level(int level);
+
+#endif
+
 #endif
