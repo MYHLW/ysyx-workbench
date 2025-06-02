@@ -21,7 +21,7 @@ void display_inst() {
   char buf[128];  
   char *p;  
 
-  //_Log("Most recently executed instructions\n");  // 使用 utils.h 中的 _Log 宏  
+  _Log("Most recently executed instructions\n");  // 使用 utils.h 中的 _Log 宏  
 
   do {  
     p = buf;  
