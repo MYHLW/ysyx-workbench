@@ -75,4 +75,28 @@ void read_elf(const char* elf_path) {
 
 static int print_ftrace_level = 0;
 
+void print_ftrace(uint32_t inst_addr, uint32_t func_addr, int is_enter) {
+    printf("0x%08x: ", inst_addr);
+    if (is_enter != 1) {
+      print_ftrace_level--;
+    }
+    for (int i = 0; i < print_ftrace_level; i++) {
+        printf(" ");
+    }
+    if (is_enter == 1) {
+        print_ftrace_level++;
+        printf("call ");
+    }
+    else {
+        printf("ret ");
+    }
+    for (int i = 0; i < elfunc_num; i++) {
+        if (func_addr >= elfuncs[i].addr && func_addr < elfuncs[i].addr + elfuncs[i].size) {
+            printf("%s\n", elfuncs[i].name);
+            return; 
+        }
+    }
+    printf("???\n");
+}
+
 #endif

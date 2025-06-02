@@ -99,14 +99,8 @@ extern int elfunc_num;        // 函数项的个数
 extern char* elfunc_strtab;   // string table
 extern int print_ftrace_level;
 
-// 初始化函数追踪，需传入ELF文件路径
-void ftrace_init(const char* elf_path);
-// 追踪函数调用
-void trace_func(word_t pc);
-// 显示函数追踪信息
-void display_ftrace();
-// 设置函数追踪级别
-void set_ftrace_level(int level);
+void read_elf(const char* elf_path);
+void print_ftrace(uint32_t inst_addr, uint32_t func_addr, int is_enter);
 
 #endif
 
