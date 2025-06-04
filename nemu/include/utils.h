@@ -94,10 +94,10 @@ void display_pwrite(paddr_t addr, int len, word_t data);
 //     char* name;     // 函数名
 // } ElfFunc;
 
-extern ElfFunc* elfuncs;      // 函数项数组
-extern int elfunc_num;        // 函数项的个数
-extern char* elfunc_strtab;   // string table
-extern int print_ftrace_level;
+// extern ElfFunc* elfuncs;      // 函数项数组
+// extern int elfunc_num;        // 函数项的个数
+// extern char* elfunc_strtab;   // string table
+// extern int print_ftrace_level;
 
 void read_elf(const char* elf_path);
 void print_ftrace(uint32_t inst_addr, uint32_t func_addr, int is_enter);
