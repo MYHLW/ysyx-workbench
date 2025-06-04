@@ -88,11 +88,11 @@ void display_pwrite(paddr_t addr, int len, word_t data);
 #ifdef CONFIG_FTRACE
 #include <elf.h>
 
-typedef struct ElfFunc {
-    uint32_t addr;  // 函数起始地址
-    uint32_t size;  // 函数体的大小
-    char* name;     // 函数名
-} ElfFunc;
+// typedef struct ElfFunc {
+//     uint32_t addr;  // 函数起始地址
+//     uint32_t size;  // 函数体的大小
+//     char* name;     // 函数名
+// } ElfFunc;
 
 extern ElfFunc* elfuncs;      // 函数项数组
 extern int elfunc_num;        // 函数项的个数

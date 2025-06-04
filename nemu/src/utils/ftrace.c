@@ -1,7 +1,13 @@
-//#ifdef CONFIG_FTRACE
+#ifdef CONFIG_FTRACE
 
 #include <common.h>
 #include <elf.h>
+
+typedef struct ElfFunc {
+    uint32_t addr;  // 函数起始地址
+    uint32_t size;  // 函数体的大小
+    char* name;     // 函数名
+} ElfFunc;
 
 ElfFunc* elfuncs = NULL;  // 函数项数组
 int elfunc_num = 0;       // 函数项的个数
@@ -180,4 +186,4 @@ void print_ftrace(uint32_t inst_addr, uint32_t func_addr, int is_enter) {
     printf("???\n");
 }
 
-//#endif
+#endif
