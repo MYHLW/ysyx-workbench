@@ -15,7 +15,7 @@ enum {
   TYPE_B // none
 };
 
-//void print_ftrace(uint32_t inst_addr, uint32_t func_addr, int is_enter);
+//void print_ftrace(); 
 
 static void ftrace_jal(uint32_t inst_addr, uint32_t func_addr, int rd) {
 #ifdef CONFIG_FTRACE
