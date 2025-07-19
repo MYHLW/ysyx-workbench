@@ -99,16 +99,18 @@ int sprintf(char *out, const char *fmt, ...) {
 
 // printf：输出到标准输出，依赖am.h中的putstr
 int printf(const char *fmt, ...) {
+    #define PRINT_BUF_SIZE 1024
+    char buffer[PRINT_BUF_SIZE];
     va_list ap;
-    // 移除 char buf[1024]; // 未使用，导致编译错误
-    int ret;
-
-    char buf[1024]; // 显式保留并使用（若确实需要）
     va_start(ap, fmt);
-    ret = vsprintf(buf, fmt, ap); // 使用buf进行格式化
+    int ret = vsprintf(buffer, fmt, ap);  // 调用vsprintf
     va_end(ap);
-
-    putstr(buf); // 通过am.h中的函数输出字符串
+    if (ret > PRINT_BUF_SIZE) {
+        ret = PRINT_BUF_SIZE;
+    }
+    for (int i = 0; i < ret; i++) {
+        putch(buffer[i]);
+    }
     return ret;
 }
 
