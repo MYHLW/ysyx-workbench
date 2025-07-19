@@ -5,38 +5,32 @@
 
 // 辅助函数：整数转字符串（支持十进制、十六进制）
 static void itoa(char *buf, int base, int value) {
-    char *p = buf;
-    char *start = buf;
+    char tmp[32];
+    int i = 0, is_negative = 0;
     unsigned int num;
-    int is_negative = 0;
 
-    // 处理负数（仅十进制）
     if (base == 10 && value < 0) {
         is_negative = 1;
         num = -value;
-        *p++ = '-'; // 记录负号
     } else {
-        num = (unsigned int)value;
+        num = value;
     }
 
-    // 转换数字为字符
     do {
         int rem = num % base;
-        *p++ = (rem < 10) ? rem + '0' : rem - 10 + 'a'; // 十六进制用小写a-f
+        tmp[i++] = (rem < 10) ? rem + '0' : rem - 10 + 'a';
     } while (num /= base);
 
-    // 反转字符串以得到正确顺序
-    if (is_negative) start++; // 跳过负号
-    char *end = p - 1;
-    while (start < end) {
-        char tmp = *start;
-        *start = *end;
-        *end = tmp;
-        start++;
-        end--;
+    if (is_negative) tmp[i++] = '-';
+
+    // 逆序写入 buf
+    int j = 0;
+    while (i--) {
+        buf[j++] = tmp[i];
     }
-    *p = '\0'; // 添加字符串终止符
+    buf[j] = '\0';
 }
+
 
 // vsprintf：使用va_list格式化到字符串（核心函数）
 int vsprintf(char *out, const char *fmt, va_list ap) {
