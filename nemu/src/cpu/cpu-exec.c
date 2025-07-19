@@ -118,7 +118,7 @@ static void statistic() {
 }
 
 void assert_fail_msg() {
-  display_inst(); //显示指令
+  IFDEF(CONFIG_ITRACE, display_inst()); //显示指令
   isa_reg_display(); //显示寄存器
   statistic(); //统计
 }
