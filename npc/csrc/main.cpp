@@ -1,119 +1,127 @@
-帮我详细解释一下这份cpp代码的功能//test.cpp
-//#include "nvboard.h"     //Defines common routines
+// test.cpp
 #include "verilated_vcd_c.h"
-#include <stdio.h>
-#include <stdlib.h>
 #include "Vysyx_25020059_top.h"
-#include "assert.h"
-#include <dlfcn.h>  //动态链接库相关函数
-//加run和target
+#include <cassert>
+#include <cstdio>
+#include <cstdlib>
+#include <cstdint>
+
 #define CONFIG_MBASE 0x80000000
-#define CONFIG_MSIZE 0X2800000
+#define CONFIG_MSIZE 0x02800000  // 40 MB
 
+typedef uint32_t paddr_t;
 typedef uint64_t word_t;
-typedef  uint32_t paddr_t;
-typedef  word_t vaddr_t;
 
-static uint8_t *pimem =NULL;
-void init_imem(){
-  pimem = (uint8_t *) malloc(CONFIG_MSIZE);
-  //printf("pimem _ success");
-  assert(pimem);
+// 模拟物理内存
+static uint8_t *pimem = nullptr;
+
+// 动态申请内存
+void init_imem() {
+  pimem = (uint8_t *)malloc(CONFIG_MSIZE);
+  assert(pimem && "Failed to allocate instruction memory");
 }
 
-uint8_t *guest_to_host(paddr_t paddr){
-  uint8_t *tmpl = pimem + paddr -CONFIG_MBASE;
-  //printf("guest to host success addr = %hhn\n",tmpl);
-  return tmpl;
+// 物理地址到主机地址映射
+uint8_t* guest_to_host(paddr_t paddr) {
+  assert(paddr >= CONFIG_MBASE && paddr < CONFIG_MBASE + CONFIG_MSIZE);
+  return pimem + (paddr - CONFIG_MBASE);
 }
+
+// 从模拟内存读取 len 字节 (1/2/4/8)
 static inline word_t host_read(void *addr, int len) {
-   //printf("host_read success addr");
   switch (len) {
     case 1: return *(uint8_t  *)addr;
     case 2: return *(uint16_t *)addr;
     case 4: return *(uint32_t *)addr;
     case 8: return *(uint64_t *)addr;
-    default:  return 0;
+    default: assert(false && "Unsupported read length"); return 0;
   }
 }
 static word_t pmem_read(paddr_t addr, int len) {
-  word_t ret = host_read(guest_to_host(addr), len);
-   //printf("pmem_read success addr");
-  return ret;
+  return host_read(guest_to_host(addr), len);
 }
 
-static long load_img(char*img_file){
-  if(img_file == NULL){
-    printf("Error: No image is given !\n");
-    assert(0);
-    return 4096;
+// 加载二进制镜像到 pimem 起始处
+static long load_img(const char *img_file) {
+  if (!img_file) {
+    fprintf(stderr, "Error: no image file specified\n");
+    exit(1);
   }
-  FILE *fp = fopen(img_file,"rb");
-  assert(fp);
+  FILE *fp = fopen(img_file, "rb");
+  assert(fp && "Failed to open image file");
   fseek(fp, 0, SEEK_END);
   long size = ftell(fp);
-  printf("The image is %s, size = %ld\n", img_file,size);
   fseek(fp, 0, SEEK_SET);
-  int ret = fread(guest_to_host(CONFIG_MBASE), size, 1,fp);
-  assert(ret == 1);
+  size_t ret = fread(guest_to_host(CONFIG_MBASE), 1, size, fp);
+  assert(ret == (size_t)size && "Failed to read entire image");
   fclose(fp);
+  printf("Loaded image '%s', size = %ld bytes\n", img_file, size);
   return size;
 }
-//加difftest
-void (*ref_difftest_memcpy)(paddr_t addr, void *buf, size_t n, bool direction) = NULL;
-void (*ref_difftest_regcpy)(void *dut, bool direction) = NULL;
-void (*ref_difftest_exec)(uint64_t n) = NULL;
-void (*ref_difftest_raise_intr)(word_t NO) = NULL;
 
+int main(int argc, char **argv) {
+  if (argc < 2) {
+    fprintf(stderr, "Usage: %s <image.bin>\n", argv[0]);
+    return 1;
+  }
 
-
-
-
-
-
-
-int port = 1234;
-//Vysyx_22040175_top *top; 
-int main(int argc, char **argv, char **env) {
-  int i;
-  int clk;
+  // 初始化 Verilator 顶层
   Verilated::commandArgs(argc, argv);
-  // init top verilog instance
-  Vysyx_25020059_top* top = new Vysyx_25020059_top;
-  // init trace dump
-  Verilated::traceEverOn(true);
-  VerilatedVcdC* tfp = new VerilatedVcdC;
-  top->trace (tfp, 99);
-  tfp->open ("Vysyx_25020059.vcd");
-  // initialize simulation inputs
-  top->clk = 1;
-  top->rst = 1;
-  // run simulation for 100 clock periods
-  char* img_file = *(argv + 1);
-  
-  printf("开始imem初始化\n");
-  init_imem();
-  long img_size = load_img(img_file);
-  //init_difftest(img_size,port);
-  for (i=0; i<200; i++) {
-    top->rst = (i < 2);
-    // dump variables into VCD file and toggle clock
-    for (clk=0; clk<2; clk++) {
-      tfp->dump (2*i+clk);
-      top->clk = !top->clk;
-      top->eval ();
-  }
-  int a = 0;
-     if(top->clk==1){
-      top->inst = pmem_read(top->curr_pc,8);
-      a= a+1;
-     }
-     if (a>2){
-       //difftest_step(top->curr_pc,top->next_pc);
-     }
+  auto *top = new Vysyx_25020059_top;
 
+  // 打开 VCD 波形
+  Verilated::traceEverOn(true);
+  auto *tfp = new VerilatedVcdC;
+  top->trace(tfp, 99);
+  tfp->open("npc_addi.vcd");
+
+  // 初始化时钟和复位
+  top->clk = 0;
+  top->rst = 1;
+
+  // 初始化模拟内存并加载镜像
+  init_imem();
+  load_img(argv[1]);
+
+  const int INSTR_LIMIT = 5;   // 最多执行 5 条 addi
+  int instr_cnt = 0;
+  int cycle = 0;
+
+  // 模拟循环
+  while (!Verilated::gotFinish()) {
+    // 复位前两个时钟周期
+    if (cycle < 2) {
+      top->rst = 1;
+    } else {
+      top->rst = 0;
+    }
+
+    // 时钟翻转
+    tfp->dump(cycle);
+    top->clk = !top->clk;
+    top->eval();
+    cycle++;
+
+    // 在上升沿后采样
+    if (top->clk && !top->rst) {
+      // 取指：4 字节
+      uint32_t inst = (uint32_t)pmem_read(top->curr_pc, 4);
+      top->inst = inst;
+
+      // 打印调试信息
+      printf("Instr %02d: PC=0x%08x  inst=0x%08x\n",
+             instr_cnt, (uint32_t)top->curr_pc, inst);
+
+      instr_cnt++;
+      if (instr_cnt >= INSTR_LIMIT) {
+        printf("Reached instruction limit (%d), finishing simulation.\n", INSTR_LIMIT);
+        break;
+      }
+    }
   }
-  if (Verilated::gotFinish())  exit(0);
+
+  // 结束并保存波形
   tfp->close();
-  exit(0);
-} 
+  delete top;
+  return 0;
+}
