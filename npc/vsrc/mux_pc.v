@@ -7,7 +7,7 @@ module muxpc #(
   parameter PC_INC = `CPU_WIDTH'h4
 )(
     input                        ena,         // 使能，复位后才开始更新 PC
-    input                        branch       // 分支指令是否有效
+    input                        branch,      // 分支指令是否有效
     input                        zero,        // ALU zero 标志
     input                        jump,        // JAL/JALR 有效
     input  [`CPU_WIDTH-1:0]      imm,         // 已签扩的立即数
