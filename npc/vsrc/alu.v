@@ -4,7 +4,7 @@ module alu(
     input       [`ALU_OP_WIDTH-1:0] alu_op,
     input       [`CPU_WIDTH-1:0]    alu_src1,
     input       [`CPU_WIDTH-1:0]    alu_src2,
-    output                          zero,
+    output reg                      zero,
     output reg  [`CPU_WIDTH-1:0]    alu_res
     //后续加入overflow, carry等信号
 );
