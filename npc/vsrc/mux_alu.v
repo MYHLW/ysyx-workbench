@@ -39,3 +39,4 @@ module mux_alu (
             end
         endcase
     end
+endmodule
