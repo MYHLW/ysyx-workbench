@@ -11,7 +11,8 @@ uint32_t *init_mem(size_t size);
 uint32_t guest_to_host(uint32_t addr);
 uint32_t pmem_read(uint32_t *mem,uint32_t vaddr);
 void single_cycle(){
-  dut.clk=~dut.clk;dut.eval();
+  dut.clk=~dut.clk;
+  dut.eval();
  // dut.clk=1;dut.eval();
 }
 
@@ -46,7 +47,9 @@ int main(){
   for (int i = 0; i < num_instructions + 2; i++) {
     dut.inst = pmem_read(mem, dut.curr_pc); // 从内存读取指令
     single_cycle(); // 执行一个周期
-    single_cycle(); // 执行下一个周期
+    tfp->dump(contextp->time()); // 转储当前时间的跟踪数据
+    contextp->timeInc(1); // 增加时间
+    single_cycle(); // 执行一个周期
     tfp->dump(contextp->time()); // 转储当前时间的跟踪数据
     contextp->timeInc(1); // 增加时间
     printf("PC: 0x%08x, Inst: 0x%08x\n", dut.curr_pc, dut.inst);
