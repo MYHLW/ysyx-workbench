@@ -9,7 +9,7 @@
 static Vysyx_25020059_top dut;
 uint32_t *init_mem(size_t size);
 uint32_t guest_to_host(uint32_t addr);
-uint32_t pmem_read(uint32_t *memory,uint32_t vaddr);
+uint32_t pmem_read(uint32_t *mem,uint32_t vaddr);
 void single_cycle(){
   dut.clk=0;dut.eval();
   dut.clk=1;dut.eval();
@@ -72,7 +72,7 @@ uint32_t *init_mem(size_t size) {
 uint32_t guest_to_host(uint32_t addr) {
   return addr - 0x80000000; // 假设物理地址从0x80000000开始
 }
-uint32_t pmem_read(uint32_t vaddr,uint32_t *mem) {
+uint32_t pmem_read(uint32_t *mem,uint32_t vaddr) {
   uint32_t paddr = guest_to_host(vaddr);
   return mem[paddr / 4]; // 每个地址对应4字节
 }
