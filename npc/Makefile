@@ -1,20 +1,15 @@
-# @echo "Write this Makefile by your self."
-# VSRC = $(wildcard ./vsrc/*.v)
-# CSRC = $(wildcard ./csrc/*.cpp)
-FILEV = $(wildcard ./top.v)
-FILEC = $(wildcard ./test_top.cpp)
 all:
 	@echo "Write this Makefile by your self."
- 
 sim:
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
-	verilator -Wno-fatal $(FILEV) $(FILEC) --top-module top --cc --trace --exe
-	make -C obj_dir -f Vtop.mk Vtop
-	./obj_dir/Vtop
-	# gtkwave wave.vcd
- 
- .PHONY:clean
+	@$(clean)
+	verilator -Wno-lint --trace -cc $(wildcard ./vsrc/*.v) --exe $(wildcard ./csrc/*.cpp) -LDFLAGS -ldl --top ysyx_25020059_top
+	make -C obj_dir -j -f Vysyx_25020059_top.mk Vysyx_25020059_top
+	./obj_dir/Vysyx_25020059_top $(IMG)
+	#gtkwave ./obj_dir/Vysyx_25020059.vcd
+#PHONY:clean sim
+
 clean:
-	rm -rf obj_dir wave.vcd	
-
-
+	rm -rf .obj_dir
+include ../Makefile
+#include ./vsrc/Makefile
