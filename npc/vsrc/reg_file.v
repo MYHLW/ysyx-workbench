@@ -10,9 +10,8 @@ module reg_file (
 
     input       [`REG_ADDR_WIDTH-1:0]   reg1_raddr, // Register read address 1
     input       [`REG_ADDR_WIDTH-1:0]   reg2_raddr, // Register read address 2
-    output      [`CPU_WIDTH-1:0]        reg1_rdata, // Register read data
-    output      [`CPU_WIDTH-1:0]        reg2_rdata, // Register read data
-
+    output reg  [`CPU_WIDTH-1:0]        reg1_rdata, // Register read data
+    output reg  [`CPU_WIDTH-1:0]        reg2_rdata // Register read data
 );
 
 reg [`CPU_WIDTH-1:0] reg_f [0:`REG_DATA_DEPTH-1];
