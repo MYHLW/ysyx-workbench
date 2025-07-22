@@ -25,7 +25,7 @@ module mux_alu (
                 alu_src2 = imm;   // src2 = imm
             end
             `ALU_SRC_FOUR_PC: begin
-                alu_src1 = `CPU_WIDTH'b4; // src1 = 4
+                alu_src1 = 4; // src1 = 4
                 alu_src2 = curr_pc; // src2 = pc
             end
             `ALU_SRC_IMM_PC: begin
