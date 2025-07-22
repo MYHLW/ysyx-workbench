@@ -4,12 +4,12 @@
 module  ysyx_25020059_top(
 	input                         clk,
     input                         rst,
-	input [31:0] inst,
+	input [31:0]                  inst,
 	output[`CPU_WIDTH-1:0]        curr_pc,
     output[`CPU_WIDTH-1:0]        next_pc
 );
-wire rst_n;
-assign rst_n = !rst;
+wire                         rst_n;
+assign                       rst_n = !rst;
 wire                         ena;
 //wire [`CPU_WIDTH-1:0]        curr_pc;    // current pc addr
 //wire [`CPU_WIDTH-1:0]        next_pc;    // next pc addr

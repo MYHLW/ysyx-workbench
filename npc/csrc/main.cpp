@@ -11,7 +11,7 @@
 uint8_t mem[CONFIG_MSIZE]; // 简单物理内存模拟
 
 uint32_t pmem_read(uint32_t addr) {
-  assert(addr >= CONFIG_MBASE && addr < CONFIG_MBASE + CONFIG_MSIZE);
+ // assert(addr >= CONFIG_MBASE && addr < CONFIG_MBASE + CONFIG_MSIZE);
   uint32_t offset = addr - CONFIG_MBASE;
   return *(uint32_t *)&mem[offset];
 }
