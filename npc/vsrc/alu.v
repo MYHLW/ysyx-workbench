@@ -1,3 +1,5 @@
+`include "../vsrc/rvseed_defines.v"
+
 module alu(
     input       [`ALU_OP_WIDTH-1:0] alu_op,
     input       [`CPU_WIDTH-1:0]    alu_src1,
