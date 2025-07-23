@@ -7,148 +7,100 @@
 #include <verilated_vcd_c.h>
 #include <verilated_dpi.h>
 
+// 仿真内存基址和大小定义
+#define MEM_BASE       0x80000000U
+#define MEM_SIZE       (8 * 1024 * 1024) // 8MB
+
 static Vysyx_25020059_top dut;
-uint32_t *init_mem(size_t size);
-uint32_t guest_to_host(uint32_t addr);
-uint32_t pmem_read(uint32_t *mem,uint32_t vaddr);
-void single_cycle(){
-  dut.clk=0;dut.eval();
-  dut.clk=1;dut.eval();
+static uint8_t *memory;
+
+// 将虚拟地址转换为内存数组偏移
+static inline uint32_t guest_to_host(uint32_t addr) {
+    return addr - MEM_BASE;
 }
 
+// 从仿真内存读取一条指令
+uint32_t pmem_read(uint32_t * /*unused*/, uint32_t vaddr) {
+    uint32_t off = guest_to_host(vaddr);
+    return *(uint32_t *)(memory + off);
+}
+
+// 从文件加载二进制镜像到仿真内存
+void load_image(const char *filename) {
+    FILE *fp = fopen(filename, "rb");
+    if (!fp) {
+        perror("fopen");
+        exit(EXIT_FAILURE);
+    }
+    // 读入数据
+    size_t sz = fread(memory, 1, MEM_SIZE, fp);
+    fclose(fp);
+    printf("Loaded binary '%s' (%zu bytes) at 0x%08X\n", filename, sz, MEM_BASE);
+}
+
+// 一个时钟周期
+void single_cycle() {
+    dut.clk = 0; dut.eval();
+    dut.clk = 1; dut.eval();
+}
+
+// 复位 n 个周期
 static void reset(int n) {
-  dut.rst = 1;
-  while (n -- > 0) single_cycle();
-  dut.rst = 0;
+    dut.rst = 1;
+    while (n-- > 0) single_cycle();
+    dut.rst = 0;
 }
 
-
-static const uint32_t img[] = {
-  0b00000000010100000000000010010011, //addi x1 x0 5
-  0b00000000000100000000000100010011, //addi x2 x0 1
-  0b00000000001000000000000100010011, //addi x2 x0 2
-  0b00000000010100001000000100010011, //addi x2 x1 5
-  0b00000000000100000000000001110011, //ebreak
-};
-
-// ============ 1. DPI‑C 函数导入 ==============
+// ============ DPI‑C: ebreak 触发退出 ==============
 extern "C" void npc_trap(int code) {
-    std::printf("[DPI] ebreak, PC: 0x%08x", dut.curr_pc);
-    std::exit(0);
-}
-
-int main(){
-  uint32_t *mem;
-  int num_instructions = sizeof(img) / sizeof(img[0]);
-  mem = init_mem(num_instructions); // 初始化内存
-
-  Verilated::traceEverOn(true);
-  VerilatedContext *contextp = new VerilatedContext;// 创建上下文
-  VerilatedVcdC *tfp = new VerilatedVcdC;// 创建VCD跟踪文件
-  dut.trace(tfp, 5); // 设置跟踪级别
-  tfp->open("Vysyx_25020059.vcd"); // 打开VCD文件
-
-  reset(2); // 重置1个周期
-  for (int i = 0; i < num_instructions + 2; i++) {
-    dut.inst = pmem_read(mem, dut.curr_pc); // 从内存读取指令
-    single_cycle(); // 执行一个周期
-    tfp->dump(contextp->time()); // 转储当前时间的跟踪数据
-    contextp->timeInc(1); // 增加时间
-    printf("PC: 0x%08x, Inst: 0x%08x\n", dut.curr_pc, dut.inst);
-  }
-  tfp->close(); // 关闭跟踪文件
-  delete tfp; // 删除跟踪文件对象
-  delete contextp; // 删除上下文
-  free(mem); // 释放内存
-  return 0;
-}
-
-uint32_t *init_mem(size_t size) {
-  uint32_t *mem = (uint32_t *)malloc(size * sizeof(uint32_t));
-  memcpy(mem, img, sizeof(img));
-  if(mem == NULL) {
+    printf("[DPI] ebreak, PC = 0x%08X, code = %d\n", (uint32_t)dut.curr_pc, code);
     exit(0);
-  }
-  return mem;
-}
-uint32_t guest_to_host(uint32_t addr) {
-  return addr - 0x80000000; // 假设物理地址从0x80000000开始
-}
-uint32_t pmem_read(uint32_t *mem,uint32_t vaddr) {
-  uint32_t paddr = guest_to_host(vaddr);
-  return mem[paddr / 4]; // 每个地址对应4字节
 }
 
+int main(int argc, char **argv) {
+    if (argc < 2) {
+        fprintf(stderr, "Usage: %s <program.bin>\n", argv[0]);
+        return -1;
+    }
+    // 分配仿真内存
+    memory = (uint8_t *)malloc(MEM_SIZE);
+    if (!memory) {
+        perror("malloc");
+        return -1;
+    }
+    memset(memory, 0, MEM_SIZE);
 
+    // 加载用户程序
+    load_image(argv[1]);
 
-// #include <cassert>
-// #include <cstdio>
-// #include <cstdlib>
-// #include <cstdint>
+    // Verilator 波形追踪设置
+    Verilated::traceEverOn(true);
+    VerilatedContext *ctx = new VerilatedContext;
+    VerilatedVcdC *tfp = new VerilatedVcdC;
+    dut.trace(tfp, 5);
+    tfp->open("npc_sim.vcd");
 
-// #define CONFIG_MBASE 0x80000000
-// #define CONFIG_MSIZE 0x02800000
+    // 初始化时钟与复位
+    dut.clk = 0;
+    reset(2);
 
-// uint8_t mem[CONFIG_MSIZE]; // 简单物理内存模拟
+    // 仿真主循环，直到 ebreak 调用 npc_trap 退出进程
+    while (true) {
+        // 提取并分发指令
+        dut.inst = pmem_read(nullptr, dut.curr_pc);
+        // 单周期推进
+        single_cycle();
+        // 波形记录
+        tfp->dump(ctx->time());
+        ctx->timeInc(1);
+        // 同步打印 PC 和指令
+        printf("PC=0x%08X inst=0x%08X\n", (uint32_t)dut.curr_pc, dut.inst);
+    }
 
-// uint32_t pmem_read(uint32_t addr) {
-//  // assert(addr >= CONFIG_MBASE && addr < CONFIG_MBASE + CONFIG_MSIZE);
-//   uint32_t offset = addr - CONFIG_MBASE;
-//   return *(uint32_t *)&mem[offset];
-// }
-
-// void load_image(const char *filename) {
-//   FILE *fp = fopen(filename, "rb");
-//   assert(fp);
-//   fseek(fp, 0, SEEK_END);
-//   long size = ftell(fp);
-//   rewind(fp);
-//   fread(mem, 1, size, fp);
-//   fclose(fp);
-//   printf("Loaded image: %s (%ld bytes)\n", filename, size);
-// }
-
-// int main(int argc, char **argv) {
-//   if (argc < 2) {
-//     printf("Usage: %s <image.bin>\n", argv[0]);
-//     return 1;
-//   }
-
-//   Verilated::commandArgs(argc, argv);
-//   auto *top = new Vysyx_25020059_top;
-//   Verilated::traceEverOn(true);
-//   VerilatedVcdC *tfp = new VerilatedVcdC;
-//   top->trace(tfp, 99);
-//   tfp->open("npc_addi.vcd");
-
-//   top->clk = 0;
-//   top->rst = 1;
-
-//   load_image(argv[1]);
-
-//   const int instr_limit = 5;
-//   int instr_cnt = 0;
-//   int cycle = 0;
-
-//   while (!Verilated::gotFinish()) {
-//     if (cycle < 2) top->rst = 1;
-//     else top->rst = 0;
-
-//     tfp->dump(cycle);
-//     top->clk = !top->clk;
-//     top->eval();
-//     cycle++;
-
-//     if (top->clk && !top->rst) {
-//       uint32_t inst = pmem_read(top->curr_pc);
-//       top->inst = inst;
-//       printf("PC=0x%08x  inst=0x%08x\n", top->curr_pc, inst);
-//       instr_cnt++;
-//       if (instr_cnt >= instr_limit) break;
-//     }
-//   }
-
-//   tfp->close();
-//   delete top;
-//   return 0;
-// }
+    // 清理（理论上不可达）
+    tfp->close();
+    delete tfp;
+    delete ctx;
+    free(memory);
+    return 0;
+}
