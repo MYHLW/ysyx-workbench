@@ -23,11 +23,10 @@ static void reset(int n) {
 
 
 static const uint32_t img[] = {
-  0x00000013, // addi x0, x0, 0
-  0x00000013, // addi x1, x0, 0
-  0x00000093, // addi x1, x1, 0
-  0x00000113, // addi x2, x1, 1
-  0x00000213, // addi x3, x2, 2
+  0b0000000001010000000000010010011, //addi x1 x0 5
+  0b0000000000010000000000010010011, //addi x2 x0 1
+  0b0000000000010000000000010010011, //addi x2 x0 2
+  0b0000000001010000100000010010011 //addi x2 x1 5
 };
 
 int main(){
@@ -42,7 +41,7 @@ int main(){
   tfp->open("Vysyx_25020059.vcd"); // 打开VCD文件
 
   reset(1); // 重置1个周期
-  for (int i = 0; i < num_instructions + 2; i++) {
+  for (int i = 0; i < num_instructions + 1; i++) {
     dut.inst = pmem_read(mem, dut.curr_pc); // 从内存读取指令
     single_cycle(); // 执行一个周期
     tfp->dump(contextp->time()); // 转储当前时间的跟踪数据
@@ -55,11 +54,6 @@ int main(){
   free(mem); // 释放内存
   return 0;
 }
-
-
-
-
-
 
 uint32_t *init_mem(size_t size) {
   uint32_t *mem = (uint32_t *)malloc(size * sizeof(uint32_t));
