@@ -19,6 +19,7 @@
 
 
 #include "verilated.h"
+#include "verilated_dpi.h"
 
 #include "Vysyx_25020059_top__Syms.h"
 #include "Vysyx_25020059_top.h"

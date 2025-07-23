@@ -6,12 +6,15 @@
 #define VERILATED_VYSYX_25020059_TOP___024ROOT_H_  // guard
 
 #include "verilated.h"
+class Vysyx_25020059_top___024unit;
 
 
 class Vysyx_25020059_top__Syms;
 
 class alignas(VL_CACHE_LINE_BYTES) Vysyx_25020059_top___024root final : public VerilatedModule {
   public:
+    // CELLS
+    Vysyx_25020059_top___024unit* __PVT____024unit;
 
     // DESIGN SPECIFIC STATE
     VL_IN8(clk,0,0);

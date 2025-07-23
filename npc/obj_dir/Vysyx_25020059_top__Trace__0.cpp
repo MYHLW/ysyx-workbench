@@ -96,6 +96,7 @@ void Vysyx_25020059_top___024root__trace_chg_0_sub_0(Vysyx_25020059_top___024roo
                                       >> 0xfU))),5);
     bufp->chgCData(oldp+60,((0x1fU & (vlSelfRef.inst 
                                       >> 0x14U))),5);
+    bufp->chgSData(oldp+61,((vlSelfRef.inst >> 0x14U)),12);
 }
 
 void Vysyx_25020059_top___024root__trace_cleanup(void* voidSelf, VerilatedVcd* /*unused*/) {

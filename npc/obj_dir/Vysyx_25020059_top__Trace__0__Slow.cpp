@@ -66,6 +66,7 @@ VL_ATTR_COLD void Vysyx_25020059_top___024root__trace_init_sub__TOP__0(Vysyx_250
     tracep->declBus(c+59,0,"rd",-1, VerilatedTraceSigDirection::NONE, VerilatedTraceSigKind::WIRE, VerilatedTraceSigType::LOGIC, false,-1, 4,0);
     tracep->declBus(c+60,0,"rs1",-1, VerilatedTraceSigDirection::NONE, VerilatedTraceSigKind::WIRE, VerilatedTraceSigType::LOGIC, false,-1, 4,0);
     tracep->declBus(c+61,0,"rs2",-1, VerilatedTraceSigDirection::NONE, VerilatedTraceSigKind::WIRE, VerilatedTraceSigType::LOGIC, false,-1, 4,0);
+    tracep->declBus(c+62,0,"imm12",-1, VerilatedTraceSigDirection::NONE, VerilatedTraceSigKind::WIRE, VerilatedTraceSigType::LOGIC, false,-1, 11,0);
     tracep->popPrefix();
     tracep->pushPrefix("u_imm_gen_0", VerilatedTracePrefixType::SCOPE_MODULE);
     tracep->declBus(c+8,0,"imm_gen_op",-1, VerilatedTraceSigDirection::INPUT, VerilatedTraceSigKind::WIRE, VerilatedTraceSigType::LOGIC, false,-1, 2,0);
@@ -82,7 +83,7 @@ VL_ATTR_COLD void Vysyx_25020059_top___024root__trace_init_sub__TOP__0(Vysyx_250
     tracep->declBus(c+17,0,"alu_src2",-1, VerilatedTraceSigDirection::OUTPUT, VerilatedTraceSigKind::WIRE, VerilatedTraceSigType::LOGIC, false,-1, 31,0);
     tracep->popPrefix();
     tracep->pushPrefix("u_mux_pc_0", VerilatedTracePrefixType::SCOPE_MODULE);
-    tracep->declBus(c+62,0,"PC_INC",-1, VerilatedTraceSigDirection::NONE, VerilatedTraceSigKind::PARAMETER, VerilatedTraceSigType::LOGIC, false,-1, 31,0);
+    tracep->declBus(c+63,0,"PC_INC",-1, VerilatedTraceSigDirection::NONE, VerilatedTraceSigKind::PARAMETER, VerilatedTraceSigType::LOGIC, false,-1, 31,0);
     tracep->declBit(c+18,0,"ena",-1, VerilatedTraceSigDirection::INPUT, VerilatedTraceSigKind::WIRE, VerilatedTraceSigType::LOGIC, false,-1);
     tracep->declBit(c+2,0,"branch",-1, VerilatedTraceSigDirection::INPUT, VerilatedTraceSigKind::WIRE, VerilatedTraceSigType::LOGIC, false,-1);
     tracep->declBit(c+12,0,"zero",-1, VerilatedTraceSigDirection::INPUT, VerilatedTraceSigKind::WIRE, VerilatedTraceSigType::LOGIC, false,-1);
@@ -162,7 +163,7 @@ VL_ATTR_COLD void Vysyx_25020059_top___024root__trace_const_0_sub_0(Vysyx_250200
     // Init
     uint32_t* const oldp VL_ATTR_UNUSED = bufp->oldp(vlSymsp->__Vm_baseCode);
     // Body
-    bufp->fullIData(oldp+62,(4U),32);
+    bufp->fullIData(oldp+63,(4U),32);
 }
 
 VL_ATTR_COLD void Vysyx_25020059_top___024root__trace_full_0_sub_0(Vysyx_25020059_top___024root* vlSelf, VerilatedVcd::Buffer* bufp);
@@ -249,4 +250,5 @@ VL_ATTR_COLD void Vysyx_25020059_top___024root__trace_full_0_sub_0(Vysyx_2502005
                                        >> 0xfU))),5);
     bufp->fullCData(oldp+61,((0x1fU & (vlSelfRef.inst 
                                        >> 0x14U))),5);
+    bufp->fullSData(oldp+62,((vlSelfRef.inst >> 0x14U)),12);
 }
