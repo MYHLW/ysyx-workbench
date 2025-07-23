@@ -40,7 +40,7 @@ int main(){
   dut.trace(tfp, 5); // 设置跟踪级别
   tfp->open("Vysyx_25020059.vcd"); // 打开VCD文件
 
-  reset(1); // 重置1个周期
+  //reset(1); // 重置1个周期
   for (int i = 0; i < num_instructions + 2; i++) {
     dut.inst = pmem_read(mem, dut.curr_pc); // 从内存读取指令
     single_cycle(); // 执行一个周期
