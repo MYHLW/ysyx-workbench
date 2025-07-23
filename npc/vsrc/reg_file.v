@@ -17,11 +17,19 @@ module reg_file (
 reg [`CPU_WIDTH-1:0] reg_f [0:`REG_DATA_DEPTH-1];
 
 // Register write operation
+// always @(posedge clk or negedge rst_n) begin
+//     if (rst_n && reg_wen && (reg_waddr != 0)) begin
+//         reg_f[reg_waddr] <= reg_wdata; // Write data to register
+//     end
+// end
 always @(posedge clk or negedge rst_n) begin
-    if (rst_n && reg_wen && (reg_waddr != 0)) begin
-        reg_f[reg_waddr] <= reg_wdata; // Write data to register
+    if (!rst_n) begin
+        reg_f[reg_waddr] <= 0; // 原来的代码没有正确处理异步复位的逻辑
+    end else if (reg_wen && (reg_waddr != 0)) begin
+        reg_f[reg_waddr] <= reg_wdata;
     end
 end
+
 
 // register 1 read
 always @(*) begin

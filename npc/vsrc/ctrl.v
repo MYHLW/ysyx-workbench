@@ -1,5 +1,8 @@
 `include "../vsrc/rvseed_defines.v"
 
+// === 1. DPI‑C 函数导入 ===
+import "DPI-C" function void npc_trap(input int code);
+
 module ctrl (
     input      [`CPU_WIDTH-1:0]        inst,       // instruction input
 
@@ -23,7 +26,7 @@ wire [`FUNCT7_WIDTH-1:0] funct7 = inst[`FUNCT7_WIDTH+`FUNCT7_BASE-1:`FUNCT7_BASE
 wire [`REG_ADDR_WIDTH-1:0] rd   = inst[`REG_ADDR_WIDTH+`RD_BASE-1:`RD_BASE]; 
 wire [`REG_ADDR_WIDTH-1:0] rs1  = inst[`REG_ADDR_WIDTH+`RS1_BASE-1:`RS1_BASE]; 
 wire [`REG_ADDR_WIDTH-1:0] rs2  = inst[`REG_ADDR_WIDTH+`RS2_BASE-1:`RS2_BASE]; 
-
+wire [11:0]             imm12   = inst[31:20];  // 用于 ebreak 指令的高 12 位
 
 always @(*) begin
     branch      = 1'b0;
@@ -35,6 +38,13 @@ always @(*) begin
     imm_gen_op  = `IMM_GEN_I;
     alu_op      = `ALU_AND;
     alu_src_sel = `ALU_SRC_REG;
+
+    // ebreak 检测：SYSTEM opcode + funct3==0 + imm12==1
+    if (opcode ==  7'b1110011 && funct3 == 3'b000 && imm12 == 12'h001) begin
+        // 通知仿真环境：执行 ebreak，退出仿真
+        npc_trap(0);
+    end
+    
     case (opcode)
         `INST_TYPE_R: begin
             reg_wen     = 1'b1;

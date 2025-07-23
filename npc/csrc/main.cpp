@@ -29,6 +29,12 @@ static const uint32_t img[] = {
   0b00000000010100001000000100010011 //addi x2 x1 5
 };
 
+// ============ 1. DPI‑C 函数导入 ==============
+extern "C" void npc_trap(int code) {
+    std::printf("[DPI] ebreak, PC: 0x%08x", dut.curr_pc);
+    std::exit(0);
+}
+
 int main(){
   uint32_t *mem;
   int num_instructions = sizeof(img) / sizeof(img[0]);
