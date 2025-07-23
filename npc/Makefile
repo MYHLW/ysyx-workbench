@@ -1,9 +1,9 @@
 # 测试用 .bin 文件所在目录
-TEST_DIR := /home/wang/ysyx-workbench/nemu/am-kernels/tests/cpu-tests
+TEST_DIR := ../nemu/am-kernels/tests/cpu-tests
 
 # 允许通过 NAME 参数指定要加载的二进制文件
 # 用法：make sim NAME=<binary_name>
-NAME ?= dummy.bin
+NAME ?= dummy-riscv32-nemu.bin
 PROGRAM ?= $(TEST_DIR)/$(NAME)
 
 all:
