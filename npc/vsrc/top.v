@@ -65,6 +65,7 @@ muxpc u_mux_pc_0(
 
 ctrl u_ctrl_0(
     .inst                           ( inst                          ),
+    .a0                             ( reg_f[10]                     ), // 假设 a0 寄存器为 reg_f[10]
     .branch                         ( branch                        ),
     .jal_jump                       ( jal_jump                      ),
     .jalr_jump                      ( jalr_jump                     ),

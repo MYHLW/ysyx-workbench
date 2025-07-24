@@ -5,6 +5,7 @@ import "DPI-C" function void npc_trap(input int code);
 
 module ctrl (
     input      [`CPU_WIDTH-1:0]        inst,       // instruction input
+    input      [`CPU_WIDTH-1:0]        a0,         // a0 input
 
     output reg                         branch,     // branch flag
     output reg                         jal_jump,       
@@ -43,8 +44,8 @@ always @(*) begin
 
     // ebreak 检测：SYSTEM opcode + funct3==0 + imm12==1
     if (opcode ==  7'b1110011 && funct3 == 3'b000 && imm12 == 12'h001) begin
-        // 通知仿真环境：执行 ebreak，退出仿真
-        npc_trap(0);
+        code = a0; // 将 a0 作为 trap code
+        npc_trap(code);
     end
     
     case (opcode)
