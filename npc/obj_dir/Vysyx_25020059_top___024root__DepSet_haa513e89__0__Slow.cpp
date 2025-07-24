@@ -33,7 +33,9 @@ VL_ATTR_COLD void Vysyx_25020059_top___024root___stl_sequent__TOP__0(Vysyx_25020
     auto &vlSelfRef = std::ref(*vlSelf).get();
     // Body
     if ((IData)((0x100073U == (0xfff0707fU & vlSelfRef.inst)))) {
-        Vysyx_25020059_top___024unit____Vdpiimwrap_npc_trap_TOP____024unit(0U);
+        Vysyx_25020059_top___024unit____Vdpiimwrap_npc_trap_TOP____024unit(
+                                                                           vlSelfRef.reg_f
+                                                                           [0xaU]);
     }
     vlSelfRef.ysyx_25020059_top__DOT__reg_waddr = 0U;
     vlSelfRef.ysyx_25020059_top__DOT__reg_wen = 0U;

@@ -86,16 +86,17 @@ void Vysyx_25020059_top___024root__trace_chg_0_sub_0(Vysyx_25020059_top___024roo
     bufp->chgIData(oldp+53,(vlSelfRef.reg_f[30]),32);
     bufp->chgIData(oldp+54,(vlSelfRef.reg_f[31]),32);
     bufp->chgBit(oldp+55,(vlSelfRef.ysyx_25020059_top__DOT__ena));
-    bufp->chgCData(oldp+56,((0x7fU & vlSelfRef.inst)),7);
-    bufp->chgCData(oldp+57,((7U & (vlSelfRef.inst >> 0xcU))),3);
-    bufp->chgCData(oldp+58,((vlSelfRef.inst >> 0x19U)),7);
-    bufp->chgCData(oldp+59,((0x1fU & (vlSelfRef.inst 
-                                      >> 7U))),5);
+    bufp->chgIData(oldp+56,(vlSelfRef.reg_f[0xaU]),32);
+    bufp->chgCData(oldp+57,((0x7fU & vlSelfRef.inst)),7);
+    bufp->chgCData(oldp+58,((7U & (vlSelfRef.inst >> 0xcU))),3);
+    bufp->chgCData(oldp+59,((vlSelfRef.inst >> 0x19U)),7);
     bufp->chgCData(oldp+60,((0x1fU & (vlSelfRef.inst 
-                                      >> 0xfU))),5);
+                                      >> 7U))),5);
     bufp->chgCData(oldp+61,((0x1fU & (vlSelfRef.inst 
+                                      >> 0xfU))),5);
+    bufp->chgCData(oldp+62,((0x1fU & (vlSelfRef.inst 
                                       >> 0x14U))),5);
-    bufp->chgSData(oldp+62,((vlSelfRef.inst >> 0x14U)),12);
+    bufp->chgSData(oldp+63,((vlSelfRef.inst >> 0x14U)),12);
 }
 
 void Vysyx_25020059_top___024root__trace_cleanup(void* voidSelf, VerilatedVcd* /*unused*/) {
