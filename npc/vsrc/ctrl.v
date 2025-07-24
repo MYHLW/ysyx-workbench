@@ -7,7 +7,7 @@ module ctrl (
     input      [`CPU_WIDTH-1:0]        inst,       // instruction input
 
     output reg                         branch,     // branch flag
-    output reg                         jar_jump,       
+    output reg                         jal_jump,       
     output reg                         jalr_jump,       // jalr jump flag
 
     output reg                         reg_wen,    // register write enable
