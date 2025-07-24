@@ -1,7 +1,6 @@
 `include "../vsrc/rvseed_defines.v"
 
 // === 1. DPI‑C 函数导入 ===
-import "DPI-C" function void set_gpr_ptr(input logic [31:0] r[32]);
 
 module reg_file (
     input                               clk,
@@ -15,7 +14,7 @@ module reg_file (
     input       [`REG_ADDR_WIDTH-1:0]   reg2_raddr, // Register read address 2
     output reg  [`CPU_WIDTH-1:0]        reg1_rdata, // Register read data
     output reg  [`CPU_WIDTH-1:0]        reg2_rdata, // Register read data
-    output reg  [`CPU_WIDTH-1:0]         reg_f [`REG_DATA_DEPTH-1:0] // Register file array
+    output reg [`CPU_WIDTH-1:0]         reg_f [`REG_DATA_DEPTH-1:0] // Register file array
 );
 
 //reg [`CPU_WIDTH-1:0] reg_f [0:`REG_DATA_DEPTH-1];
@@ -50,11 +49,6 @@ always @(*) begin
     end else begin
         reg2_rdata = reg_f[reg2_raddr]; // Read data from register 2
     end
-end
-
-// === 2. 传寄存器文件给 C++ ===
-initial begin
-  set_gpr_ptr(reg_f); 
 end
 
 endmodule
