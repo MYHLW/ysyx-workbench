@@ -45,7 +45,7 @@ always @(*) begin
 
     // ebreak 检测：SYSTEM opcode + funct3==0 + imm12==1
     if (opcode ==  7'b1110011 && funct3 == 3'b000 && imm12 == 12'h001) begin
-        npc_trap(code);
+        npc_trap(~code);
     end
     
     case (opcode)
