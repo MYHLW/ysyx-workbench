@@ -91,6 +91,7 @@ always @(*) begin
                 end
             endcase
         end
+        
         `INST_JAL: begin // only jal
             jal_jump        = 1'b1;
             reg_wen     = 1'b1;
@@ -113,6 +114,20 @@ always @(*) begin
             imm_gen_op  = `IMM_GEN_U;
             alu_op      = `ALU_ADD;
             alu_src_sel = `ALU_SRC_IMM_PC; // pc + imm
+        end
+        `INST_TYPE_S: begin  //目前还是空指令，没有实现写入内存的操作
+            reg1_raddr  = rs1;
+            reg2_raddr  = rs2;
+            imm_gen_op  = `IMM_GEN_S;
+            alu_src_sel = `ALU_SRC_IMM; //
+            case (funct3)
+                `INST_SB: 
+                    alu_op = `ALU_ADD; // store byte
+                `INST_SH: 
+                    alu_op = `ALU_ADD; // store halfword
+                `INST_SW: 
+                    alu_op = `ALU_ADD; // store word
+            endcase
         end
     endcase 
 end

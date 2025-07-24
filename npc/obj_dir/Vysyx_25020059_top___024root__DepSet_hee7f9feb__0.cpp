@@ -139,19 +139,25 @@ VL_INLINE_OPT void Vysyx_25020059_top___024root___nba_sequent__TOP__0(Vysyx_2502
                                                   == vlSelfRef.ysyx_25020059_top__DOT__alu_res);
     }
     vlSelfRef.next_pc = ((IData)(vlSelfRef.ysyx_25020059_top__DOT__ena)
-                          ? ((IData)(vlSelfRef.ysyx_25020059_top__DOT__jump)
+                          ? ((IData)(vlSelfRef.ysyx_25020059_top__DOT__jal_jump)
                               ? (vlSelfRef.curr_pc 
                                  + vlSelfRef.ysyx_25020059_top__DOT__imm)
-                              : (((IData)(vlSelfRef.ysyx_25020059_top__DOT__branch) 
-                                  & (IData)(vlSelfRef.ysyx_25020059_top__DOT__zero))
-                                  ? (vlSelfRef.curr_pc 
-                                     + vlSelfRef.ysyx_25020059_top__DOT__imm)
+                              : ((IData)(vlSelfRef.ysyx_25020059_top__DOT__jalr_jump)
+                                  ? (0xfffffffeU & 
+                                     (((0U != (IData)(vlSelfRef.ysyx_25020059_top__DOT__reg1_raddr)) 
+                                       & vlSelfRef.ysyx_25020059_top__DOT__u_reg_file_0__DOT__reg_f
+                                       [vlSelfRef.ysyx_25020059_top__DOT__reg1_raddr]) 
+                                      + vlSelfRef.ysyx_25020059_top__DOT__imm))
                                   : (((IData)(vlSelfRef.ysyx_25020059_top__DOT__branch) 
-                                      & (~ (IData)(vlSelfRef.ysyx_25020059_top__DOT__zero)))
+                                      & (IData)(vlSelfRef.ysyx_25020059_top__DOT__zero))
                                       ? (vlSelfRef.curr_pc 
                                          + vlSelfRef.ysyx_25020059_top__DOT__imm)
-                                      : ((IData)(4U) 
-                                         + vlSelfRef.curr_pc))))
+                                      : (((IData)(vlSelfRef.ysyx_25020059_top__DOT__branch) 
+                                          & (~ (IData)(vlSelfRef.ysyx_25020059_top__DOT__zero)))
+                                          ? (vlSelfRef.curr_pc 
+                                             + vlSelfRef.ysyx_25020059_top__DOT__imm)
+                                          : ((IData)(4U) 
+                                             + vlSelfRef.curr_pc)))))
                           : vlSelfRef.curr_pc);
 }
 

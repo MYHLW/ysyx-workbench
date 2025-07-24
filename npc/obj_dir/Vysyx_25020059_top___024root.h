@@ -23,7 +23,8 @@ class alignas(VL_CACHE_LINE_BYTES) Vysyx_25020059_top___024root final : public V
     CData/*0:0*/ ysyx_25020059_top__DOT__ena;
     CData/*0:0*/ ysyx_25020059_top__DOT__branch;
     CData/*0:0*/ ysyx_25020059_top__DOT__zero;
-    CData/*0:0*/ ysyx_25020059_top__DOT__jump;
+    CData/*0:0*/ ysyx_25020059_top__DOT__jal_jump;
+    CData/*0:0*/ ysyx_25020059_top__DOT__jalr_jump;
     CData/*0:0*/ ysyx_25020059_top__DOT__reg_wen;
     CData/*4:0*/ ysyx_25020059_top__DOT__reg_waddr;
     CData/*4:0*/ ysyx_25020059_top__DOT__reg1_raddr;
