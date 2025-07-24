@@ -112,7 +112,7 @@ always @(*) begin
             reg_waddr   = rd;
             imm_gen_op  = `IMM_GEN_U;
             alu_op      = `ALU_ADD;
-            alu_src_sel = `ALU_SRC_PC_IMM; // pc + imm
+            alu_src_sel = `ALU_SRC_IMM_PC; // pc + imm
     endcase 
 end
 
