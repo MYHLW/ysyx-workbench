@@ -6,7 +6,8 @@ module  ysyx_25020059_top(
     input                         rst,
 	input [31:0]                  inst,
 	output[`CPU_WIDTH-1:0]        curr_pc,
-    output[`CPU_WIDTH-1:0]        next_pc
+    output[`CPU_WIDTH-1:0]        next_pc,
+    output[`CPU_WIDTH-1:0]        reg_f [`REG_DATA_DEPTH-1:0] // Register file array
 );
 wire                         rst_n;
 assign                       rst_n = ~rst; // active low reset
@@ -85,7 +86,8 @@ reg_file u_reg_file_0(
     .reg1_raddr                     ( reg1_raddr                    ),
     .reg2_raddr                     ( reg2_raddr                    ),
     .reg1_rdata                     ( reg1_rdata                    ),
-    .reg2_rdata                     ( reg2_rdata                    )
+    .reg2_rdata                     ( reg2_rdata                    ),
+    .reg_f                          ( reg_f                         ) // Register file array
 );
 
 imm_gen u_imm_gen_0(
