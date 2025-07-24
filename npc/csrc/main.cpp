@@ -50,8 +50,9 @@ int main(){
 
   reset(2); // 重置1个周期
   for (int i = 0; i < num_instructions + 2; i++) {
-    dut.inst = pmem_read(mem, dut.curr_pc); // 从内存读取指令
     single_cycle(); // 执行一个周期
+    dut.inst = pmem_read(mem, dut.curr_pc); // 从内存读取指令
+    
     tfp->dump(contextp->time()); // 转储当前时间的跟踪数据
     contextp->timeInc(1); // 增加时间
     printf("PC: 0x%08x, Inst: 0x%08x\n", dut.curr_pc, dut.inst);
