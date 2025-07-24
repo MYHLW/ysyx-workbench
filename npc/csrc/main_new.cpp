@@ -54,18 +54,14 @@ static void reset(int n) {
 // ============ DPI‑C: ebreak 触发退出 ==============
 // 在 main.cpp（全局作用域）
 static bool sim_done = false;
+static int  trap_code = -1;
 
 // DPI 回调
 extern "C" void npc_trap(int code) {
-    static bool triggered = false;
-    if (triggered) return;  // 已打印过，直接丢弃
-    triggered = true;
-    if (code == 0) {
-        printf("\033[32m[NPC] GOOD TRAP: program exited successfully.\033[0m\n");
-    } else {
-        printf("\033[31m[NPC] BAD TRAP: program failed (code=%d).\033[0m\n", code);
+  if (!sim_done) {
+    sim_done   = true;
+    trap_code  = code;
   }
-    sim_done = true;
 }
 
 int main(int argc, char **argv) {
@@ -109,6 +105,13 @@ int main(int argc, char **argv) {
         ctx->timeInc(1);
         // 同步打印 PC 和指令
         printf("PC=0x%08X inst=0x%08X reg1=0x%08X \n", (uint32_t)dut.curr_pc, dut.inst ,(uint32_t)dut.reg_f[1]); // 假设 reg_f[1] 是要打印的寄存器
+
+         // 循环结束后，再打印 GOOD/BAD TRAP
+        if (trap_code == 0) {
+            printf("\033[32m[NPC] GOOD TRAP: program exited successfully.\033[0m\n");
+        } else {
+            printf("\033[31m[NPC] BAD TRAP: program failed (code=%d).\033[0m\n",trap_code);
+        }
     }
 
     // 清理（理论上不可达）
