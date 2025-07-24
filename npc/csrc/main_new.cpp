@@ -104,7 +104,8 @@ int main(int argc, char **argv) {
         tfp->dump(ctx->time());
         ctx->timeInc(1);
         // 同步打印 PC 和指令
-        printf("PC=0x%08X inst=0x%08X reg1=0x%08X \n", (uint32_t)dut.curr_pc, dut.inst ,(uint32_t)dut.reg_f[1]); // 假设 reg_f[1] 是要打印的寄存器
+        printf("PC=0x%08X inst=0x%08X \n", (uint32_t)dut.curr_pc, dut.inst); // 假设 reg_f[1] 是要打印的寄存器
+        //printf("reg=0x%08X \n",(uint32_t)dut.reg_f[1])
 
     }
     
