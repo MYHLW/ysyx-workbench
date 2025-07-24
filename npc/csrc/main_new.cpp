@@ -46,9 +46,9 @@ void single_cycle() {
 
 // 复位 n 个周期
 static void reset(int n) {
-    dut.rst = 0;
-    while (n-- > 0) single_cycle();
     dut.rst = 1;
+    while (n-- > 0) single_cycle();
+    dut.rst = 0;
 }
 
 // ============ DPI‑C: ebreak 触发退出 ==============
