@@ -18,8 +18,6 @@ extern "C" {
     // DPI IMPORTS
     // DPI import at vsrc/ctrl.v:4:30
     extern void npc_trap(int code);
-    // DPI import at vsrc/reg_file.v:4:30
-    extern void set_gpr_ptr(const svLogicVecVal* r);
 
 #ifdef __cplusplus
 }

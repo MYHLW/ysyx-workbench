@@ -6,17 +6,6 @@
 #include "Vysyx_25020059_top__Syms.h"
 #include "Vysyx_25020059_top___024root.h"
 
-void Vysyx_25020059_top___024unit____Vdpiimwrap_set_gpr_ptr_TOP____024unit(VlUnpacked<IData/*31:0*/, 32> r);
-
-VL_ATTR_COLD void Vysyx_25020059_top___024root___eval_initial__TOP(Vysyx_25020059_top___024root* vlSelf) {
-    (void)vlSelf;  // Prevent unused variable warning
-    Vysyx_25020059_top__Syms* const __restrict vlSymsp VL_ATTR_UNUSED = vlSelf->vlSymsp;
-    VL_DEBUG_IF(VL_DBG_MSGF("+    Vysyx_25020059_top___024root___eval_initial__TOP\n"); );
-    auto &vlSelfRef = std::ref(*vlSelf).get();
-    // Body
-    Vysyx_25020059_top___024unit____Vdpiimwrap_set_gpr_ptr_TOP____024unit(vlSelfRef.reg_f);
-}
-
 #ifdef VL_DEBUG
 VL_ATTR_COLD void Vysyx_25020059_top___024root___dump_triggers__stl(Vysyx_25020059_top___024root* vlSelf);
 #endif  // VL_DEBUG

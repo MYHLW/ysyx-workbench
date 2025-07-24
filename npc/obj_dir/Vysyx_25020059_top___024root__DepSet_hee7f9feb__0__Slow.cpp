@@ -12,15 +12,12 @@ VL_ATTR_COLD void Vysyx_25020059_top___024root___eval_static(Vysyx_25020059_top_
     auto &vlSelfRef = std::ref(*vlSelf).get();
 }
 
-VL_ATTR_COLD void Vysyx_25020059_top___024root___eval_initial__TOP(Vysyx_25020059_top___024root* vlSelf);
-
 VL_ATTR_COLD void Vysyx_25020059_top___024root___eval_initial(Vysyx_25020059_top___024root* vlSelf) {
     (void)vlSelf;  // Prevent unused variable warning
     Vysyx_25020059_top__Syms* const __restrict vlSymsp VL_ATTR_UNUSED = vlSelf->vlSymsp;
     VL_DEBUG_IF(VL_DBG_MSGF("+    Vysyx_25020059_top___024root___eval_initial\n"); );
     auto &vlSelfRef = std::ref(*vlSelf).get();
     // Body
-    Vysyx_25020059_top___024root___eval_initial__TOP(vlSelf);
     vlSelfRef.__Vtrigprevexpr___TOP__clk__0 = vlSelfRef.clk;
     vlSelfRef.__Vtrigprevexpr___TOP__ysyx_25020059_top__DOT__rst_n__0 
         = vlSelfRef.ysyx_25020059_top__DOT__rst_n;
