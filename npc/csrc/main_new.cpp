@@ -46,13 +46,9 @@ void single_cycle() {
 
 // 复位 n 个周期
 static void reset(int n) {
-    while (n-- > 0) {
-        dut.rst = 0; // 复位信号高
-        single_cycle(); // 执行一个周期
-    }
-    // dut.rst = 0; 
-    // //while (n-- > 0) single_cycle();
-    // dut.rst = 1; 
+    dut.rst = 0; 
+    while (n-- > 0) single_cycle();
+    dut.rst = 1; 
 }
 
 // ============ DPI‑C: ebreak 触发退出 ==============
@@ -85,8 +81,9 @@ int main(int argc, char **argv) {
     tfp->open("Vysyx_25020059.vcd");
 
     // 初始化时钟与复位
-    dut.clk = 0;
-    reset(2);
+    dut.clk = 1;
+    dut.rst = 1; // 复位信号
+    //reset(2);
 
 
     // 仿真主循环，直到 ebreak 调用 npc_trap 退出进程
