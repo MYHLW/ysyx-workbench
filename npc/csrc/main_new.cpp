@@ -82,7 +82,7 @@ int main(int argc, char **argv) {
 
     // 初始化时钟与复位
     dut.clk = 1;
-    dut.rst = 1; // 复位信号
+    dut.rst = 0; // 复位信号
     //reset(2);
 
 
