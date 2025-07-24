@@ -29,7 +29,7 @@ wire [`REG_ADDR_WIDTH-1:0] rd   = inst[`REG_ADDR_WIDTH+`RD_BASE-1:`RD_BASE];
 wire [`REG_ADDR_WIDTH-1:0] rs1  = inst[`REG_ADDR_WIDTH+`RS1_BASE-1:`RS1_BASE]; 
 wire [`REG_ADDR_WIDTH-1:0] rs2  = inst[`REG_ADDR_WIDTH+`RS2_BASE-1:`RS2_BASE]; 
 wire [11:0]             imm12   = inst[31:20];  // 用于 ebreak 指令的高 12 位
-wire [31:0]                code = a0; 
+wire [31:0]             code    = a0; 
 
 always @(*) begin
     branch      = 1'b0;
@@ -43,7 +43,7 @@ always @(*) begin
     alu_op      = `ALU_AND;
     alu_src_sel = `ALU_SRC_REG;
 
-    // ebreak 检测：SYSTEM opcode + funct3==0 + imm12==1
+    // ebreak 检测：
     if (opcode ==  7'b1110011 && funct3 == 3'b000 && imm12 == 12'h001) begin
         npc_trap(code);
     end
