@@ -83,7 +83,7 @@ int main(int argc, char **argv) {
     // 初始化时钟与复位
     dut.clk = 1;
     dut.rst = 0; // 复位信号
-    //reset(2);
+    reset(2);
 
 
     // 仿真主循环，直到 ebreak 调用 npc_trap 退出进程
