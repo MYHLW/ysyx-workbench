@@ -57,15 +57,15 @@ static bool sim_done = false;
 
 // DPI 回调
 extern "C" void npc_trap(int code) {
-  static bool triggered = false;
-  if (triggered) return;  // 已打印过，直接丢弃
-  triggered = true;
-  if (code == 0) {
-    printf("[NPC] GOOD TRAP: program exited successfully.\n");
-  } else {
-    printf("[NPC] BAD TRAP: program failed (code=%d).\n", code);
+    static bool triggered = false;
+    if (triggered) return;  // 已打印过，直接丢弃
+    triggered = true;
+    if (code == 0) {
+        printf("\033[32m[NPC] GOOD TRAP: program exited successfully.\033[0m\n");
+    } else {
+        printf("\033[31m[NPC] BAD TRAP: program failed (code=%d).\033[0m\n", code);
   }
-  sim_done = true;
+    sim_done = true;
 }
 
 int main(int argc, char **argv) {
