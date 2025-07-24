@@ -109,13 +109,13 @@ int main(int argc, char **argv) {
     }
     
     // 循环结束后，再打印 GOOD/BAD TRAP
+    printf("\n");
     if (trap_code == 0) {
-        printf("\n");
         printf("\033[32m[NPC] HIT GOOD TRAP: program exited successfully.\033[0m\n");
     } else {
-        printf("\n");
         printf("\033[31m[NPC] HIT BAD TRAP: program failed (code=%d).\033[0m\n",trap_code);
     }
+    printf("\n");
     // 清理（理论上不可达）
     tfp->close();
     delete tfp;
