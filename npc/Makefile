@@ -20,7 +20,7 @@ sim2:
 #./obj_dir/Vysyx_25020059_top ./program/*.bin
 	@echo "=> Running NPC with image: $(IMG)"
 	./obj_dir/Vysyx_25020059_top $(IMG)
-#gtkwave ./Vysyx_25020059.vcd
+	gtkwave ./Vysyx_25020059.vcd
 
 
 clean:
