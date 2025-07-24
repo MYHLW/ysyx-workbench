@@ -8,7 +8,7 @@ module muxpc #(
 )(
     input                        ena,         // 使能，复位后才开始更新 PC
     input                        branch,      // 分支指令是否有效
-    input                        reg1_rdata,  // 寄存器1数据
+    input  [`CPU_WIDTH-1:0]      reg1_rdata,  // 寄存器1数据(忘记位宽这事了)
     input                        zero,        // ALU zero 标志
     input                        jal_jump,        // JAL
     input                        jalr_jump,        // JALR
