@@ -93,7 +93,7 @@ always @(*) begin
         end
         
         `INST_JAL: begin // only jal
-            jal_jump        = 1'b1;
+            jal_jump    = 1'b1;
             reg_wen     = 1'b1;
             reg_waddr   = rd;
             imm_gen_op  = `IMM_GEN_J;
