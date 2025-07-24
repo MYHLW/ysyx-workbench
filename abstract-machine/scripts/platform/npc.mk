@@ -36,4 +36,4 @@ run: image
 	@echo "==> Copying AM image to NPC dir"
 	@cp $(AM_IMAGE) $(NPC_DIR)/program/
 	@echo "==> Launching NPC sim"
-#@$(MAKE) -C $(NPC_DIR) sim2 IMG=$(AM_IMAGE)
+	@$(MAKE) -C $(NPC_DIR) sim2 IMG=$(AM_IMAGE)
