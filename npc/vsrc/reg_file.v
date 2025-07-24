@@ -15,7 +15,7 @@ module reg_file (
     output reg [`CPU_WIDTH-1:0]        reg_f [`REG_DATA_DEPTH-1:0] // Register file array
 );
 
-reg [`CPU_WIDTH-1:0] reg_f [0:`REG_DATA_DEPTH-1];
+//reg [`CPU_WIDTH-1:0] reg_f [0:`REG_DATA_DEPTH-1];
 
 // Register write operation
 // always @(posedge clk or negedge rst_n) begin
