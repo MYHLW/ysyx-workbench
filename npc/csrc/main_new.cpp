@@ -88,10 +88,10 @@ int main(int argc, char **argv) {
 
     // 仿真主循环，直到 ebreak 调用 npc_trap 退出进程
     while (true) {
+         // 单周期推进
+        single_cycle();
         // 提取并分发指令
         dut.inst = pmem_read(nullptr, dut.curr_pc);
-        // 单周期推进
-        single_cycle();
         // 波形记录
         tfp->dump(ctx->time());
         ctx->timeInc(1);
