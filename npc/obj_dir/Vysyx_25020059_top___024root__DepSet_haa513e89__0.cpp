@@ -175,21 +175,6 @@ VL_INLINE_OPT void Vysyx_25020059_top___024root___ico_sequent__TOP__0(Vysyx_2502
             if ((0x13U != (0x7fU & vlSelfRef.inst))) {
                 if ((0x67U == (0x7fU & vlSelfRef.inst))) {
                     vlSelfRef.ysyx_25020059_top__DOT__jalr_jump = 1U;
-                    vlSelfRef.ysyx_25020059_top__DOT__imm_gen_op = 0U;
-                } else {
-                    vlSelfRef.ysyx_25020059_top__DOT__imm_gen_op 
-                        = ((0x63U == (0x7fU & vlSelfRef.inst))
-                            ? 2U : ((0x6fU == (0x7fU 
-                                               & vlSelfRef.inst))
-                                     ? 3U : ((0x37U 
-                                              == (0x7fU 
-                                                  & vlSelfRef.inst))
-                                              ? 4U : 
-                                             ((0x17U 
-                                               == (0x7fU 
-                                                   & vlSelfRef.inst))
-                                               ? 4U
-                                               : 1U))));
                 }
                 if ((0x67U != (0x7fU & vlSelfRef.inst))) {
                     if ((0x63U != (0x7fU & vlSelfRef.inst))) {
@@ -202,6 +187,18 @@ VL_INLINE_OPT void Vysyx_25020059_top___024root___ico_sequent__TOP__0(Vysyx_2502
                                           >> 0xcU)))) {
                             vlSelfRef.ysyx_25020059_top__DOT__branch = 1U;
                         }
+                        vlSelfRef.ysyx_25020059_top__DOT__imm_gen_op = 2U;
+                    } else {
+                        vlSelfRef.ysyx_25020059_top__DOT__imm_gen_op 
+                            = ((0x6fU == (0x7fU & vlSelfRef.inst))
+                                ? 3U : ((0x37U == (0x7fU 
+                                                   & vlSelfRef.inst))
+                                         ? 4U : ((0x17U 
+                                                  == 
+                                                  (0x7fU 
+                                                   & vlSelfRef.inst))
+                                                  ? 4U
+                                                  : 1U)));
                     }
                 }
             }
