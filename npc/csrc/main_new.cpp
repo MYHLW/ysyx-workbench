@@ -78,7 +78,7 @@ int main(int argc, char **argv) {
     VerilatedContext *ctx = new VerilatedContext;
     VerilatedVcdC *tfp = new VerilatedVcdC;
     dut.trace(tfp, 5);
-    tfp->open("npc_sim.vcd");
+    tfp->open("Vysyx_25020059.vcd");
 
     // 初始化时钟与复位
     dut.clk = 0;
