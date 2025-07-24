@@ -83,7 +83,7 @@ int main(int argc, char **argv) {
     // 初始化时钟与复位
     dut.clk = 0;
     reset(2);
-    dut.eval(); // 评估初始状态
+
 
     // 仿真主循环，直到 ebreak 调用 npc_trap 退出进程
     while (true) {
