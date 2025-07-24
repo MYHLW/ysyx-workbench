@@ -95,10 +95,10 @@ VL_ATTR_COLD void Vysyx_25020059_top___024root__trace_init_sub__TOP__0(Vysyx_250
     tracep->declBus(c+18,0,"alu_src2",-1, VerilatedTraceSigDirection::OUTPUT, VerilatedTraceSigKind::WIRE, VerilatedTraceSigType::LOGIC, false,-1, 31,0);
     tracep->popPrefix();
     tracep->pushPrefix("u_mux_pc_0", VerilatedTracePrefixType::SCOPE_MODULE);
-    tracep->declBus(c+65,0,"PC_INC",-1, VerilatedTraceSigDirection::NONE, VerilatedTraceSigKind::PARAMETER, VerilatedTraceSigType::LOGIC, false,-1, 31,0);
+    tracep->declBus(c+64,0,"PC_INC",-1, VerilatedTraceSigDirection::NONE, VerilatedTraceSigKind::PARAMETER, VerilatedTraceSigType::LOGIC, false,-1, 31,0);
     tracep->declBit(c+56,0,"ena",-1, VerilatedTraceSigDirection::INPUT, VerilatedTraceSigKind::WIRE, VerilatedTraceSigType::LOGIC, false,-1);
     tracep->declBit(c+2,0,"branch",-1, VerilatedTraceSigDirection::INPUT, VerilatedTraceSigKind::WIRE, VerilatedTraceSigType::LOGIC, false,-1);
-    tracep->declBit(c+64,0,"reg1_rdata",-1, VerilatedTraceSigDirection::INPUT, VerilatedTraceSigKind::WIRE, VerilatedTraceSigType::LOGIC, false,-1);
+    tracep->declBus(c+15,0,"reg1_rdata",-1, VerilatedTraceSigDirection::INPUT, VerilatedTraceSigKind::WIRE, VerilatedTraceSigType::LOGIC, false,-1, 31,0);
     tracep->declBit(c+13,0,"zero",-1, VerilatedTraceSigDirection::INPUT, VerilatedTraceSigKind::WIRE, VerilatedTraceSigType::LOGIC, false,-1);
     tracep->declBit(c+3,0,"jal_jump",-1, VerilatedTraceSigDirection::INPUT, VerilatedTraceSigKind::WIRE, VerilatedTraceSigType::LOGIC, false,-1);
     tracep->declBit(c+4,0,"jalr_jump",-1, VerilatedTraceSigDirection::INPUT, VerilatedTraceSigKind::WIRE, VerilatedTraceSigType::LOGIC, false,-1);
@@ -177,7 +177,7 @@ VL_ATTR_COLD void Vysyx_25020059_top___024root__trace_const_0_sub_0(Vysyx_250200
     // Init
     uint32_t* const oldp VL_ATTR_UNUSED = bufp->oldp(vlSymsp->__Vm_baseCode);
     // Body
-    bufp->fullIData(oldp+65,(4U),32);
+    bufp->fullIData(oldp+64,(4U),32);
 }
 
 VL_ATTR_COLD void Vysyx_25020059_top___024root__trace_full_0_sub_0(Vysyx_25020059_top___024root* vlSelf, VerilatedVcd::Buffer* bufp);
@@ -266,6 +266,4 @@ VL_ATTR_COLD void Vysyx_25020059_top___024root__trace_full_0_sub_0(Vysyx_2502005
     bufp->fullCData(oldp+62,((0x1fU & (vlSelfRef.inst 
                                        >> 0x14U))),5);
     bufp->fullSData(oldp+63,((vlSelfRef.inst >> 0x14U)),12);
-    bufp->fullBit(oldp+64,(((0U != (IData)(vlSelfRef.ysyx_25020059_top__DOT__reg1_raddr)) 
-                            & vlSelfRef.reg_f[vlSelfRef.ysyx_25020059_top__DOT__reg1_raddr])));
 }

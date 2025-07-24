@@ -294,9 +294,7 @@ VL_INLINE_OPT void Vysyx_25020059_top___024root___ico_sequent__TOP__0(Vysyx_2502
                                  + vlSelfRef.ysyx_25020059_top__DOT__imm)
                               : ((IData)(vlSelfRef.ysyx_25020059_top__DOT__jalr_jump)
                                   ? (0xfffffffeU & 
-                                     (((0U != (IData)(vlSelfRef.ysyx_25020059_top__DOT__reg1_raddr)) 
-                                       & vlSelfRef.reg_f
-                                       [vlSelfRef.ysyx_25020059_top__DOT__reg1_raddr]) 
+                                     (vlSelfRef.ysyx_25020059_top__DOT__reg1_rdata 
                                       + vlSelfRef.ysyx_25020059_top__DOT__imm))
                                   : (((IData)(vlSelfRef.ysyx_25020059_top__DOT__branch) 
                                       & (IData)(vlSelfRef.ysyx_25020059_top__DOT__zero))
