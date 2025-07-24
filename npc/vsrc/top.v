@@ -16,7 +16,8 @@ wire                         ena;
 
 wire                         branch;     // branch flag
 wire                         zero;       // alu result is zero
-wire                         jump;       // jump flag
+wire                         jal_jump;       // jump flag
+wire                         jalr_jump;       // jalr jump flag
 
 //wire [`CPU_WIDTH-1:0]        inst;       // instruction
 
@@ -50,8 +51,10 @@ pc_reg u_pc_reg_0(
 muxpc u_mux_pc_0(
     .ena                            ( ena                           ),
     .branch                         ( branch                        ),
+    .reg1_rdata                     ( reg1_rdata                    ),
     .zero                           ( zero                          ),
-    .jump                           ( jump                          ),
+    .jal_jump                       ( jal_jump                      ),
+    .jalr_jump                      ( jalr_jump                     ),
     .imm                            ( imm                           ),
     .curr_pc                        ( curr_pc                       ),
     .next_pc                        ( next_pc                       )
@@ -62,7 +65,8 @@ muxpc u_mux_pc_0(
 ctrl u_ctrl_0(
     .inst                           ( inst                          ),
     .branch                         ( branch                        ),
-    .jump                           ( jump                          ),
+    .jal_jump                       ( jal_jump                      ),
+    .jalr_jump                      ( jalr_jump                     ),
     .reg_wen                        ( reg_wen                       ),
     .reg1_raddr                     ( reg1_raddr                    ),
     .reg2_raddr                     ( reg2_raddr                    ),
