@@ -37,6 +37,7 @@ class alignas(VL_CACHE_LINE_BYTES) Vysyx_25020059_top VL_NOT_FINAL : public Veri
     VL_IN(&inst,31,0);
     VL_OUT(&curr_pc,31,0);
     VL_OUT(&next_pc,31,0);
+    VL_OUT((&reg_f)[32],31,0);
 
     // CELLS
     // Public to allow access to /* verilator public */ items.

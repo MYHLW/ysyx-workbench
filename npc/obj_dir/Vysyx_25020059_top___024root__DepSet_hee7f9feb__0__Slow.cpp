@@ -188,6 +188,9 @@ VL_ATTR_COLD void Vysyx_25020059_top___024root___ctor_var_reset(Vysyx_25020059_t
     vlSelf->inst = VL_RAND_RESET_I(32);
     vlSelf->curr_pc = VL_RAND_RESET_I(32);
     vlSelf->next_pc = VL_RAND_RESET_I(32);
+    for (int __Vi0 = 0; __Vi0 < 32; ++__Vi0) {
+        vlSelf->reg_f[__Vi0] = VL_RAND_RESET_I(32);
+    }
     vlSelf->ysyx_25020059_top__DOT__rst_n = VL_RAND_RESET_I(1);
     vlSelf->ysyx_25020059_top__DOT__ena = VL_RAND_RESET_I(1);
     vlSelf->ysyx_25020059_top__DOT__branch = VL_RAND_RESET_I(1);
@@ -207,9 +210,6 @@ VL_ATTR_COLD void Vysyx_25020059_top___024root___ctor_var_reset(Vysyx_25020059_t
     vlSelf->ysyx_25020059_top__DOT__alu_src1 = VL_RAND_RESET_I(32);
     vlSelf->ysyx_25020059_top__DOT__alu_src2 = VL_RAND_RESET_I(32);
     vlSelf->ysyx_25020059_top__DOT__alu_res = VL_RAND_RESET_I(32);
-    for (int __Vi0 = 0; __Vi0 < 32; ++__Vi0) {
-        vlSelf->ysyx_25020059_top__DOT__u_reg_file_0__DOT__reg_f[__Vi0] = VL_RAND_RESET_I(32);
-    }
     vlSelf->__Vtrigprevexpr___TOP__clk__0 = VL_RAND_RESET_I(1);
     vlSelf->__Vtrigprevexpr___TOP__ysyx_25020059_top__DOT__rst_n__0 = VL_RAND_RESET_I(1);
     for (int __Vi0 = 0; __Vi0 < 3; ++__Vi0) {

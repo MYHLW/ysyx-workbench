@@ -47,7 +47,7 @@ class alignas(VL_CACHE_LINE_BYTES) Vysyx_25020059_top___024root final : public V
     IData/*31:0*/ ysyx_25020059_top__DOT__alu_src2;
     IData/*31:0*/ ysyx_25020059_top__DOT__alu_res;
     IData/*31:0*/ __VactIterCount;
-    VlUnpacked<IData/*31:0*/, 32> ysyx_25020059_top__DOT__u_reg_file_0__DOT__reg_f;
+    VL_OUT(reg_f[32],31,0);
     VlUnpacked<CData/*0:0*/, 3> __Vm_traceActivity;
     VlTriggerVec<1> __VstlTriggered;
     VlTriggerVec<1> __VicoTriggered;
