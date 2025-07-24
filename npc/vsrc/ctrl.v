@@ -113,6 +113,7 @@ always @(*) begin
             imm_gen_op  = `IMM_GEN_U;
             alu_op      = `ALU_ADD;
             alu_src_sel = `ALU_SRC_IMM_PC; // pc + imm
+        end
     endcase 
 end
 
