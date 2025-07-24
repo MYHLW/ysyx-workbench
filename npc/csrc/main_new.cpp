@@ -52,9 +52,17 @@ static void reset(int n) {
 }
 
 // ============ DPI‑C: ebreak 触发退出 ==============
+// 在 main.cpp（全局作用域）
+static bool sim_done = false;
+
+// DPI 回调
 extern "C" void npc_trap(int code) {
-    printf("[DPI] ebreak, PC = 0x%08X, code = %d\n", (uint32_t)dut.curr_pc, code);
-    //exit(0);
+  if (code == 0) {
+    printf("[NPC] GOOD TRAP: program exited successfully.\n");
+  } else {
+    printf("[NPC] BAD TRAP: program failed (code=%d).\n", code);
+  }
+  sim_done = true;      // 仅置标志，不直接 exit()
 }
 
 int main(int argc, char **argv) {
@@ -87,7 +95,7 @@ int main(int argc, char **argv) {
 
 
     // 仿真主循环，直到 ebreak 调用 npc_trap 退出进程
-    while (true) {
+    while (!Verilated::gotFinish() && !sim_done) {
         // 单周期推进
         single_cycle();
         // 提取并分发指令
