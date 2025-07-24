@@ -54,7 +54,7 @@ static void reset(int n) {
 // ============ DPI‑C: ebreak 触发退出 ==============
 extern "C" void npc_trap(int code) {
     printf("[DPI] ebreak, PC = 0x%08X, code = %d\n", (uint32_t)dut.curr_pc, code);
-    exit(0);
+    //exit(0);
 }
 
 int main(int argc, char **argv) {
