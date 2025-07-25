@@ -21,11 +21,11 @@ uint8_t*          memory    = nullptr;
 #define MEM_BASE    0x80000000U
 #define MEM_SIZE    (8 * 1024 * 1024)  // 8MB
 
-// 从仿真内存读取指令
-uint32_t pmem_read(uint32_t vaddr) {
-    uint32_t off = vaddr - MEM_BASE;  // 转换为偏移
-    return *(uint32_t*)(memory + off);
-}
+// // 从仿真内存读取指令
+// uint32_t pmem_read(uint32_t vaddr) {
+//     uint32_t off = vaddr - MEM_BASE;  // 转换为偏移
+//     return *(uint32_t*)(memory + off);
+// }
 
 // 加载程序镜像
 void load_image(const char* filename) {
