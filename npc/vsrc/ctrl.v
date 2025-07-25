@@ -19,13 +19,13 @@ module ctrl (
     output reg [`IMM_GEN_OP_WIDTH-1:0] imm_gen_op, // immediate extend opcode
 
     output reg [`ALU_OP_WIDTH-1:0]     alu_op,     // alu opcode
-    output reg [`ALU_SRC_WIDTH-1:0]    alu_src_sel // alu source select flag
+    output reg [`ALU_SRC_WIDTH-1:0]    alu_src_sel, // alu source select flag
 
     // === memory ===
     output reg                         mem_valid,       // 是 load/store 指令
     output reg                         mem_wen,         // store?
     output reg [1:0]                   mem_size,        // 00=byte, 10=word
-    output reg                         mem_unsigned,    // 对 load：是否零扩展
+    output reg                         mem_unsigned    // 对 load：是否零扩展
     //output reg [`CPU_WIDTH-1:0]        mem_wdata        // 由 reg2_rdata 提供
 );
 
