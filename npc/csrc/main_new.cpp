@@ -50,20 +50,21 @@ void load_image(const char *filename) {
 
 // 一个时钟周期
 // 改写原 single_cycle，增加周期计数和状态更新
-void single_cycle() {
-    dut.clk = 0;dut.eval();
+void single_cycle(VerilatedContext *ctx, VerilatedVcdC *tfp) {
+    dut.clk = 0; dut.eval();
     tfp->dump(ctx->time());  // 记录波形
     ctx->timeInc(1);
-    dut.clk = 1;dut.eval();
+    dut.clk = 1; dut.eval();
     tfp->dump(ctx->time());  // 记录波形
     ctx->timeInc(1);
 
     sim_cycle++;  // 周期计数+1
 }
+
 // 复位 n 个周期
-static void reset(int n) {
+static void reset(int n, VerilatedContext *ctx, VerilatedVcdC *tfp) {
     dut.rst = 1; 
-    while (n-- > 0) single_cycle();
+    while (n-- > 0) single_cycle(ctx, tfp);
     dut.rst = 0; 
 }
 
@@ -106,13 +107,13 @@ int main(int argc, char **argv) {
     // 初始化时钟与复位
     dut.clk = 1;
     dut.rst = 0; // 复位信号
-    reset(2);
+    reset(2, ctx, tfp);
 
 
     // 仿真主循环，直到 ebreak 调用 npc_trap 退出进程
     while (!Verilated::gotFinish() && !sim_done) {
         // 单周期推进
-        single_cycle();
+        single_cycle(ctx, tfp);
         // 提取并分发指令
         dut.inst = pmem_read(nullptr, dut.curr_pc);
         
