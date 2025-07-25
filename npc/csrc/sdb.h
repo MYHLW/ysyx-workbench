@@ -22,8 +22,4 @@ void cmd_info_reg();          // 查看寄存器
 void cmd_help();              // 帮助命令
 void sdb_mainloop();          // 命令行主循环
 
-// 声明仿真控制函数
-void single_cycle();                  // 单时钟周期
-void reset(int n);                    // 复位函数
-
 #endif  // SDB_H
