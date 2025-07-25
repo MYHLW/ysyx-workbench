@@ -1,7 +1,5 @@
 `include "../vsrc/rvseed_defines.v"
 
-// === 1. DPI‑C 函数导入 ===
-
 module reg_file (
     input                               clk,
     input                               rst_n,
