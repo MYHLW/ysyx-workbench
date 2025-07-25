@@ -17,7 +17,7 @@ extern uint64_t sim_cycle;
 
 // single_cycle 在 main_new.cpp 中定义
 extern void single_cycle();
-extern uint32_t pmem_read();
+//extern uint32_t pmem_read();
 //extern inline uint32_t guest_to_host(uint32_t addr);
 
 // 调试命令接口
@@ -29,3 +29,5 @@ void sdb_mainloop();
 
 // 来自 DPI 的陷阱回调
 extern "C" void npc_trap(int code);
+extern "C" uint32_t pmem_read(uint32_t vaddr);
+//=======================================================
