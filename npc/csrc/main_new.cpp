@@ -14,6 +14,16 @@
 static Vysyx_25020059_top dut;
 static uint8_t *memory;
 
+// 全局变量：控制仿真状态
+static bool is_running = false;  // 是否处于连续运行状态
+static uint64_t sim_cycle = 0;   // 记录总仿真周期数
+
+// 声明后续需要的函数
+void cmd_si(int steps);          // 单步执行函数
+void cmd_continue();             // 继续运行函数
+void cmd_info_reg();             // 查看寄存器信息
+void cmd_help();                 // 帮助命令
+
 // 将虚拟地址转换为内存数组偏移
 static inline uint32_t guest_to_host(uint32_t addr) {
     return addr - MEM_BASE;
@@ -39,11 +49,17 @@ void load_image(const char *filename) {
 }
 
 // 一个时钟周期
+// 改写原 single_cycle，增加周期计数和状态更新
 void single_cycle() {
-    dut.clk = 0; dut.eval();
-    dut.clk = 1; dut.eval();
-}
+    dut.clk = 0;dut.eval();
+    tfp->dump(ctx->time());  // 记录波形
+    ctx->timeInc(1);
+    dut.clk = 1;dut.eval();
+    tfp->dump(ctx->time());  // 记录波形
+    ctx->timeInc(1);
 
+    sim_cycle++;  // 周期计数+1
+}
 // 复位 n 个周期
 static void reset(int n) {
     dut.rst = 1; 
@@ -108,8 +124,7 @@ int main(int argc, char **argv) {
         //printf("reg=0x%08X \n",(uint32_t)dut.reg_f[1])
 
     }
-    
-    // 循环结束后，再打印 GOOD/BAD TRAP
+
     printf("\n");
     if (trap_code == 0) {
         printf("\033[32m[NPC] HIT GOOD TRAP: program exited successfully.\033[0m\n");
@@ -117,7 +132,7 @@ int main(int argc, char **argv) {
         printf("\033[31m[NPC] HIT BAD TRAP: program failed (code=%d).\033[0m\n",trap_code);
     }
     printf("\n");
-    // 清理（理论上不可达）
+
     tfp->close();
     delete tfp;
     delete ctx;
