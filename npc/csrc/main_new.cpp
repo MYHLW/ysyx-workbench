@@ -7,6 +7,21 @@
 #include <verilated_vcd_c.h>
 #include <verilated_dpi.h>
 
+// 在现有头文件后添加
+#include <readline/readline.h>   // 用于命令行输入
+#include <readline/history.h>    // 记录命令历史
+#include <map>                   // 存储命令映射
+
+// 全局变量：控制仿真状态
+static bool is_running = false;  // 是否处于连续运行状态
+static uint64_t sim_cycle = 0;   // 记录总仿真周期数
+
+// 声明后续需要的函数
+void cmd_si(int steps);          // 单步执行函数
+void cmd_continue();             // 继续运行函数
+void cmd_info_reg();             // 查看寄存器信息
+void cmd_help();                 // 帮助命令
+
 // 仿真内存基址和大小定义
 #define MEM_BASE       0x80000000U
 #define MEM_SIZE       (8 * 1024 * 1024) // 8MB
@@ -38,16 +53,27 @@ void load_image(const char *filename) {
     printf("Loaded binary '%s' (%zu bytes) at 0x%08X\n", filename, sz, MEM_BASE);
 }
 
-// 一个时钟周期
-void single_cycle() {
-    dut.clk = 0; dut.eval();
-    dut.clk = 1; dut.eval();
+void single_cycle(VerilatedContext *ctx, VerilatedVcdC *tfp) {
+    dut.clk = 0; 
+    dut.eval();
+    tfp->dump(ctx->time());  // 记录波形
+    ctx->timeInc(1);
+
+    dut.clk = 1; 
+    dut.eval();
+    // 提取并分发指令
+    dut.inst = pmem_read(nullptr, dut.curr_pc);
+    tfp->dump(ctx->time());  // 记录波形
+    ctx->timeInc(1);
+
+    sim_cycle++;  // 周期计数+1
 }
 
+        
 // 复位 n 个周期
-static void reset(int n) {
+static void reset(int n, VerilatedContext *ctx, VerilatedVcdC *tfp) {
     dut.rst = 1; 
-    while (n-- > 0) single_cycle();
+    while (n-- > 0) single_cycle(ctx, tfp);
     dut.rst = 0; 
 }
 
@@ -63,6 +89,7 @@ extern "C" void npc_trap(int code) {
     trap_code  = code;
   }
 }
+//==================================================
 
 int main(int argc, char **argv) {
     if (argc < 2) {
@@ -87,22 +114,14 @@ int main(int argc, char **argv) {
     dut.trace(tfp, 5);
     tfp->open("Vysyx_25020059.vcd");
 
-    // 初始化时钟与复位
-    dut.clk = 1;
-    dut.rst = 0; // 复位信号
-    reset(2);
+    reset(2, ctx, tfp);
 
 
     // 仿真主循环，直到 ebreak 调用 npc_trap 退出进程
     while (!Verilated::gotFinish() && !sim_done) {
         // 单周期推进
-        single_cycle();
-        // 提取并分发指令
-        dut.inst = pmem_read(nullptr, dut.curr_pc);
-        
-        // 波形记录
-        tfp->dump(ctx->time());
-        ctx->timeInc(1);
+        single_cycle(ctx, tfp);
+
         // 同步打印 PC 和指令
         printf("PC=0x%08X inst=0x%08X \n", (uint32_t)dut.curr_pc, dut.inst); // 假设 reg_f[1] 是要打印的寄存器
         //printf("reg=0x%08X \n",(uint32_t)dut.reg_f[1])
