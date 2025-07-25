@@ -64,7 +64,7 @@ void cmd_help(const char* /*args*/) {
      std::printf("  si [n]   - Step n cycles (default 1)\n");
      std::printf("  c        - Continue until trap\n");
      std::printf("  info     - Show registers\n");
-     std::printf("  x addr(0x????) [n] - Scan memory: dump n words from addr (default n=1)\n");
+     std::printf("  x addr(0x80000000) [n] - Scan memory: dump n words from addr (default n=1)\n");
      std::printf("  help     - Show this help\n");
      std::printf("  q        - Quit simulation\n");
  }
