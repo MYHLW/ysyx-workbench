@@ -7,13 +7,6 @@
 #include <verilated_vcd_c.h>
 #include <verilated_dpi.h>
 
-// 在现有头文件后添加
-#include <readline/readline.h>   // 用于命令行输入
-#include <readline/history.h>    // 记录命令历史
-#include <map>                   // 存储命令映射
-
-#include "sdb.h"  // 引入 sdb 模块
-
 // 仿真内存基址和大小定义
 #define MEM_BASE       0x80000000U
 #define MEM_SIZE       (8 * 1024 * 1024) // 8MB
