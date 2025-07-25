@@ -20,6 +20,13 @@ module ctrl (
 
     output reg [`ALU_OP_WIDTH-1:0]     alu_op,     // alu opcode
     output reg [`ALU_SRC_WIDTH-1:0]    alu_src_sel // alu source select flag
+
+    // === memory ===
+    output reg                         mem_valid,       // 是 load/store 指令
+    output reg                         mem_wen,         // store?
+    output reg [1:0]                   mem_size,        // 00=byte, 10=word
+    output reg                         mem_unsigned,    // 对 load：是否零扩展
+    //output reg [`CPU_WIDTH-1:0]        mem_wdata        // 由 reg2_rdata 提供
 );
 
 wire [`OPCODE_WIDTH-1:0] opcode = inst[`OPCODE_WIDTH-1:0];            
@@ -42,6 +49,11 @@ always @(*) begin
     imm_gen_op  = `IMM_GEN_I;
     alu_op      = `ALU_AND;
     alu_src_sel = `ALU_SRC_REG;
+    mem_valid    = 0;
+    mem_wen      = 0;
+    mem_size     = 2'b00;
+    mem_unsigned = 0;
+    //mem_wdata    = `CPU_WIDTH'b0;
 
     // ebreak 检测：
     if (opcode ==  7'b1110011 && funct3 == 3'b000 && imm12 == 12'h001) begin
@@ -116,7 +128,10 @@ always @(*) begin
             alu_op      = `ALU_ADD;
             alu_src_sel = `ALU_SRC_IMM_PC; // pc + imm
         end
-        `INST_TYPE_S: begin  //目前还是空指令，没有实现写入内存的操作
+        `INST_TYPE_S: begin
+            mem_valid   = 1'b1; // load/store 指令
+            mem_wen     = 1'b1; // store
+            //mem_wdata   = reg2_rdata; // 写数据来自寄存器rs2          
             reg1_raddr  = rs1;
             reg2_raddr  = rs2;
             imm_gen_op  = `IMM_GEN_S;
@@ -124,12 +139,58 @@ always @(*) begin
             case (funct3)
                 `INST_SB: 
                     alu_op = `ALU_ADD; // store byte
+                    mem_size = 2'b00; // byte
                 `INST_SH: 
                     alu_op = `ALU_ADD; // store halfword
+                    mem_size = 2'b01; // halfword
                 `INST_SW: 
                     alu_op = `ALU_ADD; // store word
+                    mem_size = 2'b10; // word
             endcase
         end
+        `INST_TYPE_IL: begin // lb/lh/lw/lbu/lhu
+            mem_valid   = 1'b1; // load/store 指令
+            reg_wen     = 1'b1;
+            reg1_raddr  = rs1;
+            reg_waddr   = rd;
+            imm_gen_op  = `IMM_GEN_I; 
+            alu_src_sel = `ALU_SRC_IMM;
+            case (funct3)
+                `INST_LB: begin
+                    alu_op = `ALU_ADD; // load byte
+                    mem_size = 2'b00; // byte
+                    mem_unsigned = 1'b0; // lb
+                end
+                `INST_LH: begin
+                    alu_op = `ALU_ADD; // load halfword
+                    mem_size = 2'b01; // halfword
+                    mem_unsigned = 1'b0; // lh
+                end
+                `INST_LW: begin
+                    alu_op = `ALU_ADD; // load word
+                    mem_size = 2'b10; // word
+                    mem_unsigned = 1'b0; // lw
+                end
+                `INST_LBU: begin
+                    alu_op = `ALU_ADD; // load byte unsigned
+                    mem_size = 2'b00; // byte
+                    mem_unsigned = 1'b1; // lbu 需要零扩展
+                end
+                `INST_LHU: begin
+                    alu_op = `ALU_ADD; // load halfword unsigned
+                    mem_size = 2'b01; // halfword
+                    mem_unsigned = 1'b1; // lhu
+                end
+            endcase
+            
+            // mem_valid   = 1'b1;
+            // mem_wen     = (opcode == `INST_TYPE_S) ? 1'b1 : 1'b0;
+            // mem_wdata   = reg2_rdata;
+        end
+
+            
+
+
     endcase 
 end
 

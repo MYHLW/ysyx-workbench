@@ -39,7 +39,13 @@ wire [`CPU_WIDTH-1:0]        alu_src1;   // alu source 1
 wire [`CPU_WIDTH-1:0]        alu_src2;   // alu source 2
 wire [`CPU_WIDTH-1:0]        alu_res;    // alu result
 
-assign reg_wdata = alu_res;
+wire                         mem_valid, mem_wen;
+wire [1:0]                   mem_size;
+wire                         mem_unsigned;
+wire [`CPU_WIDTH-1:0]        mem_rdata;
+
+
+assign reg_wdata = (mem_valid && !mem_wen) ? mem_rdata : alu_res; // 如果是 load 指令，则写入读出的数据，否则写入 ALU 结果
 
 pc_reg u_pc_reg_0(
     .clk                            ( clk                           ),
@@ -75,7 +81,13 @@ ctrl u_ctrl_0(
     .reg_waddr                      ( reg_waddr                     ),
     .imm_gen_op                     ( imm_gen_op                    ),
     .alu_op                         ( alu_op                        ),
-    .alu_src_sel                    ( alu_src_sel                   )
+    .alu_src_sel                    ( alu_src_sel                   ),
+    // …原有信号…
+    .mem_valid                      (mem_valid                      ),
+    .mem_wen                        (mem_wen                        ),
+    .mem_size                       (mem_size                       ),
+    .mem_unsigned                   (mem_unsigned                   )
+//    .mem_wdata                      (mem_wdata                      )
 );
 
 reg_file u_reg_file_0(
@@ -114,6 +126,19 @@ alu u_alu_0(
     .zero                           ( zero                          ),
     .alu_res                        ( alu_res                       )
 );
+
+memory_if u_mem_if_0(
+    .clk                            (clk),
+    .rst_n                          (rst_n),
+    .valid                          (mem_valid),
+    .wen                            (mem_wen),
+    .addr                           (alu_res), // 或者由 alu_res 提供地址
+    .wdata                          (reg2_rdata), // 写数据来自寄存器 rs2
+    .size                           (mem_size),
+    .unsigned_load                  (mem_unsigned),
+    .rdata                          (mem_rdata) // 读出数据,应该要跟加法的写入做一个选择
+);
+
 
 
 endmodule
