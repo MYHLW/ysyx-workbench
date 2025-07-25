@@ -14,36 +14,6 @@
 static Vysyx_25020059_top dut;
 static uint8_t *memory;
 
-// // 在现有头文件后添加
-// #include <readline/readline.h>   // 用于命令行输入
-// #include <readline/history.h>    // 记录命令历史
-// #include <map>                   // 存储命令映射
-
-// // 全局变量：控制仿真状态
-// static bool is_running = false;  // 是否处于连续运行状态
- static uint64_t sim_cycle = 0;   // 记录总仿真周期数
-
-// // 声明后续需要的函数
-// void cmd_si(int steps);          // 单步执行函数
-// void cmd_continue();             // 继续运行函数
-// void cmd_info_reg();             // 查看寄存器信息
-// void cmd_help();                 // 帮助命令
-
-// // 命令处理函数类型
-// typedef void (*cmd_func_t)(const char* args);
-
-// // 命令映射（命令名 -> 处理函数）
-// std::map<std::string, cmd_func_t> cmd_table = {
-//     {"si",    [](const char* args) { 
-//         int steps = args ? atoi(args) : 1;  // 支持 si 10 执行10步
-//         cmd_si(steps); 
-//     }},
-//     {"c",     [](const char* args) { cmd_continue(); }},  // 继续运行
-//     {"info r",[](const char* args) { cmd_info_reg(); }},  // 查看寄存器
-//     {"help",  [](const char* args) { cmd_help(); }},      // 帮助
-//     {"q",     [](const char* args) { sim_done = true; }},  // 退出
-// };
-
 // 将虚拟地址转换为内存数组偏移
 static inline uint32_t guest_to_host(uint32_t addr) {
     return addr - MEM_BASE;
@@ -69,25 +39,15 @@ void load_image(const char *filename) {
 }
 
 // 一个时钟周期
-// 改写原 single_cycle，增加周期计数和状态更新
-void single_cycle(VerilatedVcdC *tfp, VerilatedContext *ctx) {
-    dut.clk = 0; 
-    dut.eval();
-    tfp->dump(ctx->time());  // 记录波形
-    ctx->timeInc(1);
-
-    dut.clk = 1; 
-    dut.eval();
-    tfp->dump(ctx->time());  // 记录波形
-    ctx->timeInc(1);
-
-    sim_cycle++;  // 周期计数+1
+void single_cycle() {
+    dut.clk = 0; dut.eval();
+    dut.clk = 1; dut.eval();
 }
 
 // 复位 n 个周期
-static void reset(int n, VerilatedVcdC *tfp, VerilatedContext *ctx) {
+static void reset(int n) {
     dut.rst = 1; 
-    while (n-- > 0) single_cycle(tfp, ctx);
+    while (n-- > 0) single_cycle();
     dut.rst = 0; 
 }
 
@@ -127,14 +87,22 @@ int main(int argc, char **argv) {
     dut.trace(tfp, 5);
     tfp->open("Vysyx_25020059.vcd");
 
-    reset(2, tfp, ctx);
+    // 初始化时钟与复位
+    dut.clk = 1;
+    dut.rst = 0; // 复位信号
+    reset(2);
 
 
     // 仿真主循环，直到 ebreak 调用 npc_trap 退出进程
     while (!Verilated::gotFinish() && !sim_done) {
         // 单周期推进
-        single_cycle(tfp, ctx);
-
+        single_cycle();
+        // 提取并分发指令
+        dut.inst = pmem_read(nullptr, dut.curr_pc);
+        
+        // 波形记录
+        tfp->dump(ctx->time());
+        ctx->timeInc(1);
         // 同步打印 PC 和指令
         printf("PC=0x%08X inst=0x%08X \n", (uint32_t)dut.curr_pc, dut.inst); // 假设 reg_f[1] 是要打印的寄存器
         //printf("reg=0x%08X \n",(uint32_t)dut.reg_f[1])
@@ -156,6 +124,3 @@ int main(int argc, char **argv) {
     free(memory);
     return 0;
 }
-
-
-//============= 2. 命令行交互 ==============
