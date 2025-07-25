@@ -55,7 +55,9 @@ void single_cycle(VerilatedContext *ctx, VerilatedVcdC *tfp) {
     tfp->dump(ctx->time());  // 记录波形
     ctx->timeInc(1);
     dut.clk = 1; dut.eval();
+    
     dut.inst = pmem_read(nullptr, dut.curr_pc);
+    
     tfp->dump(ctx->time());  // 记录波形
     ctx->timeInc(1);
 
@@ -105,26 +107,14 @@ int main(int argc, char **argv) {
     dut.trace(tfp, 5);
     tfp->open("Vysyx_25020059.vcd");
 
-    // 初始化时钟与复位
-    dut.clk = 1;
-    dut.rst = 0; // 复位信号
     reset(2, ctx, tfp);
-
-
     // 仿真主循环，直到 ebreak 调用 npc_trap 退出进程
     while (!Verilated::gotFinish() && !sim_done) {
         // 单周期推进
         single_cycle(ctx, tfp);
-        // 提取并分发指令
-        
-        
-        // 波形记录
-        //tfp->dump(ctx->time());
-        //ctx->timeInc(1);
         // 同步打印 PC 和指令
         printf("PC=0x%08X inst=0x%08X \n", (uint32_t)dut.curr_pc, dut.inst); // 假设 reg_f[1] 是要打印的寄存器
         //printf("reg=0x%08X \n",(uint32_t)dut.reg_f[1])
-
     }
 
     printf("\n");
