@@ -25,11 +25,6 @@ static uint8_t *memory;
 static bool is_running = false;  // 是否处于连续运行状态
 static uint64_t sim_cycle = 0;   // 记录总仿真周期数
 
-// 声明后续需要的函数
-void cmd_si(int steps);          // 单步执行函数
-void cmd_continue();             // 继续运行函数
-void cmd_info_reg();             // 查看寄存器信息
-void cmd_help();                 // 帮助命令
 
 // 将虚拟地址转换为内存数组偏移
 static inline uint32_t guest_to_host(uint32_t addr) {
