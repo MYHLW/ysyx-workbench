@@ -54,7 +54,9 @@ void single_cycle(VerilatedContext *ctx, VerilatedVcdC *tfp) {
     dut.clk = 0; dut.eval();
     tfp->dump(ctx->time());  // 记录波形
     ctx->timeInc(1);
-    dut.clk = 1; dut.eval();
+    dut.clk = 1; 
+    dut.inst = pmem_read(nullptr, dut.curr_pc);
+    dut.eval();
     tfp->dump(ctx->time());  // 记录波形
     ctx->timeInc(1);
 
@@ -115,7 +117,7 @@ int main(int argc, char **argv) {
         // 单周期推进
         single_cycle(ctx, tfp);
         // 提取并分发指令
-        dut.inst = pmem_read(nullptr, dut.curr_pc);
+        
         
         // 波形记录
         //tfp->dump(ctx->time());
