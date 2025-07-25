@@ -21,14 +21,9 @@ uint8_t*          memory    = nullptr;
 #define MEM_BASE    0x80000000U
 #define MEM_SIZE    (8 * 1024 * 1024)  // 8MB
 
-// 虚拟地址转宿主地址(全局变量)
-static inline uint32_t guest_to_host(uint32_t addr) {
-    return addr - MEM_BASE;
-}
-
 // 从仿真内存读取指令
-uint32_t pmem_read(uint32_t* /*unused*/, uint32_t vaddr) {
-    uint32_t off = guest_to_host(vaddr);
+uint32_t pmem_read(uint32_t vaddr) {
+    uint32_t off = vaddr - MEM_BASE;  // 转换为偏移
     return *(uint32_t*)(memory + off);
 }
 
@@ -54,7 +49,7 @@ void single_cycle() {
 
     dut.clk = 1;
     dut.eval();
-    dut.inst = pmem_read(nullptr, dut.curr_pc);
+    dut.inst = pmem_read(dut.curr_pc);
     tfp->dump(ctx->time());
     ctx->timeInc(1);
 
