@@ -112,5 +112,15 @@ extern "C" uint32_t pmem_read(uint32_t vaddr){
     return *(uint32_t*)(memory + off);
 }
 
+extern "C" void pmem_write(uint32_t addr, uint32_t data, uint8_t wmask) {
+    uint32_t off = addr - MEM_BASE;
+    uint8_t *p = memory + off;
+    for (int i = 0; i < 4; i++) {
+        if (wmask & (1 << i)) {
+            p[i] = (data >> (i * 8)) & 0xff;
+        }
+    }
+}
+
 
 //=======================================================
