@@ -177,12 +177,11 @@ int main(int argc, char**argv) {
     memset(memory, 0, MEM_SIZE);
     load_image(argv[1]);
 
+    // 波形配置
+    Verilated::traceEverOn(true); // Correctly called inside main before tracing
     // 初始化全局指针（关键：为全局ctx和tfp分配内存）
     ctx = new VerilatedContext;
     tfp = new VerilatedVcdC;
-
-    // 波形配置
-    Verilated::traceEverOn(true); // Correctly called inside main before tracing
     dut.trace(tfp, 5);
     tfp->open("Vysyx_25020059.vcd");
 
