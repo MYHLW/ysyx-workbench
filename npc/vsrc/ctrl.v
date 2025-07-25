@@ -137,19 +137,23 @@ always @(*) begin
             imm_gen_op  = `IMM_GEN_S;
             alu_src_sel = `ALU_SRC_IMM; //
             case (funct3)
-                `INST_SB: 
+                `INST_SB: begin
                     alu_op = `ALU_ADD; // store byte
                     mem_size = 2'b00; // byte
-                `INST_SH: 
+                end
+                `INST_SH: begin
                     alu_op = `ALU_ADD; // store halfword
                     mem_size = 2'b01; // halfword
-                `INST_SW: 
+                end
+                `INST_SW: begin
                     alu_op = `ALU_ADD; // store word
                     mem_size = 2'b10; // word
+                end
             endcase
         end
         `INST_TYPE_IL: begin // lb/lh/lw/lbu/lhu
             mem_valid   = 1'b1; // load/store 指令
+            mem_wen       = 1'b0;  // load
             reg_wen     = 1'b1;
             reg1_raddr  = rs1;
             reg_waddr   = rd;
