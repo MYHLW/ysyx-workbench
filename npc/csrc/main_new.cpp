@@ -7,6 +7,13 @@
 #include <verilated_vcd_c.h>
 #include <verilated_dpi.h>
 
+// 在现有头文件后添加
+#include <readline/readline.h>   // 用于命令行输入
+#include <readline/history.h>    // 记录命令历史
+#include <map>                   // 存储命令映射
+
+#include "sdb.h"  // 引入 sdb 模块
+
 // 仿真内存基址和大小定义
 #define MEM_BASE       0x80000000U
 #define MEM_SIZE       (8 * 1024 * 1024) // 8MB
@@ -75,15 +82,13 @@ static void reset(int n, VerilatedContext *ctx, VerilatedVcdC *tfp) {
 // 在 main.cpp（全局作用域）
 static bool sim_done = false;
 static int  trap_code = -1;
-
-// DPI 回调
 extern "C" void npc_trap(int code) {
   if (!sim_done) {
     sim_done   = true;
     trap_code  = code;
   }
 }
-
+//==================================================
 int main(int argc, char **argv) {
     if (argc < 2) {
         fprintf(stderr, "Usage: %s <program.bin>\n", argv[0]);
