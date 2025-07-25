@@ -1,3 +1,12 @@
+#include "Vysyx_25020059_top.h"
+#include <stdlib.h>
+#include <stdint.h>
+#include <string.h>
+#include <stdio.h>
+#include <verilated.h>
+#include <verilated_vcd_c.h>
+#include <verilated_dpi.h>
+
 // sdb.cpp
 #include "sdb.h"
 #include <readline/readline.h>
@@ -5,17 +14,34 @@
 #include <map>
 #include <cstdio>
 
+// 仿真内存基址和大小定义
+#define MEM_BASE       0x80000000U
+#define MEM_SIZE       (8 * 1024 * 1024) // 8MB
+
+static Vysyx_25020059_top dut;
+static uint8_t *memory;
+
+// 将虚拟地址转换为内存数组偏移
+static inline uint32_t guest_to_host(uint32_t addr) {
+    return addr - MEM_BASE;
+}
+
+// 从仿真内存读取一条指令
+uint32_t pmem_read(uint32_t * /*unused*/, uint32_t vaddr) {
+    uint32_t off = guest_to_host(vaddr);
+    return *(uint32_t *)(memory + off);
+}
+
 // 定义全局变量（与 sdb.h 中的 extern 声明对应）
 bool sim_done = false;
 int trap_code = -1;
-Vysyx_25020059_top dut;
 VerilatedVcdC* tfp;
 VerilatedContext* ctx;
 
 uint64_t sim_cycle = 0;  // 局部全局变量（仅 sdb.cpp 使用）
 
 // 单步执行一个时钟周期（复用之前的 single_cycle 逻辑）
-static void single_cycle() {
+static void single_cycle(VerilatedVcdC* tfp, VerilatedContext* ctx) {
     // 低电平阶段
     dut.clk = 0;
     dut.eval();  // 更新组合逻辑
@@ -25,6 +51,7 @@ static void single_cycle() {
     // 高电平阶段
     dut.clk = 1;
     dut.eval();  // 更新组合逻辑（含时序逻辑准备）
+    dut.inst = pmem_read(nullptr, dut.curr_pc);
     tfp->dump(ctx->time());
     ctx->timeInc(1);
 
@@ -35,10 +62,10 @@ static void single_cycle() {
 void cmd_si(int steps) {
     if (steps <= 0) steps = 1;
     for (int i = 0; i < steps && !sim_done; i++) {
+        single_cycle(tfp, ctx);
         // 执行前打印当前状态
-        printf("Cycle %llu: PC=0x%08X, inst=0x%08X\n",
+        printf("Cycle %lu: PC=0x%08X, inst=0x%08X\n",
                sim_cycle, (uint32_t)dut.curr_pc, dut.inst);
-        single_cycle();
     }
 }
 
@@ -46,9 +73,10 @@ void cmd_si(int steps) {
 void cmd_continue() {
     printf("Continuing...\n");
     while (!sim_done) {
-        printf("Cycle %llu: PC=0x%08X, inst=0x%08X\n",
+        single_cycle(tfp, ctx);
+        printf("Cycle %lu: PC=0x%08X, inst=0x%08X\n",
                sim_cycle, (uint32_t)dut.curr_pc, dut.inst);
-        single_cycle();
+        
     }
 }
 
