@@ -15,6 +15,7 @@
 // 全局指针声明（替代参数传递）
 static VerilatedContext* ctx = nullptr;    // 仿真上下文全局指针
 static VerilatedVcdC* tfp = nullptr;       // 波形文件全局指针
+Verilated::traceEverOn(true);
 
 // 仿真控制全局变量
 static bool sim_done = false;              // 仿真结束标志
@@ -61,13 +62,10 @@ void load_image(const char* filename) {
 
 // 单周期执行（使用全局指针，无需参数）
 void single_cycle() {
-    // 低电平阶段
     dut.clk = 0;
     dut.eval();
     tfp->dump(ctx->time());  // 使用全局tfp和ctx
     ctx->timeInc(1);
-
-    // 高电平阶段
     dut.clk = 1;
     dut.eval();
     dut.inst = pmem_read(nullptr, dut.curr_pc);  // 提取指令
