@@ -1,7 +1,7 @@
 `include "../vsrc/rvseed_defines.v"
 
 // === 1. DPI‑C 接口导入 ===
-import "DPI-C" function uint32_t    pmem_read  (input uint32_t raddr);
+import "DPI-C" function logic [31:0]    pmem_read  (input logic [31:0] raddr);
 import "DPI-C" function void        pmem_write (input int waddr,input int wdata,input byte wmask);
 
 module memory_if (
