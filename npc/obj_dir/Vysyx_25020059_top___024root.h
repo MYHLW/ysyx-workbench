@@ -32,6 +32,10 @@ class alignas(VL_CACHE_LINE_BYTES) Vysyx_25020059_top___024root final : public V
     CData/*2:0*/ ysyx_25020059_top__DOT__imm_gen_op;
     CData/*3:0*/ ysyx_25020059_top__DOT__alu_op;
     CData/*1:0*/ ysyx_25020059_top__DOT__alu_src_sel;
+    CData/*0:0*/ ysyx_25020059_top__DOT__mem_valid;
+    CData/*0:0*/ ysyx_25020059_top__DOT__mem_wen;
+    CData/*1:0*/ ysyx_25020059_top__DOT__mem_size;
+    CData/*0:0*/ ysyx_25020059_top__DOT__mem_unsigned;
     CData/*0:0*/ __VstlFirstIteration;
     CData/*0:0*/ __VicoFirstIteration;
     CData/*0:0*/ __Vtrigprevexpr___TOP__clk__0;
@@ -46,6 +50,9 @@ class alignas(VL_CACHE_LINE_BYTES) Vysyx_25020059_top___024root final : public V
     IData/*31:0*/ ysyx_25020059_top__DOT__alu_src1;
     IData/*31:0*/ ysyx_25020059_top__DOT__alu_src2;
     IData/*31:0*/ ysyx_25020059_top__DOT__alu_res;
+    IData/*31:0*/ ysyx_25020059_top__DOT__mem_rdata;
+    IData/*31:0*/ ysyx_25020059_top__DOT__u_mem_if_0__DOT__unnamedblk1__DOT__raw;
+    IData/*31:0*/ __Vfunc_pmem_read__1__Vfuncout;
     IData/*31:0*/ __VactIterCount;
     VL_OUT(reg_f[32],31,0);
     VlUnpacked<CData/*0:0*/, 3> __Vm_traceActivity;
