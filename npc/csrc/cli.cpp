@@ -10,6 +10,7 @@
 #include <cstring>
 #include <cstdlib>
 #include <cstdio>
+#include <cstdint>
 
 // 引用 main_new.cpp 中的全局变量
 extern VerilatedContext* ctx;
@@ -18,9 +19,12 @@ extern Vysyx_25020059_top dut;
 extern bool sim_done;
 extern int trap_code;
 extern uint64_t sim_cycle;
+extern uint8_t* memory;             // 仿真内存
 
 // single_cycle 在 main_new.cpp 中实现
 extern void single_cycle();
+
+#define MEM_BASE 0x80000000U
 
 // “si” 命令：单步 n 周期
 void cmd_si(const char* args) {
@@ -56,12 +60,33 @@ void cmd_info(const char* /*args*/) {
 
 // “help” 命令
 void cmd_help(const char* /*args*/) {
-    std::printf("Supported commands:\n");
-    std::printf("  si [n]   - Step n cycles (default 1)\n");
-    std::printf("  c        - Continue until trap\n");
-    std::printf("  info     - Show registers\n");
-    std::printf("  help     - Show this help\n");
-    std::printf("  q        - Quit simulation\n");
+     std::printf("Supported commands:\n");
+     std::printf("  si [n]   - Step n cycles (default 1)\n");
+     std::printf("  c        - Continue until trap\n");
+     std::printf("  info     - Show registers\n");
+     std::printf("  x addr [n] - Scan memory: dump n words from addr (default n=1)\n");
+     std::printf("  help     - Show this help\n");
+     std::printf("  q        - Quit simulation\n");
+ }
+
+// “x” 命令：扫描内存，按 32 位字读取
+void cmd_scan(const char* args) {
+    if (!args) {
+        std::printf("Usage: x <addr> [length]\n");
+        return;
+    }
+    // 解析地址和长度
+    char* token = std::strtok((char*)args, " ");
+    uint32_t addr = std::strtoul(token, nullptr, 0);
+    token = std::strtok(nullptr, " ");
+    int len = token ? std::atoi(token) : 1;
+
+    for (int i = 0; i < len; i++) {
+        uint32_t a = addr + i * 4;
+        uint32_t off = a - MEM_BASE;
+        uint32_t data = *(uint32_t*)(memory + off);
+        std::printf("0x%08X: 0x%08X\n", a, data);
+    }
 }
 
 // 命令查找表
@@ -69,6 +94,7 @@ static std::map<std::string, void(*)(const char*)> cmd_table = {
     {"si",    cmd_si},
     {"c",     cmd_continue},
     {"info",  cmd_info},
+    {"x",     cmd_scan},
     {"help",  cmd_help},
     {"q",     [](const char*) { sim_done = true; }}
 };

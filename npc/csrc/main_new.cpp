@@ -21,7 +21,7 @@ uint8_t*          memory    = nullptr;
 #define MEM_BASE    0x80000000U
 #define MEM_SIZE    (8 * 1024 * 1024)  // 8MB
 
-// 虚拟地址转宿主地址
+// 虚拟地址转宿主地址(全局变量)
 static inline uint32_t guest_to_host(uint32_t addr) {
     return addr - MEM_BASE;
 }
