@@ -94,7 +94,7 @@ extern "C" void npc_trap(int code) {
 std::map<std::string, void(*)(const char*)> cmd_table = {
     {"si",    [](const char* args) { cmd_si(args ? atoi(args) : 1); }},
     {"c",     [](const char* args) { cmd_continue(); }},
-    {"info r",[](const char* args) { cmd_info_reg(); }},
+    {"info",[](const char* args) { cmd_info_reg(); }},
     {"help",  [](const char* args) { cmd_help(); }},
     {"q",     [](const char* args) { sim_done = true; }},
 };
