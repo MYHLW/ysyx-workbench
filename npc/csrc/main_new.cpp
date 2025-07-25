@@ -15,7 +15,7 @@
 // 全局指针声明（替代参数传递）
 static VerilatedContext* ctx = nullptr;    // 仿真上下文全局指针
 static VerilatedVcdC* tfp = nullptr;       // 波形文件全局指针
-Verilated::traceEverOn(true);
+
 
 // 仿真控制全局变量
 static bool sim_done = false;              // 仿真结束标志
@@ -182,7 +182,7 @@ int main(int argc, char**argv) {
     tfp = new VerilatedVcdC;
 
     // 波形配置
-    Verilated::traceEverOn(true);
+    Verilated::traceEverOn(true); // Correctly called inside main before tracing
     dut.trace(tfp, 5);
     tfp->open("Vysyx_25020059.vcd");
 
