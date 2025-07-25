@@ -83,7 +83,6 @@ int main(int argc, char** argv) {
     dut.trace(tfp, 5);
     tfp->open("Vysyx_25020059.vcd");
 
-    // 复位
     reset(2);
 
     // 启动命令行调试
@@ -104,3 +103,17 @@ int main(int argc, char** argv) {
     std::free(memory);
     return 0;
 }
+
+// ===================DPI 端口===========================
+extern "C" void npc_trap(int code) {
+    if (!sim_done) {
+        sim_done = true;
+        trap_code = code;
+    }
+}
+
+extern "C" uint32_t pmem_read(uint32_t vaddr) {
+    uint32_t off = vaddr - MEM_BASE;
+    return *(uint32_t*)(memory + off);
+}
+//=======================================================

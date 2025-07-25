@@ -99,19 +99,6 @@ static std::map<std::string, void(*)(const char*)> cmd_table = {
     {"q",     [](const char*) { sim_done = true; }}
 };
 
-// ===================DPI 端口===========================
-extern "C" void npc_trap(int code) {
-    if (!sim_done) {
-        sim_done = true;
-        trap_code = code;
-    }
-}
-
-extern "C" uint32_t pmem_read(uint32_t vaddr) {
-    uint32_t off = vaddr - MEM_BASE;
-    return *(uint32_t*)(memory + off);
-}
-//=======================================================
 // 主循环
 void sdb_mainloop() {
     std::printf("NPC debugger started. Type 'help' for commands.\n");
