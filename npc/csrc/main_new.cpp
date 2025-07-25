@@ -108,13 +108,11 @@ void cmd_si(int steps = 1) {
         return;
     }
     for (int i = 0; i < steps && !sim_done; i++) {
-        uint32_t curr_pc = dut.curr_pc;
-        uint32_t curr_inst = dut.inst;
         single_cycle();  // 无参数调用
-        printf("Cycle %llu: PC=0x%08X, inst=0x%08X\n", 
-               sim_cycle, curr_pc, curr_inst);
+        printf("PC=0x%08X, inst=0x%08X\n",dut.curr_pc, dut.inst);
     }
 }
+
 
 // 继续运行直到陷阱
 void cmd_continue() {
