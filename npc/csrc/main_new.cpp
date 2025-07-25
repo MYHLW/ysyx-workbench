@@ -78,7 +78,7 @@ void single_cycle() {
 }
 
 // 复位n个周期（使用全局指针）
-static void reset(int n) {
+void reset(int n) {
     dut.rst = 1;
     while (n-- > 0) single_cycle();  // 直接调用单周期函数，无需传参
     dut.rst = 0;
@@ -120,11 +120,8 @@ void cmd_si(int steps = 1) {
 void cmd_continue() {
     printf("Continuing...\n");
     while (!sim_done) {
-        uint32_t curr_pc = dut.curr_pc;
-        uint32_t curr_inst = dut.inst;
         single_cycle();  // 无参数调用
-        printf("Cycle %llu: PC=0x%08X, inst=0x%08X\n", 
-               sim_cycle, curr_pc, curr_inst);
+        printf("PC=0x%08X, inst=0x%08X\n",dut.curr_pc, dut.inst);
     }
 }
 
