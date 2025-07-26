@@ -1,4 +1,4 @@
-`include "../vsrc/rvseed_defines.v"
+`include "/home/wang/ysyx-workbench/npc/vsrc/rvseed_defines.v"
 
 // === 1. DPI‑C 接口导入 ===
 // 使用 SystemVerilog 内建类型，不用 C 头文件里的 uint32_t

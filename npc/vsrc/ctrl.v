@@ -1,4 +1,4 @@
-`include "../vsrc/rvseed_defines.v"
+`include "/home/wang/ysyx-workbench/npc/vsrc/rvseed_defines.v"
 
 // === 1. DPI‑C 函数导入 ===
 import "DPI-C" function void npc_trap(input int code);

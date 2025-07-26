@@ -1,4 +1,4 @@
-`include "../vsrc/rvseed_defines.v"
+`include "/home/wang/ysyx-workbench/npc/vsrc/rvseed_defines.v"
 
 // 在 rvseed_defines.v 里，你可以加一行：
 // `define PC_INC (`CPU_WIDTH)'(32'd4)

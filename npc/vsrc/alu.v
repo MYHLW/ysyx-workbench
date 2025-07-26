@@ -1,4 +1,4 @@
-`include "../vsrc/rvseed_defines.v"
+`include "/home/wang/ysyx-workbench/npc/vsrc/rvseed_defines.v"
 
 module alu(
     input       [`ALU_OP_WIDTH-1:0] alu_op,

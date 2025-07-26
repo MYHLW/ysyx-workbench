@@ -1,4 +1,4 @@
-`include "../vsrc/rvseed_defines.v"
+`include "/home/wang/ysyx-workbench/npc/vsrc/rvseed_defines.v"
 
 module imm_gen (
     input       [`IMM_GEN_OP_WIDTH-1:0] imm_gen_op, // immediate extend opcode
