@@ -46,6 +46,7 @@ VM_USER_LDLIBS = \
 VM_USER_CLASSES = \
 	cli \
 	main_new \
+	trace \
 
 # User .cpp directories (from .cpp's on Verilator command line)
 VM_USER_DIR = \
@@ -65,6 +66,8 @@ VPATH += $(VM_USER_DIR)
 cli.o: ./csrc/cli.cpp 
 	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST)  -c -o $@ $<
 main_new.o: ./csrc/main_new.cpp 
+	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST)  -c -o $@ $<
+trace.o: ./csrc/trace.cpp 
 	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST)  -c -o $@ $<
 
 ### Link rules... (from --exe)
