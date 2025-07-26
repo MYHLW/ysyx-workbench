@@ -41,3 +41,13 @@ VL_INLINE_OPT void Vysyx_25020059_top___024unit____Vdpiimwrap_pmem_write_TOP____
     for (size_t wmask__Vidx = 0; wmask__Vidx < 1; ++wmask__Vidx) wmask__Vcvt = wmask;
     pmem_write(waddr__Vcvt, wdata__Vcvt, wmask__Vcvt);
 }
+
+extern "C" void npc_itrace(const svLogicVecVal* pc);
+
+VL_INLINE_OPT void Vysyx_25020059_top___024unit____Vdpiimwrap_npc_itrace_TOP____024unit(IData/*31:0*/ pc) {
+    VL_DEBUG_IF(VL_DBG_MSGF("+        Vysyx_25020059_top___024unit____Vdpiimwrap_npc_itrace_TOP____024unit\n"); );
+    // Body
+    svLogicVecVal pc__Vcvt[1];
+    for (size_t pc__Vidx = 0; pc__Vidx < 1; ++pc__Vidx) VL_SET_SVLV_I(32, pc__Vcvt + 1 * pc__Vidx, pc);
+    npc_itrace(pc__Vcvt);
+}

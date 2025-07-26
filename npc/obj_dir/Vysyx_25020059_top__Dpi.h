@@ -16,6 +16,8 @@ extern "C" {
 
 
     // DPI IMPORTS
+    // DPI import at vsrc/pc_reg.v:4:30
+    extern void npc_itrace(const svLogicVecVal* pc);
     // DPI import at vsrc/ctrl.v:4:30
     extern void npc_trap(int code);
     // DPI import at vsrc/memory_if.v:5:43
