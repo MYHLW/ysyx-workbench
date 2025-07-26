@@ -1,9 +1,5 @@
 `include "../vsrc/rvseed_defines.v"
 
-// 引入 DPI-C 接口
-import "DPI-C" function void npc_itrace(input logic [31:0] pc);
-
-
 module pc_reg (
     input                        clk,
     input                        rst_n,
@@ -19,8 +15,6 @@ always @(posedge clk or negedge rst_n) begin
     end else begin
         ena <= 1; // Enable signal is set
         curr_pc <= next_pc; 
-         // 在 PC 更新后调用 itrace
-        npc_itrace(curr_pc);
     end
 end
 

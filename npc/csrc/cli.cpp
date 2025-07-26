@@ -1,5 +1,6 @@
 // csrc/cli.cpp
 #include "cli.h"
+#include "utils/itrace.h"  // 添加 itrace 头文件
 #include "Vysyx_25020059_top.h"
 #include <verilated.h>
 #include <verilated_vcd_c.h>
@@ -35,7 +36,7 @@ void cmd_si(const char* args) {
     }
     for (int i = 0; i < steps && !sim_done; i++) {
         single_cycle();
-        std::printf("PC=0x%08X, inst=0x%08X\n", dut.curr_pc, dut.inst);
+        std::printf("PC=0x%08X, inst=0x%08X\n", dut.curr_pc, dut.inst);  //可要可不要，每条指令都打印终端很乱
     }
 }
 
@@ -67,6 +68,8 @@ void cmd_help(const char* /*args*/) {
      std::printf("  x addr(0x80000000) [n] - Scan memory: dump n words from addr (default n=1)\n");
      std::printf("  help     - Show this help\n");
      std::printf("  q        - Quit simulation\n");
+     std::printf("  iring    - Show instruction history\n");
+     std::printf("  itrace on/off - Enable/disable instruction tracing\n");
  }
 
 // “x” 命令：扫描内存，按 32 位字读取
@@ -89,6 +92,30 @@ void cmd_scan(const char* args) {
     }
 }
 
+//显示环形缓冲区
+void cmd_iringbuf(const char* /*args*/) {
+    itrace_print_history();
+}
+
+// 命令控制 itrace 记录
+void cmd_itrace(const char* args) {
+    if (!args) {
+        printf("itrace is currently %s\n", 
+               itrace_is_enabled() ? "enabled" : "disabled");
+        return;
+    }
+    
+    if (strcmp(args, "on") == 0) {
+        itrace_set_enabled(true);
+        printf("itrace recording enabled\n");
+    } else if (strcmp(args, "off") == 0) {
+        itrace_set_enabled(false);
+        printf("itrace recording disabled\n");
+    } else {
+        printf("Invalid argument: %s\n", args);
+    }
+}
+
 // 命令查找表
 static std::map<std::string, void(*)(const char*)> cmd_table = {
     {"si",    cmd_si},
@@ -96,7 +123,9 @@ static std::map<std::string, void(*)(const char*)> cmd_table = {
     {"info",  cmd_info},
     {"x",     cmd_scan},
     {"help",  cmd_help},
-    {"q",     [](const char*) { sim_done = true; }}
+    {"q",     [](const char*) { sim_done = true; }},
+    {"iring", cmd_iringbuf},
+    {"itrace",cmd_itrace}
 };
 
 // 主循环
