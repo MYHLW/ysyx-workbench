@@ -20,7 +20,7 @@ always @(posedge clk or negedge rst_n) begin
         ena <= 1; // Enable signal is set
         curr_pc <= next_pc; 
          // 在 PC 更新后调用 itrace
-        npc_itrace(next_pc);
+        npc_itrace(curr_pc);
     end
 end
 
