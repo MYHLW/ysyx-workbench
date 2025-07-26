@@ -6,34 +6,21 @@ AM_SRCS := riscv/npc/start.S \
            riscv/npc/cte.c \
            riscv/npc/trap.S \
            platform/dummy/vme.c \
-           platform/dummy/mpe.c
+           platform/dummy/mpe.c 
 
-CFLAGS    += -fdata-sections -ffunction-sections
-LDSCRIPTS += $(AM_HOME)/scripts/linker.ld
-LDFLAGS   += --defsym=_pmem_start=0x80000000 --defsym=_entry_offset=0x0
-LDFLAGS   += --gc-sections -e _start
+CFLAGS   += -fdata-sections -ffunction-sections
+LDFLAGS  += -T $(AM_HOME)/scripts/linker.ld \
+             --defsym=_pmem_start=0x80000000 --defsym=_entry_offset=0x0
+LDFLAGS  += --gc-sections -e _start
 
-MAINARGS_MAX_LEN = 64
-MAINARGS_PLACEHOLDER = The insert-arg rule in Makefile will insert mainargs here.
-CFLAGS += -DMAINARGS_MAX_LEN=$(MAINARGS_MAX_LEN) -DMAINARGS_PLACEHOLDER=\""$(MAINARGS_PLACEHOLDER)"\"
+CFLAGS   += -DMAINARGS=\"$(mainargs)\"
+CFLAGS += -I $(NPC_HOME)/csrc/include
+.PHONY: $(AM_HOME)/am/src/riscv/npc/trm.c
 
-insert-arg: image
-	@python3 $(AM_HOME)/tools/insert-arg.py $(IMAGE).bin $(MAINARGS_MAX_LEN) "$(MAINARGS_PLACEHOLDER)" "$(mainargs)"
-
-image: image-dep
+image: $(IMAGE).elf
 	@$(OBJDUMP) -d $(IMAGE).elf > $(IMAGE).txt
 	@echo + OBJCOPY "->" $(IMAGE_REL).bin
 	@$(OBJCOPY) -S --set-section-flags .bss=alloc,contents -O binary $(IMAGE).elf $(IMAGE).bin
 
-# 指向绝对的 NPC 目录
-NPC_DIR := /home/wang/ysyx-workbench/npc
-
-# AM 镜像文件
-AM_IMAGE := $(IMAGE).bin
-
-.PHONY: run
 run: image
-	@echo "==> Copying AM image to NPC dir"
-	@cp $(AM_IMAGE) $(NPC_DIR)/program/
-	@echo "==> Launching NPC sim"
-	@$(MAKE) -C $(NPC_DIR) sim2 IMG=$(AM_IMAGE)
+	$(MAKE) -C $(NPC_HOME) ISA=$(ISA) run ARGS="$(NPCFLAGS)" IMG=$(IMAGE).bin

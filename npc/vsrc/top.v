@@ -1,6 +1,6 @@
 //top.v  只实现了 ADDI 等算术／分支／跳转指令的最小子集 
 //如果后续要加 BEQ、LUI、AUIPC、JALR、Load/Store 等，再补相应控制信号和数据通路即可。
-`include "/home/wang/ysyx-workbench/npc/vsrc/rvseed_defines.v"
+`include "../vsrc/rvseed_defines.v"
 module  ysyx_25020059_top(
 	input                         clk,
     input                         rst,

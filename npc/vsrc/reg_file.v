@@ -1,4 +1,4 @@
-`include "/home/wang/ysyx-workbench/npc/vsrc/rvseed_defines.v"
+`include "../vsrc/rvseed_defines.v"
 
 module reg_file (
     input                               clk,

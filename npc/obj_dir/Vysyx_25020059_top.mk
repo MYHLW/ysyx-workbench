@@ -37,23 +37,20 @@ VM_PREFIX = Vysyx_25020059_top
 VM_MODPREFIX = Vysyx_25020059_top
 # User CFLAGS (from -CFLAGS on Verilator command line)
 VM_USER_CFLAGS = \
-	-I./tools/capstone/repo/include -Icsrc/utils \
 
 # User LDLIBS (from -LDFLAGS on Verilator command line)
 VM_USER_LDLIBS = \
-	-ldl -lreadline -L./tools/capstone/repo -l:libcapstone.so.5 \
+	-ldl -lreadline \
 
 # User .cpp files (from .cpp's on Verilator command line)
 VM_USER_CLASSES = \
 	cli \
 	main_new \
-	disasm \
 
 # User .cpp directories (from .cpp's on Verilator command line)
 VM_USER_DIR = \
 	.. \
 	../csrc \
-	../csrc/utils \
 
 
 ### Default rules...
@@ -68,8 +65,6 @@ VPATH += $(VM_USER_DIR)
 cli.o: ./csrc/cli.cpp 
 	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST)  -c -o $@ $<
 main_new.o: ./csrc/main_new.cpp 
-	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST)  -c -o $@ $<
-disasm.o: ./csrc/utils/disasm.c 
 	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST)  -c -o $@ $<
 
 ### Link rules... (from --exe)

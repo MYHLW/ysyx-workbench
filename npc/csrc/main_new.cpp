@@ -1,6 +1,5 @@
 // csrc/main_new.cpp
 #include "cli.h"
-#include "utils/itrace.h"  
 #include "Vysyx_25020059_top.h"
 #include <cstdlib>
 #include <cstdint>
@@ -36,7 +35,6 @@ void load_image(const char* filename) {
 }
 
 // 单周期执行
-// 修改 single_cycle 函数
 void single_cycle() {
     dut.clk = 0;
     dut.eval();
@@ -45,14 +43,10 @@ void single_cycle() {
 
     dut.clk = 1;
     dut.eval();
-    uint32_t inst = pmem_read(dut.curr_pc);   
+    dut.inst = pmem_read(dut.curr_pc);
     tfp->dump(ctx->time());
     ctx->timeInc(1);
 
-    
-    // 记录指令到环形缓冲区（只在启用时记录）
-    itrace_record(dut.curr_pc, inst);
-    
     sim_cycle++;
 }
 
@@ -83,19 +77,11 @@ int main(int argc, char** argv) {
     dut.trace(tfp, 5);
     tfp->open("Vysyx_25020059.vcd");
 
-    // 初始化 itrace 系统（默认启用）
-    itrace_set_enabled(true);
-
     // 复位
     reset(2);
 
     // 启动命令行调试
     sdb_mainloop();
-
-    // 如果程序异常结束，打印指令历史
-    if (trap_code != 0) {
-        itrace_print_history();
-    }
 
     // 结束后输出 Trap 状态
     std::printf("\n");
