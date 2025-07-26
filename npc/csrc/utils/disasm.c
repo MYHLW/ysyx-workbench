@@ -1,7 +1,6 @@
 // csrc/utils/disasm.c
 #include "disasm.h"  // 添加头文件包含
 #include <dlfcn.h>
-#include "capstone.h"
 #include <common.h>
 #include <assert.h>
 #include <stdio.h>
