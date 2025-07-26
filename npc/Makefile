@@ -1,4 +1,4 @@
-# 默认接收外部传入的 IMG
+# 默认接收外部传入的 IMG，如果未指定就用下面这行
 IMG ?= /home/wang/ysyx-workbench/am/$(IMAGE).bin
 
 # 设置 Capstone 的绝对路径
@@ -10,33 +10,30 @@ C_SRCS := $(wildcard csrc/*.cpp) \
           csrc/utils/disasm.c \
           csrc/utils/itrace.cpp
 
-# 检查库文件存在
-$(LIBCAPSTONE):
-	@echo "Error: Capstone library not found at $(LIBCAPSTONE)"
-	@echo "Please ensure Capstone is built and available at this location"
-	@exit 1
 
 all:
 	@echo "Write this Makefile by your self."
 
+# 在 Makefile 的 sim2 目标中添加包含路径
 sim2: $(LIBCAPSTONE)
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
-	@rm -rf obj_dir *.vcd  # 清理旧构建
-	
-	# 使用绝对路径链接库文件
+	@$(clean)
 	verilator -Wno-lint --trace -cc $(wildcard ./vsrc/*.v) --exe $(C_SRCS) \
 		-CFLAGS "-I$(CAPSTONE_DIR)/include -Icsrc/utils" \
-		-LDFLAGS "-ldl -lreadline $(LIBCAPSTONE)" \
+		-LDFLAGS "-ldl -lreadline -L$(CAPSTONE_DIR) -l:libcapstone.so.5" \
 		--top ysyx_25020059_top
-	
 	make -C obj_dir -j -f Vysyx_25020059_top.mk Vysyx_25020059_top
-	
 	@echo "=> Running NPC with image: $(IMG)"
 	LD_LIBRARY_PATH=$(CAPSTONE_DIR) ./obj_dir/Vysyx_25020059_top $(IMG)
 	gtkwave ./Vysyx_25020059.vcd
 
+$(LIBCAPSTONE):
+	@echo "Capstone library already exists at $(CAPSTONE_DIR)"
+	@echo "Skipping build as it's pre-built"
+
 clean:
 	rm -rf obj_dir
 	rm -f *.vcd
+	rm -f csrc/utils/disasm.o
 
 include ../Makefile
