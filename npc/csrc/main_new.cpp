@@ -100,12 +100,10 @@ int main(int argc, char** argv) {
 }
 
 // ===================DPI 端口===========================
-extern "C" void npc_trap(int code) {
-    if (!sim_done) {
-        sim_done = true;
-        trap_code = code;
-    }
-}
+// extern "C" void npc_itrace(uint32_t pc);
+
+// extern "C" void npc_trap  (int code);
+
 
 extern "C" uint32_t pmem_read(uint32_t vaddr){
     uint32_t off = vaddr - MEM_BASE;  // 转换为偏移
