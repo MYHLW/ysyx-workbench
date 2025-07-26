@@ -9,6 +9,10 @@
 #include <verilated_vcd_c.h>
 #include <verilated_dpi.h>
 
+
+// 在文件顶部（在现有 includes 之后）加入：
+extern "C" void npc_itrace(uint32_t pc);
+extern "C" void npc_trap  (int code);
 // ----- 全局变量定义 -----
 VerilatedContext* ctx       = nullptr;
 VerilatedVcdC*    tfp       = nullptr;
