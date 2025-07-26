@@ -24,7 +24,7 @@ run:
 
 
 clean:
-	rm -rf .obj_dir
+	rm -rf ./obj_dir
 	rm *.vcd
 include ../Makefile
 #include ./vsrc/Makefile
