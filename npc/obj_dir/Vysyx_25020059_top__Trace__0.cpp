@@ -63,9 +63,8 @@ void Vysyx_25020059_top___024root__trace_chg_0_sub_0(Vysyx_25020059_top___024roo
                                           : ((1U == (IData)(vlSelfRef.ysyx_25020059_top__DOT__mem_size))
                                               ? ((IData)(3U) 
                                                  << 
-                                                 (6U 
-                                                  & (vlSelfRef.ysyx_25020059_top__DOT__alu_res 
-                                                     << 1U)))
+                                                 (3U 
+                                                  & vlSelfRef.ysyx_25020059_top__DOT__alu_res))
                                               : ((2U 
                                                   == (IData)(vlSelfRef.ysyx_25020059_top__DOT__mem_size))
                                                   ? 0xfU

@@ -130,18 +130,20 @@ VL_ATTR_COLD void Vysyx_25020059_top___024root___stl_sequent__TOP__0(Vysyx_25020
                         vlSelfRef.ysyx_25020059_top__DOT__reg_waddr 
                             = (0x1fU & (vlSelfRef.inst 
                                         >> 7U));
-                        vlSelfRef.ysyx_25020059_top__DOT__reg_wen = 1U;
                     } else if ((0x37U == (0x7fU & vlSelfRef.inst))) {
                         vlSelfRef.ysyx_25020059_top__DOT__reg_waddr 
                             = (0x1fU & (vlSelfRef.inst 
                                         >> 7U));
-                        vlSelfRef.ysyx_25020059_top__DOT__reg_wen = 1U;
                     } else if ((0x17U == (0x7fU & vlSelfRef.inst))) {
                         vlSelfRef.ysyx_25020059_top__DOT__reg_waddr 
                             = (0x1fU & (vlSelfRef.inst 
                                         >> 7U));
-                        vlSelfRef.ysyx_25020059_top__DOT__reg_wen = 1U;
                     }
+                    vlSelfRef.ysyx_25020059_top__DOT__reg_wen 
+                        = ((0x6fU == (0x7fU & vlSelfRef.inst)) 
+                           || ((0x37U == (0x7fU & vlSelfRef.inst)) 
+                               || (0x17U == (0x7fU 
+                                             & vlSelfRef.inst))));
                 }
                 if ((0x63U == (0x7fU & vlSelfRef.inst))) {
                     if ((1U == (7U & (vlSelfRef.inst 
@@ -429,9 +431,8 @@ VL_ATTR_COLD void Vysyx_25020059_top___024root___stl_sequent__TOP__0(Vysyx_25020
                                                                                  ? 
                                                                                 ((IData)(3U) 
                                                                                 << 
-                                                                                (6U 
-                                                                                & (vlSelfRef.ysyx_25020059_top__DOT__alu_res 
-                                                                                << 1U)))
+                                                                                (3U 
+                                                                                & vlSelfRef.ysyx_25020059_top__DOT__alu_res))
                                                                                  : 
                                                                                 ((2U 
                                                                                 == (IData)(vlSelfRef.ysyx_25020059_top__DOT__mem_size))

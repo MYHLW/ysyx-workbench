@@ -257,9 +257,8 @@ VL_ATTR_COLD void Vysyx_25020059_top___024root__trace_full_0_sub_0(Vysyx_2502005
                                           << (3U & vlSelfRef.ysyx_25020059_top__DOT__alu_res))
                                        : ((1U == (IData)(vlSelfRef.ysyx_25020059_top__DOT__mem_size))
                                            ? ((IData)(3U) 
-                                              << (6U 
-                                                  & (vlSelfRef.ysyx_25020059_top__DOT__alu_res 
-                                                     << 1U)))
+                                              << (3U 
+                                                  & vlSelfRef.ysyx_25020059_top__DOT__alu_res))
                                            : ((2U == (IData)(vlSelfRef.ysyx_25020059_top__DOT__mem_size))
                                                ? 0xfU
                                                : 0U))))),4);
