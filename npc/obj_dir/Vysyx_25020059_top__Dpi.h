@@ -18,9 +18,9 @@ extern "C" {
     // DPI IMPORTS
     // DPI import at vsrc/ctrl.v:4:30
     extern void npc_trap(int code);
-    // DPI import at vsrc/memory_if.v:5:43
+    // DPI import at vsrc/memory_if.v:4:43
     extern unsigned int pmem_read(unsigned int raddr);
-    // DPI import at vsrc/memory_if.v:6:43
+    // DPI import at vsrc/memory_if.v:5:43
     extern void pmem_write(unsigned int waddr, unsigned int wdata, char wmask);
 
 #ifdef __cplusplus
