@@ -1,4 +1,5 @@
 #include <common.h>  // 包含 utils.h（需定义 CONFIG_ITRACE）  
+#include "disasm.h"
 
 #define MAX_IRINGBUF 16
 
