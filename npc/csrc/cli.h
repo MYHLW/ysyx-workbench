@@ -29,5 +29,5 @@ void sdb_mainloop();
 
 // 来自 DPI 的陷阱回调
 extern "C" void npc_trap(int code);
-extern "C" uint32_t pmem_read(uint32_t vaddr);
+//extern "C" uint32_t pmem_read(uint32_t vaddr);
 //=======================================================

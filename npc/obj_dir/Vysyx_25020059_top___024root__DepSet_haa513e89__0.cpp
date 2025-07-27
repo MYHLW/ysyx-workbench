@@ -25,7 +25,7 @@ void Vysyx_25020059_top___024root___eval_triggers__ico(Vysyx_25020059_top___024r
 }
 
 void Vysyx_25020059_top___024unit____Vdpiimwrap_npc_trap_TOP____024unit(IData/*31:0*/ code);
-void Vysyx_25020059_top___024unit____Vdpiimwrap_pmem_read_TOP____024unit(IData/*31:0*/ raddr, IData/*31:0*/ &pmem_read__Vfuncrtn);
+void Vysyx_25020059_top___024unit____Vdpiimwrap_pmem_read_TOP____024unit(IData/*31:0*/ raddr, IData/*31:0*/ i, IData/*31:0*/ &pmem_read__Vfuncrtn);
 void Vysyx_25020059_top___024unit____Vdpiimwrap_pmem_write_TOP____024unit(IData/*31:0*/ waddr, IData/*31:0*/ wdata, CData/*7:0*/ wmask);
 
 VL_INLINE_OPT void Vysyx_25020059_top___024root___ico_sequent__TOP__0(Vysyx_25020059_top___024root* vlSelf) {
@@ -398,7 +398,7 @@ VL_INLINE_OPT void Vysyx_25020059_top___024root___ico_sequent__TOP__0(Vysyx_2502
     if (vlSelfRef.ysyx_25020059_top__DOT__mem_valid) {
         Vysyx_25020059_top___024unit____Vdpiimwrap_pmem_read_TOP____024unit(
                                                                             (0xfffffffcU 
-                                                                             & vlSelfRef.ysyx_25020059_top__DOT__alu_res), vlSelfRef.__Vfunc_pmem_read__1__Vfuncout);
+                                                                             & vlSelfRef.ysyx_25020059_top__DOT__alu_res), 2U, vlSelfRef.__Vfunc_pmem_read__1__Vfuncout);
         vlSelfRef.ysyx_25020059_top__DOT__u_mem_if_0__DOT__raw_data 
             = vlSelfRef.__Vfunc_pmem_read__1__Vfuncout;
         vlSelfRef.ysyx_25020059_top__DOT__mem_rdata 
@@ -613,7 +613,7 @@ VL_INLINE_OPT void Vysyx_25020059_top___024root___nba_sequent__TOP__0(Vysyx_2502
     if (vlSelfRef.ysyx_25020059_top__DOT__mem_valid) {
         Vysyx_25020059_top___024unit____Vdpiimwrap_pmem_read_TOP____024unit(
                                                                             (0xfffffffcU 
-                                                                             & vlSelfRef.ysyx_25020059_top__DOT__alu_res), vlSelfRef.__Vfunc_pmem_read__1__Vfuncout);
+                                                                             & vlSelfRef.ysyx_25020059_top__DOT__alu_res), 2U, vlSelfRef.__Vfunc_pmem_read__1__Vfuncout);
         vlSelfRef.ysyx_25020059_top__DOT__u_mem_if_0__DOT__raw_data 
             = vlSelfRef.__Vfunc_pmem_read__1__Vfuncout;
         vlSelfRef.ysyx_25020059_top__DOT__mem_rdata 
