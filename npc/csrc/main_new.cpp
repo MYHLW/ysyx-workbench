@@ -179,7 +179,7 @@ extern "C" uint32_t pmem_read(uint32_t vaddr,int i) {
     //     npc_trap(MEM_ACCESS_FAULT);  // 触发内存访问错误trap
     //     return MEM_FAULT_CODE;
     // }
-    printf("pmem_read: vaddr=0x%08X\n      code:%d", vaddr,i);  //!!1
+    printf("code:%d pmem_read: vaddr=0x%08X\n",i, vaddr);  //!!1
     uint32_t off = vaddr - MEM_BASE;
     
     // 安全的内存访问（避免未对齐访问问题）
