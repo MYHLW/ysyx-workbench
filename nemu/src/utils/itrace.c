@@ -8,6 +8,9 @@ typedef struct {
   uint32_t inst;
 } ItraceNode;
 
+void init_disasm(); // 初始化反汇编器
+void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);
+
 // 定义全局变量（与 utils.h 中的 extern 对应）  
 ItraceNode iringbuf[MAX_IRINGBUF];  
 int p_cur = 0;  
