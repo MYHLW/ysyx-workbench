@@ -38,6 +38,8 @@ void load_image(const char* filename) {
 
 // 单周期执行
 void single_cycle() {
+     dut.inst = pmem_read(dut.curr_pc);
+
     dut.clk = 0;
     dut.eval();
     tfp->dump(ctx->time());
@@ -48,7 +50,7 @@ void single_cycle() {
     tfp->dump(ctx->time());
     ctx->timeInc(1);
 
-    dut.inst = pmem_read(dut.curr_pc);
+   
 
     sim_cycle++;
 }
