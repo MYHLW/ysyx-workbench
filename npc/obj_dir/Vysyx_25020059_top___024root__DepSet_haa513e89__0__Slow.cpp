@@ -349,16 +349,12 @@ VL_ATTR_COLD void Vysyx_25020059_top___024root___stl_sequent__TOP__0(Vysyx_25020
                                                  & vlSelfRef.inst);
     }
     if ((2U & (IData)(vlSelfRef.ysyx_25020059_top__DOT__alu_src_sel))) {
-        if ((1U & (IData)(vlSelfRef.ysyx_25020059_top__DOT__alu_src_sel))) {
-            vlSelfRef.ysyx_25020059_top__DOT__alu_src1 
-                = vlSelfRef.ysyx_25020059_top__DOT__imm;
-            vlSelfRef.ysyx_25020059_top__DOT__alu_src2 
-                = (vlSelfRef.curr_pc - (IData)(4U));
-        } else {
-            vlSelfRef.ysyx_25020059_top__DOT__alu_src1 = 4U;
-            vlSelfRef.ysyx_25020059_top__DOT__alu_src2 
-                = vlSelfRef.curr_pc;
-        }
+        vlSelfRef.ysyx_25020059_top__DOT__alu_src1 
+            = ((1U & (IData)(vlSelfRef.ysyx_25020059_top__DOT__alu_src_sel))
+                ? vlSelfRef.ysyx_25020059_top__DOT__imm
+                : 4U);
+        vlSelfRef.ysyx_25020059_top__DOT__alu_src2 
+            = vlSelfRef.curr_pc;
     } else {
         vlSelfRef.ysyx_25020059_top__DOT__alu_src1 
             = vlSelfRef.ysyx_25020059_top__DOT__reg1_rdata;
