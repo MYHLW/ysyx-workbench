@@ -110,14 +110,8 @@ extern "C" void npc_trap(int code) {
     printf("NPC_TRAP: code=%d", code);
 }
 
-extern "C" uint32_t pmem_read(uint32_t vaddr) {
-    // 地址范围检查
-    if (vaddr < MEM_BASE || vaddr >= MEM_BASE + MEM_SIZE) {
-        printf("MEM_FAULT: PC=0x%08X Addr=0x%08X\n", dut.curr_pc, vaddr);
-        npc_trap(MEM_FAULT_CODE);
-        return 0;
-    }
-    
+extern "C" uint32_t pmem_read(uint32_t vaddr) {  
+    printf("pmem_read: vaddr=0x%08X\n", vaddr);  
     uint32_t off = vaddr - MEM_BASE;
     
     // 安全的内存访问（避免未对齐访问问题）
