@@ -91,19 +91,35 @@ void single_cycle() {
     tfp->dump(ctx->time());
     ctx->timeInc(1);
 
+    dut.inst = pmem_read(dut.curr_pc);
+
     dut.clk = 1;
     dut.eval();
-    dut.inst = pmem_read(dut.curr_pc);
+    
     tfp->dump(ctx->time());
     ctx->timeInc(1);
 
     sim_cycle++;
 }
 
+// 复位用：不做 pmem_read
+void reset_cycle() {
+    dut.clk = 0;
+    dut.eval();
+    tfp->dump(ctx->time());
+    ctx->timeInc(1);
+
+    dut.clk = 1;
+    dut.eval();
+    tfp->dump(ctx->time());
+    ctx->timeInc(1);
+}
+
+
 // 复位 n 周期
 void reset(int n) {
     dut.rst = 1;
-    while (n-- > 0) single_cycle();
+    while (n-- > 0)  reset_cycle();
     dut.rst = 0;
 }
 
