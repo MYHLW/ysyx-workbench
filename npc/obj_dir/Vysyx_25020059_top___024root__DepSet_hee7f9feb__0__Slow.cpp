@@ -215,6 +215,10 @@ VL_ATTR_COLD void Vysyx_25020059_top___024root___ctor_var_reset(Vysyx_25020059_t
     vlSelf->ysyx_25020059_top__DOT__mem_size = VL_RAND_RESET_I(2);
     vlSelf->ysyx_25020059_top__DOT__mem_unsigned = VL_RAND_RESET_I(1);
     vlSelf->ysyx_25020059_top__DOT__mem_rdata = VL_RAND_RESET_I(32);
+    vlSelf->ysyx_25020059_top__DOT__u_mem_if_0__DOT__wmask_reg = VL_RAND_RESET_I(4);
+    vlSelf->ysyx_25020059_top__DOT__u_mem_if_0__DOT__wdata_reg = VL_RAND_RESET_I(32);
+    vlSelf->ysyx_25020059_top__DOT__u_mem_if_0__DOT__addr_reg = VL_RAND_RESET_I(32);
+    vlSelf->ysyx_25020059_top__DOT__u_mem_if_0__DOT__write_pending = VL_RAND_RESET_I(1);
     vlSelf->ysyx_25020059_top__DOT__u_mem_if_0__DOT__unnamedblk1__DOT__raw = 0;
     vlSelf->__Vfunc_pmem_read__1__Vfuncout = 0;
     vlSelf->__Vtrigprevexpr___TOP__clk__0 = VL_RAND_RESET_I(1);
