@@ -116,6 +116,10 @@ extern "C" void npc_trap(int code) {
 }
 
 extern "C" uint32_t pmem_read(uint32_t vaddr) {  
+    if (vaddr < MEM_BASE || vaddr >= MEM_BASE + MEM_SIZE) {
+        printf("pmem_read: address out of bounds: 0x%08X\n", vaddr);
+        return MEM_FAULT_CODE;  // 返回故障码
+    }
     printf("pmem_read: vaddr=0x%08X\n", vaddr);  //!!1
     uint32_t off = vaddr - MEM_BASE;
     
