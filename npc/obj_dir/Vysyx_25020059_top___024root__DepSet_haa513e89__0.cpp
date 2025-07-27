@@ -486,7 +486,7 @@ VL_INLINE_OPT void Vysyx_25020059_top___024root___nba_sequent__TOP__0(Vysyx_2502
     } else {
         __VdlyDim0__reg_f__v1 = vlSelfRef.ysyx_25020059_top__DOT__reg_waddr;
         __VdlySet__reg_f__v1 = 1U;
-        vlSelfRef.curr_pc = 0x80000000U;
+        vlSelfRef.curr_pc = 0U;
         vlSelfRef.ysyx_25020059_top__DOT__ena = 0U;
     }
     if (__VdlySet__reg_f__v0) {
