@@ -144,9 +144,6 @@ VL_ATTR_COLD void Vysyx_25020059_top___024root___dump_triggers__act(Vysyx_250200
     if ((2ULL & vlSelfRef.__VactTriggered.word(0U))) {
         VL_DBG_MSGF("         'act' region trigger index 1 is active: @(negedge ysyx_25020059_top.rst_n)\n");
     }
-    if ((4ULL & vlSelfRef.__VactTriggered.word(0U))) {
-        VL_DBG_MSGF("         'act' region trigger index 2 is active: @(negedge clk)\n");
-    }
 }
 #endif  // VL_DEBUG
 
@@ -165,9 +162,6 @@ VL_ATTR_COLD void Vysyx_25020059_top___024root___dump_triggers__nba(Vysyx_250200
     }
     if ((2ULL & vlSelfRef.__VnbaTriggered.word(0U))) {
         VL_DBG_MSGF("         'nba' region trigger index 1 is active: @(negedge ysyx_25020059_top.rst_n)\n");
-    }
-    if ((4ULL & vlSelfRef.__VnbaTriggered.word(0U))) {
-        VL_DBG_MSGF("         'nba' region trigger index 2 is active: @(negedge clk)\n");
     }
 }
 #endif  // VL_DEBUG
@@ -221,14 +215,7 @@ VL_ATTR_COLD void Vysyx_25020059_top___024root___ctor_var_reset(Vysyx_25020059_t
     vlSelf->ysyx_25020059_top__DOT__mem_size = VL_RAND_RESET_I(2);
     vlSelf->ysyx_25020059_top__DOT__mem_unsigned = VL_RAND_RESET_I(1);
     vlSelf->ysyx_25020059_top__DOT__mem_rdata = VL_RAND_RESET_I(32);
-    vlSelf->ysyx_25020059_top__DOT__u_mem_if_0__DOT__valid_r = VL_RAND_RESET_I(1);
-    vlSelf->ysyx_25020059_top__DOT__u_mem_if_0__DOT__wen_r = VL_RAND_RESET_I(1);
-    vlSelf->ysyx_25020059_top__DOT__u_mem_if_0__DOT__addr_r = VL_RAND_RESET_I(32);
-    vlSelf->ysyx_25020059_top__DOT__u_mem_if_0__DOT__wdata_r = VL_RAND_RESET_I(32);
-    vlSelf->ysyx_25020059_top__DOT__u_mem_if_0__DOT__size_r = VL_RAND_RESET_I(2);
-    vlSelf->ysyx_25020059_top__DOT__u_mem_if_0__DOT__unsigned_load_r = VL_RAND_RESET_I(1);
-    vlSelf->ysyx_25020059_top__DOT__u_mem_if_0__DOT__unnamedblk2__DOT__wmask = VL_RAND_RESET_I(4);
-    vlSelf->ysyx_25020059_top__DOT__u_mem_if_0__DOT__unnamedblk1__DOT__raw = 0;
+    vlSelf->__Vfunc_pmem_read__1__Vfuncout = 0;
     vlSelf->__Vtrigprevexpr___TOP__clk__0 = VL_RAND_RESET_I(1);
     vlSelf->__Vtrigprevexpr___TOP__ysyx_25020059_top__DOT__rst_n__0 = VL_RAND_RESET_I(1);
     for (int __Vi0 = 0; __Vi0 < 3; ++__Vi0) {
