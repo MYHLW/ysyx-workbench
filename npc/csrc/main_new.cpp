@@ -111,7 +111,7 @@ extern "C" void npc_trap(int code) {
 }
 
 extern "C" uint32_t pmem_read(uint32_t vaddr) {  
-    printf("pmem_read: vaddr=0x%08X\n", vaddr);  
+    printf("pmem_read: vaddr=0x%08X\n", vaddr);  //!!1
     uint32_t off = vaddr - MEM_BASE;
     
     // 安全的内存访问（避免未对齐访问问题）
