@@ -131,6 +131,7 @@ always @(*) begin
         `INST_TYPE_S: begin
             mem_valid   = 1'b1; // load/store 指令
             mem_wen     = 1'b1; // store
+            reg_wen     = 1'b0; // store 不写寄存器
             //mem_wdata   = reg2_rdata; // 写数据来自寄存器rs2          
             reg1_raddr  = rs1;
             reg2_raddr  = rs2;

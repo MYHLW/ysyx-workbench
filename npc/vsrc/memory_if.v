@@ -24,7 +24,7 @@ module memory_if (
   always @(*) begin
     case (size)
       2'b00: wmask = 4'b0001 << addr[1:0];  // byte
-      2'b01: wmask = 4'b0011 << {addr[1:0],1'b0}; // halfword (两个字节)
+      2'b01: wmask = 4'b0011 << addr[1:0];  // halfword
       2'b10: wmask = 4'b1111;               // word
       default: wmask = 4'b0000;
     endcase
