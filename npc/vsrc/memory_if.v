@@ -1,7 +1,7 @@
 `include "../vsrc/rvseed_defines.v"
 
 // === 1. DPI‑C 接口导入 ===
-import "DPI-C" function int unsigned      pmem_read  (input int unsigned raddr);
+import "DPI-C" function int unsigned      pmem_read  (input int unsigned raddr,input int unsigned i);
 import "DPI-C" function        void       pmem_write (input int unsigned waddr,
                                                         input int unsigned wdata,
                                                         input byte           wmask);
