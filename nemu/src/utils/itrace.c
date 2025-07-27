@@ -1,8 +1,3 @@
-#ifdef CONFIG_ITRACE
-
-
-
-
 #include <common.h>  // 包含 utils.h（需定义 CONFIG_ITRACE）  
 
 #define MAX_IRINGBUF 16
@@ -53,4 +48,3 @@ void display_inst() {
   } while ((i = (i+1)%MAX_IRINGBUF) != end);  
 }  
 
-#endif

@@ -61,8 +61,6 @@ uint64_t get_time();
 // ----------- instruction trace -----------
 
 #ifdef CONFIG_ITRACE
-
-extern ItraceNode iringbuf[MAX_IRINGBUF];
 extern int p_cur;
 extern bool full;
 
