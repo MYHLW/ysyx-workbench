@@ -96,7 +96,7 @@ void single_cycle() {
     tfp->dump(ctx->time());
     ctx->timeInc(1);
 
-    dut.inst = pmem_read(dut.curr_pc);
+    dut.inst = pmem_read(dut.curr_pc,1);
 
     sim_cycle++;
 }
@@ -173,13 +173,13 @@ extern "C" void npc_trap(int code) {
     printf("NPC_TRAP: code=%d", code);
 }
 
-extern "C" uint32_t pmem_read(uint32_t vaddr) {  
+extern "C" uint32_t pmem_read(uint32_t vaddr,int i) {  
     // if (vaddr < MEM_BASE || vaddr >= MEM_BASE + MEM_SIZE) {
     //     printf("pmem_read: address out of bounds: 0x%08X\n", vaddr);
     //     npc_trap(MEM_ACCESS_FAULT);  // 触发内存访问错误trap
     //     return MEM_FAULT_CODE;
     // }
-    printf("pmem_read: vaddr=0x%08X\n", vaddr);  //!!1
+    printf("pmem_read: vaddr=0x%08X\n      code:%d", vaddr,i);  //!!1
     uint32_t off = vaddr - MEM_BASE;
     
     // 安全的内存访问（避免未对齐访问问题）

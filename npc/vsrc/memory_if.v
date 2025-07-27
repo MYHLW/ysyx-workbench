@@ -35,7 +35,7 @@ module memory_if (
   always @(*) begin
     if (valid) begin
       // 1) 读一个 word（32-bit）并根据 addr[1:0] 选出需要的字节/半字
-      raw_data = pmem_read(addr & ~2'b11);  // 地址下两位清零，读对齐的 word
+      raw_data = pmem_read(addr & ~2'b11,2);  // 地址下两位清零，读对齐的 word
 
       // 2) 根据 size 和 unsigned_load 进行扩展
       case (size)
