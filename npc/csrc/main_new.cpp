@@ -18,6 +18,8 @@ uint64_t          sim_cycle = 0;
 Vysyx_25020059_top dut;
 uint8_t*          memory    = nullptr;
 
+#define MEM_FAULT_CODE 0xdeadbeef  // 定义内存故障码
+
 #define MEM_BASE    0x80000000U
 #define MEM_SIZE    (8 * 1024 * 1024)  // 8MB
 
@@ -105,6 +107,7 @@ extern "C" void npc_trap(int code) {
         sim_done = true;
         trap_code = code;
     }
+    printf("NPC_TRAP: code=%d", code);
 }
 
 extern "C" uint32_t pmem_read(uint32_t vaddr) {
