@@ -1,12 +1,3 @@
-`include "../vsrc/rvseed_defines.v"
-
-// === 1. DPI‑C 接口导入 ===
-// 使用 SystemVerilog 内建类型，不用 C 头文件里的 uint32_t
-import "DPI-C" function int unsigned      pmem_read  (input int unsigned raddr);
-import "DPI-C" function        void       pmem_write (input int unsigned waddr,
-                                                        input int unsigned wdata,
-                                                        input byte           wmask);
-
 module memory_if (
   input                         clk,
   input                         rst_n,
@@ -19,8 +10,13 @@ module memory_if (
   output reg [`CPU_WIDTH-1:0]   rdata           // 读出数据
 );
 
-  // 写掩码：4 位，每位对应一个 byte
-  reg [3:0] wmask;
+  // 写掩码寄存器
+  reg [3:0] wmask_reg;
+  reg [`CPU_WIDTH-1:0] wdata_reg;
+  reg [`CPU_WIDTH-1:0] addr_reg;
+  reg write_pending;
+  
+  // 写掩码生成（组合逻辑）
   always @(*) begin
     case (size)
       2'b00: wmask = 4'b0001 << addr[1:0];  // byte
@@ -30,35 +26,40 @@ module memory_if (
     endcase
   end
 
+  // 读路径：组合逻辑
   always @(*) begin
-    if (!valid) begin
+    if (!valid || wen) begin  // 写操作时不产生读数据
       rdata = '0;
     end else begin
-      // 1) 读原始 32-bit 数据
       int unsigned raw = pmem_read(addr);
-      // 2) 根据 size 和 unsigned_load 做扩展
+      
       case (size)
-        2'b00: begin  // byte
-          if (unsigned_load)
-            rdata = {24'b0, raw[7:0]};
-          else
-            rdata = {{24{raw[7]}}, raw[7:0]};
-        end
-        2'b01: begin  // halfword
-          if (unsigned_load)
-            rdata = {16'b0, raw[15:0]};
-          else
-            rdata = {{16{raw[15]}}, raw[15:0]};
-        end
-        2'b10: begin  // word
-          rdata = raw;
-        end
+        2'b00: rdata = unsigned_load ? {24'b0, raw[7:0]} : {{24{raw[7]}}, raw[7:0]};
+        2'b01: rdata = unsigned_load ? {16'b0, raw[15:0]} : {{16{raw[15]}}, raw[15:0]};
+        2'b10: rdata = raw;
         default: rdata = '0;
       endcase
+    end
+  end
 
-      // 3) 如果是 store，再写回
-      if (wen) begin
-        pmem_write(addr, wdata, wmask);
+  // 写路径：时序逻辑（同步写操作）
+  always @(posedge clk or negedge rst_n) begin
+    if (!rst_n) begin
+      write_pending <= 1'b0;
+    end else begin
+      // 捕获写请求
+      if (valid && wen) begin
+        wmask_reg <= wmask;
+        wdata_reg <= wdata;
+        addr_reg <= addr;
+        write_pending <= 1'b1;
+      end else begin
+        write_pending <= 1'b0;
+      end
+      
+      // 执行写操作
+      if (write_pending) begin
+        pmem_write(addr_reg, wdata_reg, wmask_reg);
       end
     end
   end
