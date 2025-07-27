@@ -11,7 +11,7 @@ module pc_reg (
 always @(posedge clk or negedge rst_n) begin
     if (!rst_n) begin
         ena <= 0; // Reset enable signal
-        curr_pc <= 32'h0000_0000; // Reset current PC to 0
+        curr_pc <= 32'h8000_0000; // Reset current PC to 0
     end else begin
         ena <= 1; // Enable signal is set
         curr_pc <= next_pc; 
