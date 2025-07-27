@@ -132,7 +132,7 @@ memory_if u_mem_if_0(
     .rst_n                          (rst_n),
     .valid                          (mem_valid),
     .wen                            (mem_wen),
-    .addr                           (alu_res), // 或者由 alu_res 提供地址
+    .addr                           (alu_res), // 由 alu_res 提供地址
     .wdata                          (reg2_rdata), // 写数据来自寄存器 rs2
     .size                           (mem_size),
     .unsigned_load                  (mem_unsigned),
