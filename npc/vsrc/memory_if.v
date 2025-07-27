@@ -18,7 +18,7 @@ module memory_if (
   input                         unsigned_load,  // lb vs lbu, lh vs lhu
   output reg [`CPU_WIDTH-1:0]   rdata           // 读出数据
 );
-
+  reg [3:0] wmask;  // 写掩码
   // 写掩码寄存器
   reg [3:0] wmask_reg;
   reg [`CPU_WIDTH-1:0] wdata_reg;
