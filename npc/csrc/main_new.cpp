@@ -45,9 +45,10 @@ void single_cycle() {
 
     dut.clk = 1;
     dut.eval();
-    dut.inst = pmem_read(dut.curr_pc);
     tfp->dump(ctx->time());
     ctx->timeInc(1);
+
+    dut.inst = pmem_read(dut.curr_pc);
 
     sim_cycle++;
 }
