@@ -24,7 +24,7 @@ extern uint8_t* memory;             // 仿真内存
 // single_cycle 在 main_new.cpp 中实现
 extern void single_cycle();
 
-#define MEM_BASE 0x00000000U
+#define MEM_BASE 0x80000000U
 
 // “si” 命令：单步 n 周期
 void cmd_si(const char* args) {
