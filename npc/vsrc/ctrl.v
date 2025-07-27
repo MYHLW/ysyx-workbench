@@ -136,7 +136,7 @@ always @(*) begin
             reg1_raddr  = rs1;
             reg2_raddr  = rs2;
             imm_gen_op  = `IMM_GEN_S;
-            alu_src_sel = `ALU_SRC_IMM; //
+            alu_src_sel = `ALU_SRC_IMM; // src1 = reg1_rdata, src2 = imm
             case (funct3)
                 `INST_SB: begin
                     alu_op = `ALU_ADD; // store byte
