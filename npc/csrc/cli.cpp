@@ -34,7 +34,6 @@ void cmd_si(const char* args) {
         return;
     }
     for (int i = 0; i < steps && !sim_done; i++) {
-        dut.inst = pmem_read(dut.curr_pc);
         single_cycle();
         std::printf("PC=0x%08X, inst=0x%08X\n", dut.curr_pc, dut.inst);
     }
@@ -44,7 +43,6 @@ void cmd_si(const char* args) {
 void cmd_continue(const char* /*args*/) {
     std::printf("Continuing...\n");
     while (!sim_done) {
-        dut.inst = pmem_read(dut.curr_pc);
         single_cycle();
         std::printf("PC=0x%08X, inst=0x%08X\n", dut.curr_pc, dut.inst);
     }
