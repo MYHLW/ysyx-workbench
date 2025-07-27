@@ -107,9 +107,20 @@ extern "C" void npc_trap(int code) {
     }
 }
 
-extern "C" uint32_t pmem_read(uint32_t vaddr){
-    uint32_t off = vaddr - MEM_BASE;  // 转换为偏移
-    return *(uint32_t*)(memory + off);
+extern "C" uint32_t pmem_read(uint32_t vaddr) {
+    // 地址范围检查
+    if (vaddr < MEM_BASE || vaddr >= MEM_BASE + MEM_SIZE) {
+        printf("MEM_FAULT: PC=0x%08X Addr=0x%08X\n", dut.curr_pc, vaddr);
+        npc_trap(MEM_FAULT_CODE);
+        return 0;
+    }
+    
+    uint32_t off = vaddr - MEM_BASE;
+    
+    // 安全的内存访问（避免未对齐访问问题）
+    uint32_t value;
+    memcpy(&value, memory + off, sizeof(value));
+    return value;
 }
 
 extern "C" void pmem_write(uint32_t addr, uint32_t data, uint8_t wmask) {
