@@ -154,7 +154,7 @@ always @(*) begin
         end
         `INST_TYPE_IL: begin // lb/lh/lw/lbu/lhu
             mem_valid   = 1'b1; // load/store 指令
-            mem_wen       = 1'b0;  // load
+            mem_wen     = 1'b0;  // load
             reg_wen     = 1'b1;
             reg1_raddr  = rs1;
             reg_waddr   = rd;
