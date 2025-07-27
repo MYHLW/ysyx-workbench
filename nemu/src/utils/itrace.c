@@ -1,5 +1,4 @@
 #include <common.h>  // 包含 utils.h（需定义 CONFIG_ITRACE）  
-#include "utils.h"   // 确保包含定义 ItraceNode 的头文件
 
 #define MAX_IRINGBUF 16
 
