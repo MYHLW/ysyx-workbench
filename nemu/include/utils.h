@@ -61,12 +61,12 @@ uint64_t get_time();
 // ----------- instruction trace -----------
 
 #ifdef CONFIG_ITRACE
-// #define MAX_IRINGBUF 16
+#define MAX_IRINGBUF 16
 
-// typedef struct {
-//   word_t pc;
-//   uint32_t inst;
-// } ItraceNode;
+typedef struct {
+  word_t pc;
+  uint32_t inst;
+} ItraceNode;
 
 extern ItraceNode iringbuf[MAX_IRINGBUF];
 extern int p_cur;
