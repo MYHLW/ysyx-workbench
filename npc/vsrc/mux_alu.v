@@ -30,7 +30,7 @@ module mux_alu (
             end
             `ALU_SRC_IMM_PC: begin
                 alu_src1 = imm;   // src1 = imm
-                alu_src2 = curr_pc; // src2 = pc
+                alu_src2 = curr_pc - 4; // src2 = pc
             end
             // 其他情况可以根据需要添加
             default: begin
