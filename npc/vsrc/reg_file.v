@@ -23,7 +23,7 @@ module reg_file (
 //         reg_f[reg_waddr] <= reg_wdata; // Write data to register
 //     end
 // end
-always @(posedge clk or negedge rst_n) begin
+always @(negedge clk or negedge rst_n) begin
     if (!rst_n) begin
         reg_f[reg_waddr] <= 0; // 原来的代码没有正确处理异步复位的逻辑
     end else if (reg_wen && (reg_waddr != 0)) begin
