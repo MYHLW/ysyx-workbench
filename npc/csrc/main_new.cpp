@@ -205,6 +205,7 @@ extern "C" uint32_t pmem_read(uint32_t vaddr,int i) {
 
 extern "C" void pmem_write(uint32_t addr, uint32_t data, uint8_t wmask) {
     // 1) 先把 addr 映射到内存数组偏移
+    printf("pmem_write: addr=0x%08X, data=0x%08X, wmask=0x%02X\n", addr, data, wmask);
     uint32_t off_byte = addr - MEM_BASE;
 
     // 2) 向下对齐到 4 字节边界（保证 p 指向一个完整的 32 位字的起始）
