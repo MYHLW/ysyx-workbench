@@ -122,6 +122,7 @@ void reset(int n) {
     dut.rst = 0;
     while (n-- > 0)  reset_cycle();
     dut.rst = 1;
+    dut.rst = 1;
 }
 
 int main(int argc, char** argv) {
