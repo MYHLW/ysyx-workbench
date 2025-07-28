@@ -19,7 +19,11 @@ extern Vysyx_25020059_top dut;
 extern bool sim_done;
 extern int trap_code;
 extern uint64_t sim_cycle;
-extern uint8_t* memory;             // 仿真内存
+// 原错误声明（指针类型，与main_new中数组不匹配）
+// extern uint8_t* memory;             // 仿真内存
+
+// 修正后（数组类型，匹配main_new中的static uint8_t memory[MEM_SIZE]）
+extern uint8_t memory[];             // 仿真内存（数组形式外部引用）        // 仿真内存
 
 // single_cycle 在 main_new.cpp 中实现
 extern void single_cycle();
