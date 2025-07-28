@@ -132,7 +132,7 @@ extern "C" uint32_t pmem_read(uint32_t vaddr, int i) {
         npc_trap(MEM_ACCESS_FAULT);
         return MEM_FAULT_CODE;
     }
-    printf("code:%d pmem_read: addr=0x%08X\n", i, vaddr);
+    //printf("code:%d pmem_read: addr=0x%08X\n", i, vaddr);
     uint32_t off = vaddr - MEM_BASE;
     uint32_t value;
     memcpy(&value, memory + off, sizeof(value));
@@ -140,7 +140,7 @@ extern "C" uint32_t pmem_read(uint32_t vaddr, int i) {
 }
 
 extern "C" void pmem_write(uint32_t addr, uint32_t data, uint8_t wmask) {
-    printf("pmem_write: addr=0x%08X, off_data=0x%08X, wmask=0x%02X\n", addr, data, wmask);
+    //printf("pmem_write: addr=0x%08X, off_data=0x%08X, wmask=0x%02X\n", addr, data, wmask);
     uint32_t off_byte = addr - MEM_BASE;
     uint32_t off_word = off_byte & ~0x3u;
     uint8_t *p = memory + off_word;
