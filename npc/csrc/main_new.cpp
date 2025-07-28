@@ -24,7 +24,7 @@ uint8_t*          memory    = nullptr;
 #define MEM_FAULT_CODE   0xdeadbeef  // 定义内存故障码
 #define MEM_ACCESS_FAULT 1           // 定义内存访问错误trap码
 
-#define MEM_BASE    0x00000000U
+#define MEM_BASE    0x80000000U
 #define MEM_SIZE    (8 * 1024 * 1024)  // 8MB
 
 // 加载二进制镜像
