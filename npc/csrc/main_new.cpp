@@ -12,6 +12,13 @@
 #include <verilated_vcd_c.h>
 #include <verilated_dpi.h>
 
+#define MEM_FAULT_CODE   0xdeadbeef  // 定义内存故障码
+#define MEM_ACCESS_FAULT 1           // 定义内存访问错误trap码
+
+#define MEM_BASE    0x00000000U
+#define MEM_SIZE (128 * 1024 * 1024)  // 128 MB
+
+
 // ----- 全局变量定义 -----
 VerilatedContext* ctx       = nullptr;
 VerilatedVcdC*    tfp       = nullptr;
@@ -19,26 +26,19 @@ bool              sim_done  = false;
 int               trap_code = -1;
 uint64_t          sim_cycle = 0;
 Vysyx_25020059_top dut;
-uint8_t*          memory    = nullptr;
+// 全局静态分配8 MB
+static uint8_t memory[MEM_SIZE];
 
-#define MEM_FAULT_CODE   0xdeadbeef  // 定义内存故障码
-#define MEM_ACCESS_FAULT 1           // 定义内存访问错误trap码
-
-#define MEM_BASE    0x00000000U
-#define MEM_SIZE    (8 * 1024 * 1024)  // 8MB
-
-// 加载二进制镜像
+// 在加载镜像时直接写入
 void load_image(const char* filename) {
     FILE* fp = std::fopen(filename, "rb");
-    if (!fp) {
-        std::perror("fopen");
-        std::exit(EXIT_FAILURE);
-    }
+    if (!fp) { std::perror("fopen"); std::exit(EXIT_FAILURE); }
     size_t sz = std::fread(memory, 1, MEM_SIZE, fp);
     std::fclose(fp);
     std::printf("Loaded binary '%s' (%zu bytes) at 0x%08X\n",
                 filename, sz, MEM_BASE);
 }
+
 
 // 加载 HEX 格式程序 (地址为 word 地址)
 void load_hex(const char* filename) {
