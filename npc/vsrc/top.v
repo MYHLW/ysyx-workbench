@@ -55,7 +55,7 @@ pc_reg u_pc_reg_0(
     .ena                            ( ena                           ),
     .next_pc                        ( next_pc                       ),
     .curr_pc                        ( curr_pc                       ),
-    .inst                           ( inst                          ),
+    .inst                           ( inst                          )
 );
 
 muxpc u_mux_pc_0(
