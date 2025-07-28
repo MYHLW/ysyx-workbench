@@ -495,8 +495,8 @@ void Vysyx_25020059_top___024root___eval_triggers__act(Vysyx_25020059_top___024r
     VL_DEBUG_IF(VL_DBG_MSGF("+    Vysyx_25020059_top___024root___eval_triggers__act\n"); );
     auto &vlSelfRef = std::ref(*vlSelf).get();
     // Body
-    vlSelfRef.__VactTriggered.set(0U, ((~ (IData)(vlSelfRef.clk)) 
-                                       & (IData)(vlSelfRef.__Vtrigprevexpr___TOP__clk__0)));
+    vlSelfRef.__VactTriggered.set(0U, ((IData)(vlSelfRef.clk) 
+                                       & (~ (IData)(vlSelfRef.__Vtrigprevexpr___TOP__clk__0))));
     vlSelfRef.__VactTriggered.set(1U, ((~ (IData)(vlSelfRef.ysyx_25020059_top__DOT__rst_n)) 
                                        & (IData)(vlSelfRef.__Vtrigprevexpr___TOP__ysyx_25020059_top__DOT__rst_n__0)));
     vlSelfRef.__Vtrigprevexpr___TOP__clk__0 = vlSelfRef.clk;
