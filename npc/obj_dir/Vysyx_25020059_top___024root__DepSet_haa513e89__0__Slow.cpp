@@ -400,7 +400,16 @@ VL_ATTR_COLD void Vysyx_25020059_top___024root___stl_sequent__TOP__0(Vysyx_25020
         vlSelfRef.ysyx_25020059_top__DOT__u_mem_if_0__DOT__unnamedblk1__DOT__raw 
             = vlSelfRef.__Vfunc_pmem_read__2__Vfuncout;
         if (vlSelfRef.ysyx_25020059_top__DOT__mem_wen) {
-            Vysyx_25020059_top___024unit____Vdpiimwrap_pmem_write_TOP____024unit(vlSelfRef.ysyx_25020059_top__DOT__alu_res, vlSelfRef.ysyx_25020059_top__DOT__reg2_rdata, 
+            vlSelfRef.ysyx_25020059_top__DOT__u_mem_if_0__DOT__write_data 
+                = vlSelfRef.ysyx_25020059_top__DOT__reg2_rdata;
+            if ((0U == (IData)(vlSelfRef.ysyx_25020059_top__DOT__mem_size))) {
+                vlSelfRef.ysyx_25020059_top__DOT__u_mem_if_0__DOT__write_data 
+                    = VL_SHIFTL_III(32,32,32, vlSelfRef.ysyx_25020059_top__DOT__reg2_rdata, 
+                                    VL_SHIFTL_III(32,32,32, 
+                                                  (3U 
+                                                   & vlSelfRef.ysyx_25020059_top__DOT__alu_res), 3U));
+            }
+            Vysyx_25020059_top___024unit____Vdpiimwrap_pmem_write_TOP____024unit(vlSelfRef.ysyx_25020059_top__DOT__alu_res, vlSelfRef.ysyx_25020059_top__DOT__u_mem_if_0__DOT__write_data, 
                                                                                 (0xfU 
                                                                                 & ((0U 
                                                                                 == (IData)(vlSelfRef.ysyx_25020059_top__DOT__mem_size))

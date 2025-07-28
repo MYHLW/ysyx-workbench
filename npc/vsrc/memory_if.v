@@ -22,6 +22,7 @@ module memory_if (
   // 写掩码：4 位，每位对应一个 byte
   reg [3:0] wmask;
   reg [`CPU_WIDTH-1:0] write_data;
+  reg [`CPU_WIDTH-1:0] raw;
   always @(*) begin
     case (size)
       2'b00: wmask = 4'b0001 << addr[1:0];  // SB: 只写一个 byte
@@ -35,7 +36,7 @@ module memory_if (
   always @(*) begin
     if (valid) begin
       // 1) 直接从 DPI-C 读整字
-      int unsigned raw = pmem_read(addr,2);
+      raw = pmem_read(addr,2);
 
       // 2) 如果是写操作（store），马上发起
             // Write path: shift wdata before calling pmem_write for SB
@@ -52,31 +53,17 @@ module memory_if (
       if (!wen) begin
         case (size)
           2'b00: begin  // Byte
-            // 取出对应字节
-            case (addr[1:0])
-              2'd0: rdata = raw[7:0];
-              2'd1: rdata = raw[15:8];
-              2'd2: rdata = raw[23:16];
-              2'd3: rdata = raw[31:24];
-            endcase
-            // 符号扩展或零扩展
             if (!unsigned_load)
-              rdata = { {24{rdata[7]}}, rdata[7:0] };  // LB
+              rdata = { {24{raw[7]}}, raw[7:0] };  // LB
             else
-              rdata = { 24'd0, rdata[7:0] };          // LBU
+              rdata = { 24'd0, raw[7:0] };          // LBU
           end
 
           2'b01: begin  // Halfword
-            // 取出对应半字
-            if (addr[1] == 1'b0)
-              rdata = raw[15:0];
-            else
-              rdata = raw[31:16];
-            // 符号扩展或零扩展
             if (!unsigned_load)
-              rdata = { {16{rdata[15]}}, rdata[15:0] };  // LH
+              rdata = { {16{raw[15]}}, raw[15:0] };  // LH
             else
-              rdata = { 16'd0, rdata[15:0] };            // LHU
+              rdata = { 16'd0, raw[15:0] };            // LHU
           end
 
           2'b10: begin  // Word
