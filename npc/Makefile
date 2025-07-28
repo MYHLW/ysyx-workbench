@@ -11,7 +11,6 @@ run:
 	make -C obj_dir -j -f Vysyx_25020059_top.mk Vysyx_25020059_top
 	@echo "=> Running NPC with image: $(IMG)"
 	./obj_dir/Vysyx_25020059_top $(IMG)
-	gtkwave ./Vysyx_25020059.vcd
 
 run debug:
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
