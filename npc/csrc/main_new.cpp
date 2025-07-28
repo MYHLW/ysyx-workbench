@@ -100,16 +100,6 @@ void single_cycle() {
     sim_cycle++;
 }
 
-void summary(){
-    printf("%ld cycles executed.\n", sim_cycle);
-    std::printf("\n");
-    if (trap_code == 0) {
-        std::printf("\033[32m[NPC] HIT GOOD TRAP: program exited successfully.\033[0m\n");
-    } else {
-        std::printf("\033[31m[NPC] HIT BAD TRAP: program failed (code=%d).\033[0m\n", trap_code);
-    }
-}
-
 // 复位用：不做 pmem_read
 void reset_cycle() {
     dut.clk = 1;
@@ -122,6 +112,8 @@ void reset_cycle() {
     tfp->dump(ctx->time());
     ctx->timeInc(1);
 }
+
+
 
 void reset() {
     dut.clk = 0;  // 时钟低电平
@@ -137,19 +129,16 @@ void reset() {
     dut.rst = 0;  // 取消复位信号
 }
 
-void mem_init(){
-    
-
 int main(int argc, char** argv) {
     if (argc < 2) {
         std::fprintf(stderr, "Usage: %s <program.hex|program.bin>\n", argv[0]);
         return -1;
     }
+
     memory = (uint8_t*)std::malloc(MEM_SIZE);
     if (!memory) { std::perror("malloc"); return -1; }
     std::memset(memory, 0, MEM_SIZE);
-}    
-    //mem_init();
+
     // 根据后缀自动选择加载方式
     load_program(argv[1]);
 
@@ -160,10 +149,22 @@ int main(int argc, char** argv) {
     dut.trace(tfp, 5);
     tfp->open("Vysyx_25020059.vcd");
 
+    // 复位
     reset();
 
-    sdb_mainloop();
     
+
+    // 启动命令行调试
+    sdb_mainloop();
+    printf("%ld cycles executed.\n", sim_cycle);
+
+    // 结束后输出 Trap 状态
+    std::printf("\n");
+    if (trap_code == 0) {
+        std::printf("\033[32m[NPC] HIT GOOD TRAP: program exited successfully.\033[0m\n");
+    } else {
+        std::printf("\033[31m[NPC] HIT BAD TRAP: program failed (code=%d).\033[0m\n", trap_code);
+    }
 
     tfp->close();
     delete tfp;
@@ -188,7 +189,7 @@ extern "C" uint32_t pmem_read(uint32_t vaddr,int i) {
         npc_trap(MEM_ACCESS_FAULT);  // 触发内存访问错误trap
         return MEM_FAULT_CODE;
     }
-    printf("code:%d  pmem_read: vaddr=0x%08X\n",i, vaddr);  //!!1
+    printf("code:%d pmem_read: vaddr=0x%08X\n",i, vaddr);  //!!1
     uint32_t off = vaddr - MEM_BASE;
     
     // 安全的内存访问（避免未对齐访问问题）
