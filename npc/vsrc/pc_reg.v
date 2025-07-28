@@ -18,7 +18,7 @@ always @(posedge clk or negedge rst_n) begin
         //inst = pmem_read(curr_pc,1);zhel
     end else begin
         ena <= 1; // Enable signal is set
-        inst <= pmem_read(curr_pc,1); // Fetch instruction from memory
+        inst <= pmem_read(next_pc,1); // Fetch instruction from memory
         curr_pc <= next_pc; 
         
         
