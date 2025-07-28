@@ -89,16 +89,15 @@ void single_cycle() {
     dut.clk = 0;
     dut.eval();
     tfp->dump(ctx->time());
-    ctx->timeInc(1);
+    ctx->timeInc(2);
    // dut.inst = pmem_read(dut.curr_pc);
     
     dut.clk = 1;
     dut.eval();    
     tfp->dump(ctx->time());
     ctx->timeInc(1);
-
+    
     dut.inst = pmem_read(dut.curr_pc,1);
-
     sim_cycle++;
 }
 
