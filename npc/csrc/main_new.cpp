@@ -27,7 +27,7 @@ int               trap_code = -1;
 uint64_t          sim_cycle = 0;
 Vysyx_25020059_top dut;
 // 全局静态分配8 MB
-static uint8_t memory[MEM_SIZE];
+uint8_t memory[MEM_SIZE];
 
 // 在加载镜像时直接写入
 void load_image(const char* filename) {
