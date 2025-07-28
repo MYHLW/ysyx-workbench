@@ -19,6 +19,8 @@ extern uint64_t sim_cycle;
 extern void single_cycle();
 //extern uint32_t pmem_read();
 //extern inline uint32_t guest_to_host(uint32_t addr);
+extern const uint32_t MEM_BASE;
+extern const uint32_t MEM_SIZE;
 
 // 调试命令接口
 void cmd_si(const char* args);

@@ -15,8 +15,9 @@
 #define MEM_FAULT_CODE   0xdeadbeef  // 定义内存故障码
 #define MEM_ACCESS_FAULT 1           // 定义内存访问错误trap码
 
-#define MEM_BASE    0x00000000U
-#define MEM_SIZE (128 * 1024 * 1024)  // 128 MB
+
+const uint32_t MEM_BASE = 0x80000000U;
+const uint32_t MEM_SIZE = 128 * 1024 * 1024;
 
 
 // ----- 全局变量定义 -----
