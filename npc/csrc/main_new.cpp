@@ -147,6 +147,8 @@ int main(int argc, char** argv) {
     dut.clk = 0;  // 时钟低电平
     dut.eval();   // 评估模型
     dut.rst = 0;  // 释放复位信号
+    dut.eval();   // 评估模型
+
 
 
     // 启动命令行调试
