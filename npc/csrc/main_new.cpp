@@ -86,6 +86,8 @@ void load_program(const char* filename) {
 
 // 单周期执行
 void single_cycle() {
+    dut.inst = pmem_read(dut.curr_pc,1);
+
     dut.clk = 0;
     dut.eval();
     tfp->dump(ctx->time());
@@ -96,19 +98,19 @@ void single_cycle() {
     tfp->dump(ctx->time());
     ctx->timeInc(1);
 
-    dut.inst = pmem_read(dut.curr_pc,1);
+   
 
     sim_cycle++;
 }
 
 // 复位用：不做 pmem_read
 void reset_cycle() {
-    dut.clk = 0;
+    dut.clk = 1;
     dut.eval();
     tfp->dump(ctx->time());
     ctx->timeInc(1);
 
-    dut.clk = 1;
+    dut.clk = 0;
     dut.eval();
     tfp->dump(ctx->time());
     ctx->timeInc(1);
