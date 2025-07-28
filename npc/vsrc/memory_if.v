@@ -2,7 +2,7 @@
 
 // === 1. DPI‑C 接口导入 ===
 // 使用 SystemVerilog 内建类型，不用 C 头文件里的 uint32_t
-import "DPI-C" function int unsigned      pmem_read  (input int unsigned raddr);
+import "DPI-C" function int unsigned      pmem_read  (input int unsigned raddr,input int i);
 import "DPI-C" function        void       pmem_write (input int unsigned waddr,
                                                         input int unsigned wdata,
                                                         input byte           wmask);
