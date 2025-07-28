@@ -7,7 +7,7 @@ module pc_reg (
     input                        rst_n,
     input       [`CPU_WIDTH-1:0] next_pc, // Next PC value
     output reg  [`CPU_WIDTH-1:0] curr_pc, // Current PC value
-    output reg                   ena //system enable signal 可以用来控制整个 NPC 的启动，比如在没复位完之前屏蔽所有其他逻辑。
+    output reg                   ena, //system enable signal 可以用来控制整个 NPC 的启动，比如在没复位完之前屏蔽所有其他逻辑。
     output reg  [`CPU_WIDTH-1:0] inst // Instruction fetched from memory
 );
 

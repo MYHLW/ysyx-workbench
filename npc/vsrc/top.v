@@ -4,7 +4,7 @@
 module  ysyx_25020059_top(
 	input                         clk,
     input                         rst,
-	input [31:0]                  inst,
+	output [31:0]                 inst,
 	output[`CPU_WIDTH-1:0]        curr_pc,
     output[`CPU_WIDTH-1:0]        next_pc,
     output[`CPU_WIDTH-1:0]        reg_f [`REG_DATA_DEPTH-1:0] // Register file array
@@ -44,6 +44,8 @@ wire [1:0]                   mem_size;
 wire                         mem_unsigned;
 wire [`CPU_WIDTH-1:0]        mem_rdata;
 
+wire [`CPU_WIDTH-1:0]        inst; // Instruction fetched from memory
+
 
 assign reg_wdata = (mem_valid && !mem_wen) ? mem_rdata : alu_res; // 如果是 load 指令，则写入读出的数据，否则写入 ALU 结果
 
@@ -52,7 +54,8 @@ pc_reg u_pc_reg_0(
     .rst_n                          ( rst_n                         ),
     .ena                            ( ena                           ),
     .next_pc                        ( next_pc                       ),
-    .curr_pc                        ( curr_pc                       )
+    .curr_pc                        ( curr_pc                       ),
+    .inst                           ( inst                          ),
 );
 
 muxpc u_mux_pc_0(
