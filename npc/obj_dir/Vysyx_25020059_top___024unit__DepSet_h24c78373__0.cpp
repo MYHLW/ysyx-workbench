@@ -16,14 +16,14 @@ VL_INLINE_OPT void Vysyx_25020059_top___024unit____Vdpiimwrap_npc_trap_TOP____02
     npc_trap(code__Vcvt);
 }
 
-extern "C" unsigned int pmem_read(unsigned int raddr, unsigned int i);
+extern "C" unsigned int pmem_read(unsigned int raddr, int i);
 
 VL_INLINE_OPT void Vysyx_25020059_top___024unit____Vdpiimwrap_pmem_read_TOP____024unit(IData/*31:0*/ raddr, IData/*31:0*/ i, IData/*31:0*/ &pmem_read__Vfuncrtn) {
     VL_DEBUG_IF(VL_DBG_MSGF("+        Vysyx_25020059_top___024unit____Vdpiimwrap_pmem_read_TOP____024unit\n"); );
     // Body
     unsigned int raddr__Vcvt;
     for (size_t raddr__Vidx = 0; raddr__Vidx < 1; ++raddr__Vidx) raddr__Vcvt = raddr;
-    unsigned int i__Vcvt;
+    int i__Vcvt;
     for (size_t i__Vidx = 0; i__Vidx < 1; ++i__Vidx) i__Vcvt = i;
     unsigned int pmem_read__Vfuncrtn__Vcvt;
     pmem_read__Vfuncrtn__Vcvt = pmem_read(raddr__Vcvt, i__Vcvt);
