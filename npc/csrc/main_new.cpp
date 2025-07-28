@@ -149,8 +149,8 @@ int main(int argc, char** argv) {
         return -1;
     }
 
-    memory = (uint8_t*)std::malloc(MEM_SIZE);
-    if (!memory) { std::perror("malloc"); return -1; }
+    // memory = (uint8_t*)std::malloc(MEM_SIZE);
+    // if (!memory) { std::perror("malloc"); return -1; }
     std::memset(memory, 0, MEM_SIZE);
 
     // 根据后缀自动选择加载方式
@@ -174,7 +174,6 @@ int main(int argc, char** argv) {
     tfp->close();
     delete tfp;
     delete ctx;
-    std::free(memory);
     return 0;
 }
 
