@@ -34,7 +34,7 @@ module memory_if (
   always @(*) begin
     if (valid) begin
       // 1) 直接从 DPI-C 读整字
-      int unsigned raw = pmem_read(addr);
+      int unsigned raw = pmem_read(addr,1);
 
       // 2) 如果是写操作（store），马上发起
       if (wen) begin
