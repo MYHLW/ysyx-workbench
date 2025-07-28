@@ -1,6 +1,6 @@
 `include "/home/wang/ysyx-workbench/npc/vsrc/rvseed_defines.v"
 
-import "DPI-C" function int unsigned      pmem_read  (input int unsigned raddr,input int unsigned i);
+//import "DPI-C" function int unsigned      pmem_read  (input int unsigned raddr,input int unsigned i);
 
 module pc_reg (
     input                        clk,
