@@ -21,6 +21,7 @@ module memory_if (
 
   // 写掩码：4 位，每位对应一个 byte
   reg [3:0] wmask;
+  reg [`CPU_WIDTH-1:0] write_data;
   always @(*) begin
     case (size)
       2'b00: wmask = 4'b0001 << addr[1:0];  // SB: 只写一个 byte
@@ -37,8 +38,14 @@ module memory_if (
       int unsigned raw = pmem_read(addr,2);
 
       // 2) 如果是写操作（store），马上发起
+            // Write path: shift wdata before calling pmem_write for SB
       if (wen) begin
-        pmem_write(addr, wdata, wmask);
+        // 对于 SB，先将最低 8 位左移到字中正确字节位置
+        write_data = wdata;
+        if (size == 2'b00) begin
+          write_data = wdata << (addr[1:0] * 8);
+        end
+        pmem_write(addr, write_data, wmask);
       end
 
       // 3) 如果是读操作，根据 size 和 unsigned_load 提取/扩展
