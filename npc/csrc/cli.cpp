@@ -47,7 +47,7 @@ void cmd_continue(const char* /*args*/) {
     std::printf("Continuing...\n");
     while (!sim_done) {
         single_cycle();
-        std::printf("PC=0x%08X, inst=0x%08X\n", dut.curr_pc, dut.inst);
+        //std::printf("PC=0x%08X, inst=0x%08X\n", dut.curr_pc, dut.inst);
     }
 }
 

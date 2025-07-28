@@ -12,7 +12,7 @@
 
 #define MEM_FAULT_CODE   0xdeadbeef  // 定义内存故障码
 #define MEM_ACCESS_FAULT 1           // 定义内存访问错误trap码
-#define MAX_CYCLE 1000000  // 最大允许周期数，超过则触发trap
+#define MAX_CYCLE 5000000  // 最大允许周期数，超过则触发trap
 
 
 // ----- 全局变量（供外部引用：loader.cpp和cli.cpp）-----
