@@ -8,7 +8,7 @@ module pc_reg (
     output reg                   ena //system enable signal 可以用来控制整个 NPC 的启动，比如在没复位完之前屏蔽所有其他逻辑。
 );
 
-always @(negedge clk or negedge rst_n) begin
+always @(posedge clk or negedge rst_n) begin
     if (!rst_n) begin
         ena <= 0; // Reset enable signal
         curr_pc <= 32'h8000_0000; // Reset current PC to 0
