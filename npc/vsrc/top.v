@@ -10,7 +10,7 @@ module  ysyx_25020059_top(
     output[`CPU_WIDTH-1:0]        reg_f [`REG_DATA_DEPTH-1:0] // Register file array
 );
 wire                         rst_n;
-assign                       rst_n = ~rst; // active low reset
+assign                       rst_n = !rst; // active low reset
 wire                         ena;
 //wire [`CPU_WIDTH-1:0]        curr_pc;    // current pc addr
 //wire [`CPU_WIDTH-1:0]        next_pc;    // next pc addr
