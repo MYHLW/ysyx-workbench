@@ -1,4 +1,4 @@
-`include "../vsrc/rvseed_defines.v"
+`include "/home/wang/ysyx-workbench/npc/vsrc/rvseed_defines.v"
 
 module mux_alu (
     input       [`ALU_SRC_WIDTH-1:0]    alu_src_sel,// 选择信号

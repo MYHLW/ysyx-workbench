@@ -1,4 +1,4 @@
-`include "../vsrc/rvseed_defines.v"
+`include "/home/wang/ysyx-workbench/npc/vsrc/rvseed_defines.v"
 
 // === 1. DPI‑C 接口导入 ===
 import "DPI-C" function int unsigned      pmem_read  (input int unsigned raddr,input int unsigned i);
