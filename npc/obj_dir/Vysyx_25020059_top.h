@@ -34,7 +34,7 @@ class alignas(VL_CACHE_LINE_BYTES) Vysyx_25020059_top VL_NOT_FINAL : public Veri
     // propagate new values into/out from the Verilated model.
     VL_IN8(&clk,0,0);
     VL_IN8(&rst,0,0);
-    VL_IN(&inst,31,0);
+    VL_OUT(&inst,31,0);
     VL_OUT(&curr_pc,31,0);
     VL_OUT(&next_pc,31,0);
     VL_OUT((&reg_f)[32],31,0);

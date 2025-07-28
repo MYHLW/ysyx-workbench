@@ -15,11 +15,12 @@ always @(posedge clk or negedge rst_n) begin
     if (!rst_n) begin
         ena <= 0; // Reset enable signal
         curr_pc <= 32'h8000_0000; // Reset current PC to 0
-        inst = pmem_read(curr_pc,1);
+        //inst = pmem_read(curr_pc,1);
     end else begin
         ena <= 1; // Enable signal is set
+        inst = pmem_read(curr_pc,1); // Fetch instruction from memory
         curr_pc <= next_pc; 
-        inst = pmem_read(next_pc,1); // Fetch instruction from memory
+        
         
     end
 end

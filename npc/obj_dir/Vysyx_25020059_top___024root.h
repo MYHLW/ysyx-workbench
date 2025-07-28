@@ -41,7 +41,7 @@ class alignas(VL_CACHE_LINE_BYTES) Vysyx_25020059_top___024root final : public V
     CData/*0:0*/ __Vtrigprevexpr___TOP__clk__0;
     CData/*0:0*/ __Vtrigprevexpr___TOP__ysyx_25020059_top__DOT__rst_n__0;
     CData/*0:0*/ __VactContinue;
-    VL_IN(inst,31,0);
+    VL_OUT(inst,31,0);
     VL_OUT(curr_pc,31,0);
     VL_OUT(next_pc,31,0);
     IData/*31:0*/ ysyx_25020059_top__DOT__reg1_rdata;
@@ -52,10 +52,10 @@ class alignas(VL_CACHE_LINE_BYTES) Vysyx_25020059_top___024root final : public V
     IData/*31:0*/ ysyx_25020059_top__DOT__alu_res;
     IData/*31:0*/ ysyx_25020059_top__DOT__mem_rdata;
     IData/*31:0*/ ysyx_25020059_top__DOT__u_mem_if_0__DOT__raw_data;
-    IData/*31:0*/ __Vfunc_pmem_read__1__Vfuncout;
+    IData/*31:0*/ __Vfunc_pmem_read__3__Vfuncout;
     IData/*31:0*/ __VactIterCount;
     VL_OUT(reg_f[32],31,0);
-    VlUnpacked<CData/*0:0*/, 3> __Vm_traceActivity;
+    VlUnpacked<CData/*0:0*/, 2> __Vm_traceActivity;
     VlTriggerVec<1> __VstlTriggered;
     VlTriggerVec<1> __VicoTriggered;
     VlTriggerVec<2> __VactTriggered;

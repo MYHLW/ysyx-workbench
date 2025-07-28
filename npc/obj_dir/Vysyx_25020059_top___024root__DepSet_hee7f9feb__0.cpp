@@ -15,8 +15,17 @@ void Vysyx_25020059_top___024root___eval_ico(Vysyx_25020059_top___024root* vlSel
     // Body
     if ((1ULL & vlSelfRef.__VicoTriggered.word(0U))) {
         Vysyx_25020059_top___024root___ico_sequent__TOP__0(vlSelf);
-        vlSelfRef.__Vm_traceActivity[1U] = 1U;
     }
+}
+
+VL_INLINE_OPT void Vysyx_25020059_top___024root___ico_sequent__TOP__0(Vysyx_25020059_top___024root* vlSelf) {
+    (void)vlSelf;  // Prevent unused variable warning
+    Vysyx_25020059_top__Syms* const __restrict vlSymsp VL_ATTR_UNUSED = vlSelf->vlSymsp;
+    VL_DEBUG_IF(VL_DBG_MSGF("+    Vysyx_25020059_top___024root___ico_sequent__TOP__0\n"); );
+    auto &vlSelfRef = std::ref(*vlSelf).get();
+    // Body
+    vlSelfRef.ysyx_25020059_top__DOT__rst_n = (1U & 
+                                               (~ (IData)(vlSelfRef.rst)));
 }
 
 void Vysyx_25020059_top___024root___eval_triggers__ico(Vysyx_25020059_top___024root* vlSelf);
@@ -54,7 +63,7 @@ void Vysyx_25020059_top___024root___eval_nba(Vysyx_25020059_top___024root* vlSel
     // Body
     if ((3ULL & vlSelfRef.__VnbaTriggered.word(0U))) {
         Vysyx_25020059_top___024root___nba_sequent__TOP__0(vlSelf);
-        vlSelfRef.__Vm_traceActivity[2U] = 1U;
+        vlSelfRef.__Vm_traceActivity[1U] = 1U;
     }
 }
 
