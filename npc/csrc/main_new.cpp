@@ -148,6 +148,7 @@ int main(int argc, char** argv) {
 
     // 启动命令行调试
     sdb_mainloop();
+    printf("%d cycles executed.\n", sim_cycle);
 
     // 结束后输出 Trap 状态
     std::printf("\n");
@@ -177,7 +178,7 @@ extern "C" void npc_trap(int code) {
 extern "C" uint32_t pmem_read(uint32_t vaddr,int i) {  
     if (vaddr < MEM_BASE || vaddr >= MEM_BASE + MEM_SIZE) {
         printf("pmem_read: address out of bounds: 0x%08X\n", vaddr);
-       // npc_trap(MEM_ACCESS_FAULT);  // 触发内存访问错误trap
+        npc_trap(MEM_ACCESS_FAULT);  // 触发内存访问错误trap
         return MEM_FAULT_CODE;
     }
     printf("code:%d pmem_read: vaddr=0x%08X\n",i, vaddr);  //!!1
@@ -190,7 +191,7 @@ extern "C" uint32_t pmem_read(uint32_t vaddr,int i) {
 }
 
 extern "C" void pmem_write(uint32_t addr, uint32_t data, uint8_t wmask) {
-    printf("pmem_write: addr=0x%08X, data=0x%08X, wmask=0x%02X\n", addr, data, wmask);
+   // printf("pmem_write: addr=0x%08X, data=0x%08X, wmask=0x%02X\n", addr, data, wmask);
     uint32_t off = addr - MEM_BASE;
     uint8_t *p = memory + off;
     for (int i = 0; i < 4; i++) {
