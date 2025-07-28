@@ -89,7 +89,7 @@ void single_cycle() {
     dut.clk = 0;
     dut.eval();
     tfp->dump(ctx->time());
-    ctx->timeInc(2);
+    ctx->timeInc(1);
    // dut.inst = pmem_read(dut.curr_pc);
     
     dut.clk = 1;
@@ -143,7 +143,17 @@ int main(int argc, char** argv) {
     tfp->open("Vysyx_25020059.vcd");
 
     // 复位
-    reset(2);
+    //reset(2);
+    dut.rst = 1;  // 设置复位信号
+    dut.clk = 0;  // 时钟低电平
+    dut.eval();   // 评估模型
+    tfp->dump(ctx->time());  // 转储当前时间点
+    ctx->timeInc(1);  // 增加时间
+    dut.clk = 1;  // 时钟高电平
+    dut.eval();  // 再次评估模型
+    tfp->dump(ctx->time());  // 转储当前时间点
+    ctx->timeInc(1);  // 增加时间
+    dut.rst = 0;  // 取消复位信号
 
     // 启动命令行调试
     sdb_mainloop();
