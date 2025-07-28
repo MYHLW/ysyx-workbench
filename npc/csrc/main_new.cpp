@@ -115,7 +115,8 @@ void reset_cycle() {
 
 
 
-void reset() {
+void reset(int n) {
+    while(n>0){
     dut.clk = 0;  // 时钟低电平
     dut.rst = 1;  // 设置复位信号
     dut.eval();   // 评估模型
@@ -127,6 +128,19 @@ void reset() {
     tfp->dump(ctx->time());  // 转储当前时间点
     ctx->timeInc(1);  // 增加时间
     dut.rst = 0;  // 取消复位信号
+    n--;
+    }
+}
+
+void summary(){
+    printf("%ld cycles executed.\n", sim_cycle);
+    // 结束后输出 Trap 状态
+    std::printf("\n");
+    if (trap_code == 0) {
+        std::printf("\033[32m[NPC] HIT GOOD TRAP: program exited successfully.\033[0m\n");
+    } else {
+        std::printf("\033[31m[NPC] HIT BAD TRAP: program failed (code=%d).\033[0m\n", trap_code);
+    }
 }
 
 int main(int argc, char** argv) {
@@ -150,22 +164,12 @@ int main(int argc, char** argv) {
     tfp->open("Vysyx_25020059.vcd");
 
     // 复位
-    reset();
-    reset();
-
-    
+    reset(2);
 
     // 启动命令行调试
     sdb_mainloop();
-    printf("%ld cycles executed.\n", sim_cycle);
-
-    // 结束后输出 Trap 状态
-    std::printf("\n");
-    if (trap_code == 0) {
-        std::printf("\033[32m[NPC] HIT GOOD TRAP: program exited successfully.\033[0m\n");
-    } else {
-        std::printf("\033[31m[NPC] HIT BAD TRAP: program failed (code=%d).\033[0m\n", trap_code);
-    }
+    
+    void summary();
 
     tfp->close();
     delete tfp;
