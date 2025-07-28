@@ -86,8 +86,6 @@ void load_program(const char* filename) {
 
 // 单周期执行
 void single_cycle() {
-    dut.inst = pmem_read(dut.curr_pc,1);
-
     dut.clk = 0;
     dut.eval();
     tfp->dump(ctx->time());
@@ -98,7 +96,7 @@ void single_cycle() {
     tfp->dump(ctx->time());
     ctx->timeInc(1);
 
-   
+    dut.inst = pmem_read(dut.curr_pc,1);
 
     sim_cycle++;
 }
@@ -119,10 +117,9 @@ void reset_cycle() {
 
 // 复位 n 周期
 void reset(int n) {
-    dut.rst = 0;
+    dut.rst = 1;
     while (n-- > 0)  reset_cycle();
-    dut.rst = 1;
-    dut.rst = 1;
+    dut.rst = 0;
 }
 
 int main(int argc, char** argv) {
@@ -179,7 +176,7 @@ extern "C" void npc_trap(int code) {
 extern "C" uint32_t pmem_read(uint32_t vaddr,int i) {  
     if (vaddr < MEM_BASE || vaddr >= MEM_BASE + MEM_SIZE) {
         printf("pmem_read: address out of bounds: 0x%08X\n", vaddr);
-        npc_trap(MEM_ACCESS_FAULT);  // 触发内存访问错误trap
+       // npc_trap(MEM_ACCESS_FAULT);  // 触发内存访问错误trap
         return MEM_FAULT_CODE;
     }
     printf("code:%d pmem_read: vaddr=0x%08X\n",i, vaddr);  //!!1
