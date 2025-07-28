@@ -94,7 +94,7 @@ VL_INLINE_OPT void Vysyx_25020059_top___024root___nba_sequent__TOP__0(Vysyx_2502
         vlSelfRef.curr_pc = vlSelfRef.next_pc;
     } else {
         vlSelfRef.ysyx_25020059_top__DOT__ena = 0U;
-        vlSelfRef.curr_pc = 0U;
+        vlSelfRef.curr_pc = 0x80000000U;
     }
     if (__VdlySet__reg_f__v0) {
         vlSelfRef.reg_f[__VdlyDim0__reg_f__v0] = __VdlyVal__reg_f__v0;
