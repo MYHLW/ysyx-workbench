@@ -1,5 +1,5 @@
 # 默认接收外部传入的 IMG，如果未指定就用下面这行
-IMG ?= /home/wang/ysyx-workbench/am/$(IMAGE).bin
+IMG ?= /home/wang/ysyx-workbench/npc/program/$(IMAGE).bin
 
 all:
 	@echo "Write this Makefile by your self."
