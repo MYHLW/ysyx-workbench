@@ -133,16 +133,9 @@ void reset(int n) {
     }
 }
 
-void summary(){
-    printf("%ld cycles executed.\n", sim_cycle);
-    // 结束后输出 Trap 状态
-    std::printf("\n");
-    if (trap_code == 0) {
-        std::printf("\033[32m[NPC] HIT GOOD TRAP: program exited successfully.\033[0m\n");
-    } else {
-        std::printf("\033[31m[NPC] HIT BAD TRAP: program failed (code=%d).\033[0m\n", trap_code);
-    }
-}
+// void summary(){
+    
+// }
 
 int main(int argc, char** argv) {
     if (argc < 2) {
@@ -170,7 +163,7 @@ int main(int argc, char** argv) {
     // 启动命令行调试
     sdb_mainloop();
     
-    void summary();
+    //void summary();
 
     tfp->close();
     delete tfp;
@@ -185,7 +178,15 @@ extern "C" void npc_trap(int code) {
         sim_done = true;
         trap_code = code;
     }
-    printf("NPC_TRAP: code=%d", code);
+    printf("NPC_TRAP: code=%d\n", code);
+    printf("%ld cycles executed.\n", sim_cycle);
+    // 结束后输出 Trap 状态
+    std::printf("\n");
+    if (trap_code == 0) {
+        std::printf("\033[32m[NPC] HIT GOOD TRAP: program exited successfully.\033[0m\n");
+    } else {
+        std::printf("\033[31m[NPC] HIT BAD TRAP: program failed (code=%d).\033[0m\n", trap_code);
+    }
 }
 
 extern "C" uint32_t pmem_read(uint32_t vaddr,int i) {  
