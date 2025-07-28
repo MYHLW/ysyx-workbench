@@ -108,9 +108,7 @@ VL_ATTR_COLD void Vysyx_25020059_top___024root__trace_init_sub__TOP__0(Vysyx_250
     tracep->declBus(c+24,0,"rdata",-1, VerilatedTraceSigDirection::OUTPUT, VerilatedTraceSigKind::WIRE, VerilatedTraceSigType::LOGIC, false,-1, 31,0);
     tracep->declBus(c+25,0,"wmask",-1, VerilatedTraceSigDirection::NONE, VerilatedTraceSigKind::VAR, VerilatedTraceSigType::LOGIC, false,-1, 3,0);
     tracep->declBus(c+26,0,"write_data",-1, VerilatedTraceSigDirection::NONE, VerilatedTraceSigKind::VAR, VerilatedTraceSigType::LOGIC, false,-1, 31,0);
-    tracep->pushPrefix("unnamedblk1", VerilatedTracePrefixType::SCOPE_MODULE);
-    tracep->declBus(c+27,0,"raw",-1, VerilatedTraceSigDirection::NONE, VerilatedTraceSigKind::VAR, VerilatedTraceSigType::INT, false,-1, 31,0);
-    tracep->popPrefix();
+    tracep->declBus(c+27,0,"raw",-1, VerilatedTraceSigDirection::NONE, VerilatedTraceSigKind::VAR, VerilatedTraceSigType::LOGIC, false,-1, 31,0);
     tracep->popPrefix();
     tracep->pushPrefix("u_mux_alu_0", VerilatedTracePrefixType::SCOPE_MODULE);
     tracep->declBus(c+16,0,"alu_src_sel",-1, VerilatedTraceSigDirection::INPUT, VerilatedTraceSigKind::WIRE, VerilatedTraceSigType::LOGIC, false,-1, 1,0);
@@ -265,7 +263,7 @@ VL_ATTR_COLD void Vysyx_25020059_top___024root__trace_full_0_sub_0(Vysyx_2502005
                                                ? 0xfU
                                                : 0U))))),4);
     bufp->fullIData(oldp+26,(vlSelfRef.ysyx_25020059_top__DOT__u_mem_if_0__DOT__write_data),32);
-    bufp->fullIData(oldp+27,(vlSelfRef.ysyx_25020059_top__DOT__u_mem_if_0__DOT__unnamedblk1__DOT__raw),32);
+    bufp->fullIData(oldp+27,(vlSelfRef.ysyx_25020059_top__DOT__u_mem_if_0__DOT__raw),32);
     bufp->fullBit(oldp+28,(vlSelfRef.clk));
     bufp->fullBit(oldp+29,(vlSelfRef.rst));
     bufp->fullIData(oldp+30,(vlSelfRef.inst),32);

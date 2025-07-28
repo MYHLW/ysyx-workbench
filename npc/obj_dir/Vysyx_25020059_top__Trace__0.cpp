@@ -66,7 +66,7 @@ void Vysyx_25020059_top___024root__trace_chg_0_sub_0(Vysyx_25020059_top___024roo
                                                   ? 0xfU
                                                   : 0U))))),4);
         bufp->chgIData(oldp+25,(vlSelfRef.ysyx_25020059_top__DOT__u_mem_if_0__DOT__write_data),32);
-        bufp->chgIData(oldp+26,(vlSelfRef.ysyx_25020059_top__DOT__u_mem_if_0__DOT__unnamedblk1__DOT__raw),32);
+        bufp->chgIData(oldp+26,(vlSelfRef.ysyx_25020059_top__DOT__u_mem_if_0__DOT__raw),32);
     }
     bufp->chgBit(oldp+27,(vlSelfRef.clk));
     bufp->chgBit(oldp+28,(vlSelfRef.rst));
