@@ -203,7 +203,7 @@ extern "C" uint32_t pmem_read(uint32_t vaddr,int i) {
     return value;
 }
 
-extern "C" void pmem_write_aligned(uint32_t addr, uint32_t data, uint8_t wmask) {
+extern "C" void pmem_write(uint32_t addr, uint32_t data, uint8_t wmask) {
     // 1) 先把 addr 映射到内存数组偏移
     uint32_t off_byte = addr - MEM_BASE;
 
