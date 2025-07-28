@@ -114,11 +114,19 @@ void reset_cycle() {
 }
 
 
-// 复位 n 周期
-void reset(int n) {
-    dut.rst = 1;
-    while (n-- > 0)  reset_cycle();
-    dut.rst = 0;
+
+void reset() {
+    dut.clk = 0;  // 时钟低电平
+    dut.rst = 1;  // 设置复位信号
+    dut.eval();   // 评估模型
+    tfp->dump(ctx->time());  // 转储当前时间点
+    ctx->timeInc(1);  // 增加时间
+    dut.clk = 1;  // 时钟高电平
+    dut.rst = 1;  // 取消复位信号
+    dut.eval();  // 再次评估模型
+    tfp->dump(ctx->time());  // 转储当前时间点
+    ctx->timeInc(1);  // 增加时间
+    dut.rst = 0;  // 取消复位信号
 }
 
 int main(int argc, char** argv) {
@@ -142,17 +150,9 @@ int main(int argc, char** argv) {
     tfp->open("Vysyx_25020059.vcd");
 
     // 复位
-    //reset(2);
-    // dut.rst = 1;  // 设置复位信号
-    // dut.clk = 0;  // 时钟低电平
-    // dut.eval();   // 评估模型
-    // tfp->dump(ctx->time());  // 转储当前时间点
-    // ctx->timeInc(1);  // 增加时间
-    // dut.clk = 1;  // 时钟高电平
-    // dut.eval();  // 再次评估模型
-    // tfp->dump(ctx->time());  // 转储当前时间点
-    // ctx->timeInc(1);  // 增加时间
-    // dut.rst = 0;  // 取消复位信号
+    reset();
+
+    
 
     // 启动命令行调试
     sdb_mainloop();
