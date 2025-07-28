@@ -12,6 +12,7 @@
 
 #define MEM_FAULT_CODE   0xdeadbeef  // 定义内存故障码
 #define MEM_ACCESS_FAULT 1           // 定义内存访问错误trap码
+#define MAX_CYCLE 100000  // 最大允许周期数，超过则触发trap
 
 
 // ----- 全局变量（供外部引用：loader.cpp和cli.cpp）-----
@@ -39,6 +40,11 @@ void single_cycle() {
     tfp->dump(ctx->time());
     ctx->timeInc(1);    
     sim_cycle++;
+    // 新增：检查周期数是否超过阈值
+    if (sim_cycle >= MAX_CYCLE) {
+        npc_trap(2);  // 用新的trap码（比如2）表示周期超限
+        sim_done = true;
+    }  // 标记模拟结束，退出循环
 }
 
 // 复位用：不做pmem_read
