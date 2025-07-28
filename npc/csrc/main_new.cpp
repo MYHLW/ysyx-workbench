@@ -146,17 +146,11 @@ int main(int argc, char** argv) {
     dut.rst = 1;  // 设置复位信号
     dut.clk = 0;  // 时钟低电平
     dut.eval();   // 评估模型
-    tfp->dump(ctx->time());  // 转储当前时间点
-    ctx->timeInc(1);  // 增加时间
-    dut.clk = 1;  // 时钟高电平
-    dut.eval();  // 再次评估模型
-    tfp->dump(ctx->time());  // 转储当前时间点
-    ctx->timeInc(1);  // 增加时间
-    dut.rst = 0;  // 取消复位信号
+
 
     // 启动命令行调试
     sdb_mainloop();
-    printf("%Ld cycles executed.\n", sim_cycle);
+    printf("%ld cycles executed.\n", sim_cycle);
 
     // 结束后输出 Trap 状态
     std::printf("\n");

@@ -398,9 +398,9 @@ VL_ATTR_COLD void Vysyx_25020059_top___024root___stl_sequent__TOP__0(Vysyx_25020
     if (vlSelfRef.ysyx_25020059_top__DOT__mem_valid) {
         Vysyx_25020059_top___024unit____Vdpiimwrap_pmem_read_TOP____024unit(
                                                                             (0xfffffffcU 
-                                                                             & vlSelfRef.ysyx_25020059_top__DOT__alu_res), 2U, vlSelfRef.__Vfunc_pmem_read__3__Vfuncout);
+                                                                             & vlSelfRef.ysyx_25020059_top__DOT__alu_res), 2U, vlSelfRef.__Vfunc_pmem_read__2__Vfuncout);
         vlSelfRef.ysyx_25020059_top__DOT__u_mem_if_0__DOT__raw_data 
-            = vlSelfRef.__Vfunc_pmem_read__3__Vfuncout;
+            = vlSelfRef.__Vfunc_pmem_read__2__Vfuncout;
         vlSelfRef.ysyx_25020059_top__DOT__mem_rdata 
             = ((0U == (IData)(vlSelfRef.ysyx_25020059_top__DOT__mem_size))
                 ? ((2U & vlSelfRef.ysyx_25020059_top__DOT__alu_res)
