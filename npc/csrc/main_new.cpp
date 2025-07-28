@@ -16,7 +16,7 @@
 #define MEM_ACCESS_FAULT 1           // 定义内存访问错误trap码
 
 
-const uint32_t MEM_BASE = 0x80000000U;
+const uint32_t MEM_BASE = 0x00000000U;
 const uint32_t MEM_SIZE = 128 * 1024 * 1024;
 
 
