@@ -44,7 +44,7 @@ wire [1:0]                   mem_size;
 wire                         mem_unsigned;
 wire [`CPU_WIDTH-1:0]        mem_rdata;
 
-wire [`CPU_WIDTH-1:0]        inst; // Instruction fetched from memory
+//wire [`CPU_WIDTH-1:0]        inst; // Instruction fetched from memory
 
 
 assign reg_wdata = (mem_valid && !mem_wen) ? mem_rdata : alu_res; // 如果是 load 指令，则写入读出的数据，否则写入 ALU 结果
