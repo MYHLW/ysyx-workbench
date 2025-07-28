@@ -151,6 +151,7 @@ int main(int argc, char** argv) {
 
     // 复位
     reset();
+    reset();
 
     
 
