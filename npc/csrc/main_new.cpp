@@ -120,7 +120,7 @@ void reset_cycle() {
 // 复位 n 周期
 void reset(int n) {
     dut.rst = 1;
-    while (n-- > 0)  reset_cycle();
+    //while (n-- > 0)  reset_cycle();
     dut.rst = 0;
 }
 
