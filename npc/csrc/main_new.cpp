@@ -138,17 +138,18 @@ void reset() {
 }
 
 void mem_init(){
-    memory = (uint8_t*)std::malloc(MEM_SIZE);
-    if (!memory) { std::perror("malloc"); return -1; }
-    std::memset(memory, 0, MEM_SIZE);
-}
+    
 
 int main(int argc, char** argv) {
     if (argc < 2) {
         std::fprintf(stderr, "Usage: %s <program.hex|program.bin>\n", argv[0]);
         return -1;
-    }    
-    mem_init();
+    }
+    memory = (uint8_t*)std::malloc(MEM_SIZE);
+    if (!memory) { std::perror("malloc"); return -1; }
+    std::memset(memory, 0, MEM_SIZE);
+}    
+    //mem_init();
     // 根据后缀自动选择加载方式
     load_program(argv[1]);
 

@@ -88,7 +88,7 @@ VL_INLINE_OPT void Vysyx_25020059_top___024root___nba_sequent__TOP__0(Vysyx_2502
         __VdlySet__reg_f__v1 = 1U;
     }
     if (vlSelfRef.ysyx_25020059_top__DOT__rst_n) {
-        Vysyx_25020059_top___024unit____Vdpiimwrap_pmem_read_TOP____024unit(vlSelfRef.curr_pc, 1U, __Vfunc_pmem_read__0__Vfuncout);
+        Vysyx_25020059_top___024unit____Vdpiimwrap_pmem_read_TOP____024unit(vlSelfRef.next_pc, 1U, __Vfunc_pmem_read__0__Vfuncout);
         vlSelfRef.ysyx_25020059_top__DOT__ena = 1U;
         vlSelfRef.inst = __Vfunc_pmem_read__0__Vfuncout;
         vlSelfRef.curr_pc = vlSelfRef.next_pc;
