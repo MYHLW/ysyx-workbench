@@ -1,4 +1,4 @@
-#ifdef CONFIG_FTRACE
+
 
 #include <common.h>
 #include <elf.h>
@@ -186,4 +186,3 @@ void print_ftrace(uint32_t inst_addr, uint32_t func_addr, int is_enter) {
     printf("???\n");
 }
 
-#endif

@@ -60,7 +60,7 @@ uint64_t get_time();
 
 // ----------- instruction trace -----------
 
-#ifdef CONFIG_ITRACE
+//#ifdef CONFIG_ITRACE
 #define MAX_IRINGBUF 16
 
 typedef struct {
@@ -74,7 +74,7 @@ extern bool full;
 
 void trace_inst(word_t pc, uint32_t inst);
 void display_inst();
-#endif
+//#endif
 
 // ----------- memory trace -----------
 #ifdef CONFIG_MTRACE
