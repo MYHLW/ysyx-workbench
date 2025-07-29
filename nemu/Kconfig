@@ -152,7 +152,6 @@ config TRACE_END
   default 10000
 
   config ITRACE
-  depends on TRACE
   bool "Enable instruction tracer--->DISASM"
   default y
 

@@ -14,7 +14,7 @@ static const char mainargs[MAINARGS_MAX_LEN] = TOSTRING(MAINARGS_PLACEHOLDER); /
 
 void putch(char ch) {
   printf("%c", ch);
-
+//????
 }
 
 void halt(int code) {
