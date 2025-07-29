@@ -4,3 +4,6 @@
 [submodule "yosys-sta"]
 	path = yosys-sta
 	url = https://github.com/yosys-sta.git
+[submodule "npc2"]
+	path = npc2
+	url = https://github.com/Ethan-KaKa/npc.git
