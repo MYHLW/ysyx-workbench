@@ -6,8 +6,8 @@
 #define AM_DEVREG(id, reg, perm, ...) \
   enum { AM_##reg = (id) }; \
   typedef struct { __VA_ARGS__; } AM_##reg##_T;
-
-AM_DEVREG( 1, UART_CONFIG,  RD, bool present);
+//AM_DEVREG 是一个用于定义设备寄存器的宏。它通过创建一个枚举值（AM_#reg）和一个结构体类型（AM_#reg##_T）来表示设备寄存器的标识符和其相关的数据结构，支持可变参数以定义结构体的成员。
+AM_DEVREG( 1, UART_CONFIG,  RD, bool present); 
 AM_DEVREG( 2, UART_TX,      WR, char data);
 AM_DEVREG( 3, UART_RX,      RD, char data);
 AM_DEVREG( 4, TIMER_CONFIG, RD, bool present, has_rtc);
