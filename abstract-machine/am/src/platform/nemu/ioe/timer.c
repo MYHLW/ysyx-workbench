@@ -5,7 +5,9 @@ void __am_timer_init() {
 }
 
 void __am_timer_uptime(AM_TIMER_UPTIME_T *uptime) {
-  uptime->us = 0;
+  uint32_t low_time = inl(RTC_ADDR);                     //设备寄存器为64位 将64位功能拆分成两个32位设备寄存器
+  uint32_t high_time = inl(RTC_ADDR+4);
+  uptime->us = (uint64_t)low_time + (((uint64_t) high_time) << 32);
 }
 
 void __am_timer_rtc(AM_TIMER_RTC_T *rtc) {
