@@ -24,7 +24,7 @@ CFLAGS += -DMAINARGS_MAX_LEN=$(MAINARGS_MAX_LEN) -DMAINARGS_PLACEHOLDER=\""$(MAI
 
 insert-arg: image
     @echo "mainargs11111: $(mainargs)"
-	@python3 $(AM_HOME)/tools/insert-arg.py $(IMAGE).bin $(MAINARGS_MAX_LEN) "$(MAINARGS_PLACEHOLDER)" "$(mainargs)"
+	@python3 $(AM_HOME)/tools/insert-arg.py $(IMAGE).bin $(MAINARGS_MAX_LEN) "$(mainargs)" "$(MAINARGS_PLACEHOLDER)" 
     
 
 image: image-dep
