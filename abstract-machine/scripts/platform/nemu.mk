@@ -15,7 +15,7 @@ LDFLAGS   += --defsym=_pmem_start=0x80000000 --defsym=_entry_offset=0x0
 LDFLAGS   += --gc-sections -e _start
 NEMUFLAGS += -l $(shell dirname $(IMAGE).elf)/nemu-log.txt
 NEMUFLAGS += -e $(IMAGE).elf 
-#NEMUFLAGS += -b
+NEMUFLAGS += -b
 
 
 MAINARGS_MAX_LEN = 64
@@ -23,7 +23,7 @@ MAINARGS_PLACEHOLDER = The insert-arg rule in Makefile will insert mainargs here
 CFLAGS += -DMAINARGS_MAX_LEN=$(MAINARGS_MAX_LEN) -DMAINARGS_PLACEHOLDER=\""$(MAINARGS_PLACEHOLDER)"\"
 
 insert-arg: image
-	@python3 $(AM_HOME)/tools/insert-arg.py $(IMAGE).bin $(MAINARGS_MAX_LEN) "$(MAINARGS_PLACEHOLDER)" $(mainargs)
+	@python3 $(AM_HOME)/tools/insert-arg.py $(IMAGE).bin $(MAINARGS_MAX_LEN) $(MAINARGS_PLACEHOLDER) $(mainargs)
     @echo "mainargs: $(mainargs)"
 
 image: image-dep
