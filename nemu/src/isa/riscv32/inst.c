@@ -160,6 +160,6 @@ static int decode_exec(Decode *s) {
 
 int isa_exec_once(Decode *s) {
   s->isa.inst = inst_fetch(&s->snpc, 4);
-  IFDEF(CONFIG_ITRACE, trace_inst(s->pc, s->isa.inst)); //"存"的时机要在其取指之后执行之前
+  IFDEF(CONFIG_IRTRACE, trace_inst(s->pc, s->isa.inst)); //"存"的时机要在其取指之后执行之前
   return decode_exec(s);
 }
