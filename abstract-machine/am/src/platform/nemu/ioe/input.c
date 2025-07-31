@@ -5,8 +5,17 @@
 #define KEYDOWN_MASK 0x8000
 
 void __am_input_keybrd(AM_INPUT_KEYBRD_T *kbd) {
-  uint32_t key = inl(KBD_ADDR);
-  kbd->keydown = key & KEYDOWN_MASK ? true : false;// 用位掩码判断按键是否按下
-  kbd->keycode = key & ~KEYDOWN_MASK;//用按位与运算把 key 的第 16 位清零，仅保留低 15 位的键值部分。
-  printf("Key %s: %d\n", kbd->keydown ? "down" : "up", kbd->keycode);
+  // 1. 直接把那个 NEMU 侧写好的 4 字节 MMIO 区域当成普通变量读
+  uint32_t key = *(volatile uint32_t *)KBD_ADDR;
+
+  // 2. 无事件就退出
+  if (key == AM_KEY_NONE) {
+    kbd->keydown = false;
+    kbd->keycode = AM_KEY_NONE;
+    return;
+  }
+  // 3. 按位剥离
+  kbd->keydown = !!(key & KEYDOWN_MASK);
+  kbd->keycode = key & ~KEYDOWN_MASK;
 }
+
