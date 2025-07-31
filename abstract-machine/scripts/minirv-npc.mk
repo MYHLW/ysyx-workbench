@@ -1,6 +1,11 @@
 include $(AM_HOME)/scripts/isa/riscv.mk
 include $(AM_HOME)/scripts/platform/npc.mk
-CFLAGS  += -DISA_H=\"riscv/riscv.h\"
+
+export PATH := $(PATH):$(abspath $(AM_HOME)/tools/minirv)
+CC = minirv-gcc
+AS = minirv-gcc
+CXX = minirv-g++
+
 COMMON_CFLAGS += -march=rv32e_zicsr -mabi=ilp32e  # overwrite
 LDFLAGS       += -melf32lriscv                    # overwrite
 
