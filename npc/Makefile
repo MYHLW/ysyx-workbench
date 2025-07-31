@@ -1,29 +1,20 @@
-# 默认接收外部传入的 IMG，如果未指定就用下面这行
-IMG ?= /home/wang/ysyx-workbench/npc/program/$(IMAGE).bin
-
+# @echo "Write this Makefile by your self."
+# VSRC = $(wildcard ./vsrc/*.v)
+# CSRC = $(wildcard ./csrc/*.cpp)
+FILEV = $(wildcard ./top.v)
+FILEC = $(wildcard ./test_top.cpp)
 all:
 	@echo "Write this Makefile by your self."
-
-run:
+ 
+sim:
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
-	@$(clean)
-	verilator -Wno-lint -cc $(wildcard ./vsrc/*.v) --exe ./csrc/*.cpp  -LDFLAGS "-ldl -lreadline" --top ysyx_25020059_top
-	make -C obj_dir -j -f Vysyx_25020059_top.mk Vysyx_25020059_top
-	@echo "=> Running NPC with image: $(IMG)"
-	./obj_dir/Vysyx_25020059_top $(IMG)
-
-run debug:
-	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
-	@$(clean)
-	verilator -Wno-lint --trace -cc $(wildcard ./vsrc/*.v) --exe ./csrc/*.cpp  -LDFLAGS "-ldl -lreadline" --top ysyx_25020059_top
-	make -C obj_dir -j -f Vysyx_25020059_top.mk Vysyx_25020059_top
-	@echo "=> Running NPC with image: $(IMG)"
-	./obj_dir/Vysyx_25020059_top $(IMG)
-	gtkwave ./Vysyx_25020059.vcd
-
-
+	verilator -Wno-fatal $(FILEV) $(FILEC) --top-module top --cc --trace --exe
+	make -C obj_dir -f Vtop.mk Vtop
+	./obj_dir/Vtop
+	# gtkwave wave.vcd
+ 
+ .PHONY:clean
 clean:
-	rm -rf ./obj_dir
-	rm *.vcd
-include ../Makefile
-#include ./vsrc/Makefile
+	rm -rf obj_dir wave.vcd	
+
+
