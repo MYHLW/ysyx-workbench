@@ -5,32 +5,38 @@
 
 // 辅助函数：整数转字符串（支持十进制、十六进制）
 static void itoa(char *buf, int base, int value) {
-    char tmp[32];
-    int i = 0, is_negative = 0;
+    char *p = buf;
+    char *start = buf;
     unsigned int num;
+    int is_negative = 0;
 
+    // 处理负数（仅十进制）
     if (base == 10 && value < 0) {
         is_negative = 1;
         num = -value;
+        *p++ = '-'; // 记录负号
     } else {
-        num = value;
+        num = (unsigned int)value;
     }
 
+    // 转换数字为字符
     do {
         int rem = num % base;
-        tmp[i++] = (rem < 10) ? rem + '0' : rem - 10 + 'a';
+        *p++ = (rem < 10) ? rem + '0' : rem - 10 + 'a'; // 十六进制用小写a-f
     } while (num /= base);
 
-    if (is_negative) tmp[i++] = '-';
-
-    // 逆序写入 buf
-    int j = 0;
-    while (i--) {
-        buf[j++] = tmp[i];
+    // 反转字符串以得到正确顺序
+    if (is_negative) start++; // 跳过负号
+    char *end = p - 1;
+    while (start < end) {
+        char tmp = *start;
+        *start = *end;
+        *end = tmp;
+        start++;
+        end--;
     }
-    buf[j] = '\0';
+    *p = '\0'; // 添加字符串终止符
 }
-
 
 // vsprintf：使用va_list格式化到字符串（核心函数）
 int vsprintf(char *out, const char *fmt, va_list ap) {
@@ -99,18 +105,16 @@ int sprintf(char *out, const char *fmt, ...) {
 
 // printf：输出到标准输出，依赖am.h中的putstr
 int printf(const char *fmt, ...) {
-    #define PRINT_BUF_SIZE 1024
-    char buffer[PRINT_BUF_SIZE];
     va_list ap;
+    // 移除 char buf[1024]; // 未使用，导致编译错误
+    int ret;
+
+    char buf[1024]; // 显式保留并使用（若确实需要）
     va_start(ap, fmt);
-    int ret = vsprintf(buffer, fmt, ap);  // 调用vsprintf
+    ret = vsprintf(buf, fmt, ap); // 使用buf进行格式化
     va_end(ap);
-    if (ret > PRINT_BUF_SIZE) {
-        ret = PRINT_BUF_SIZE;
-    }
-    for (int i = 0; i < ret; i++) {
-        putch(buffer[i]);
-    }
+
+    putstr(buf); // 通过am.h中的函数输出字符串
     return ret;
 }
 
