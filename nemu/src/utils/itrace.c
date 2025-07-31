@@ -1,3 +1,4 @@
+//#ifdef CONFIG_ITRACE
 #include <common.h>  // 包含 utils.h（需定义 CONFIG_ITRACE）  
 
 // 定义全局变量（与 utils.h 中的 extern 对应）  
@@ -40,3 +41,4 @@ void display_inst() {
     }  
   } while ((i = (i+1)%MAX_IRINGBUF) != end);  
 }  
+//#endif
