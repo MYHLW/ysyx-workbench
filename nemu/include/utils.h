@@ -60,7 +60,7 @@ uint64_t get_time();
 
 // ----------- instruction trace -----------
 
-#ifdef CONFIG_ITRACE
+//#ifdef CONFIG_ITRACE
 #define MAX_IRINGBUF 16
 
 typedef struct {
@@ -74,18 +74,18 @@ extern bool full;
 
 void trace_inst(word_t pc, uint32_t inst);
 void display_inst();
-#endif
+//#endif
 
 // ----------- memory trace -----------
-#ifdef CONFIG_MTRACE
+//#ifdef CONFIG_MTRACE
 
 void display_pread(paddr_t addr, int len);
 
 void display_pwrite(paddr_t addr, int len, word_t data);
-#endif
+//#endif
 
 // ----------- function trace -----------
-#ifdef CONFIG_FTRACE
+//#ifdef CONFIG_FTRACE
 #include <elf.h>
 
 // typedef struct ElfFunc {
@@ -102,6 +102,6 @@ void display_pwrite(paddr_t addr, int len, word_t data);
 void read_elf(const char* elf_path);
 void print_ftrace(uint32_t inst_addr, uint32_t func_addr, int is_enter);
 
-#endif
+//#endif
 
 #endif
