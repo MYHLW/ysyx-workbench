@@ -13,14 +13,6 @@
 #include <verilated_vcd_c.h>
 #include <verilated_dpi.h>
 
-// 定义测试程序类型
-#define TEST_NONE 0  // 默认类型，不是特定测试程序
-#define TEST_RTC 1   // RTC测试程序
-#define TEST_KBD 2   // 键盘测试程序
-
-// 当前运行的测试程序类型
-int current_test = TEST_NONE;
-
 #define MEM_FAULT_CODE   0xdeadbeef  // 定义内存故障码
 #define MEM_ACCESS_FAULT 1           // 定义内存访问错误trap码
 #define MAX_CYCLE 5000000  // 最大允许周期数，超过则触发trap
@@ -99,22 +91,6 @@ int main(int argc, char** argv) {
     // 初始化内存并加载程序（使用封装的接口）
     std::memset(memory, 0, MEM_SIZE);
     load_program(argv[1]);  // 调用loader.h中的函数
-    
-    // 检查命令行参数，确定当前运行的测试程序类型
-    if (argc >= 3) {
-        const char* mainargs = argv[2];
-        if (mainargs[0] == 't') {
-            current_test = TEST_RTC;
-            printf("Running RTC test\n");
-        } else if (mainargs[0] == 'k') {
-            current_test = TEST_KBD;
-            printf("Running keyboard test\n");
-        } else if (mainargs[0] == 'h') {
-            // hello测试程序不需要特殊处理
-            current_test = TEST_NONE;
-            printf("Running hello test\n");
-        }
-    }
 
     // 波形跟踪初始化
     Verilated::traceEverOn(true);
@@ -167,67 +143,49 @@ uint64_t get_time() {
     return tv.tv_sec * 1000000 + tv.tv_usec;
 }
 
-// 获取键盘输入的函数
-uint32_t get_keyboard_input() {
-    // 简单实现：从标准输入读取一个字符作为键盘输入
-    // 在实际应用中，应该使用更复杂的键盘输入处理机制
-    static uint32_t last_key = 0;
-    
-    // 非阻塞方式检查是否有键盘输入
-    int ch = -1;
-    fd_set fds;
-    struct timeval tv;
-    FD_ZERO(&fds);
-    FD_SET(STDIN_FILENO, &fds);
-    tv.tv_sec = 0;
-    tv.tv_usec = 0;
-    
-    if (select(STDIN_FILENO + 1, &fds, NULL, NULL, &tv) > 0) {
-        ch = getchar();
-        if (ch != -1) {
-            // 将ASCII码转换为AM_KEY_xxx格式
-            // 这里简化处理，实际应用需要更复杂的映射
-            uint32_t keycode = ch;
-            // 设置按下标志（最高位为1）
-            last_key = 0x8000 | keycode;
-        }
-    } else {
-        // 如果没有新按键，清除按下标志
-        if (last_key & 0x8000) {
-            last_key = last_key & 0x7fff; // 保留键码但清除按下标志
-        } else {
-            last_key = 0; // 完全清除上一次的按键
-        }
-    }
-    
-    return last_key;
-}
-
 extern "C" uint32_t pmem_read(uint32_t vaddr, int i) {  
     // 处理MMIO读取
     if (vaddr == RTC_PORT) {
-        // 只有在RTC测试程序中才返回真实时间，否则返回固定值
-        if (current_test == TEST_RTC) {
-            return (uint32_t)get_time();
-        } else {
-            return 0;
-        }
+        // 返回当前时间的低32位
+        return (uint32_t)get_time();
     }
     else if (vaddr == RTC_PORT + 4) {
-        // 只有在RTC测试程序中才返回真实时间，否则返回固定值
-        if (current_test == TEST_RTC) {
-            return (uint32_t)(get_time() >> 32);
-        } else {
-            return 0;
-        }
+        // 返回当前时间的高32位
+        return (uint32_t)(get_time() >> 32);
     }
     else if (vaddr == KBD_ADDR) {
-        // 只有在键盘测试程序中才返回键盘输入，否则返回固定值
-        if (current_test == TEST_KBD) {
-            return get_keyboard_input();
+        // 简单实现：从标准输入读取一个字符作为键盘输入
+        // 在实际应用中，应该使用更复杂的键盘输入处理机制
+        static uint32_t last_key = 0;
+        
+        // 非阻塞方式检查是否有键盘输入
+        int ch = -1;
+        fd_set fds;
+        struct timeval tv;
+        FD_ZERO(&fds);
+        FD_SET(STDIN_FILENO, &fds);
+        tv.tv_sec = 0;
+        tv.tv_usec = 0;
+        
+        if (select(STDIN_FILENO + 1, &fds, NULL, NULL, &tv) > 0) {
+            ch = getchar();
+            if (ch != -1) {
+                // 将ASCII码转换为AM_KEY_xxx格式
+                // 这里简化处理，实际应用需要更复杂的映射
+                uint32_t keycode = ch;
+                // 设置按下标志（最高位为1）
+                last_key = 0x8000 | keycode;
+            }
         } else {
-            return 0;
+            // 如果没有新按键，清除按下标志
+            if (last_key & 0x8000) {
+                last_key = last_key & 0x7fff; // 保留键码但清除按下标志
+            } else {
+                last_key = 0; // 完全清除上一次的按键
+            }
         }
+        
+        return last_key;
     }
     // 处理普通内存读取
     else if (vaddr >= MEM_BASE && vaddr < MEM_BASE + MEM_SIZE) {
