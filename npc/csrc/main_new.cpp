@@ -13,6 +13,14 @@
 #include <verilated_vcd_c.h>
 #include <verilated_dpi.h>
 
+// 定义测试程序类型
+#define TEST_NONE 0  // 默认类型，不是特定测试程序
+#define TEST_RTC 1   // RTC测试程序
+#define TEST_KBD 2   // 键盘测试程序
+
+// 当前运行的测试程序类型
+int current_test = TEST_NONE;
+
 #define MEM_FAULT_CODE   0xdeadbeef  // 定义内存故障码
 #define MEM_ACCESS_FAULT 1           // 定义内存访问错误trap码
 #define MAX_CYCLE 5000000  // 最大允许周期数，超过则触发trap
@@ -147,14 +155,6 @@ extern "C" void npc_trap(int code) {
 #define VGACTL_PORT 0xa0000100  // VGA控制器地址，与NEMU保持一致
 #define FB_ADDR     0xa1000000  // 帧缓冲区地址，与NEMU保持一致
 #define KBD_ADDR    0xa0000060  // 键盘地址，与NEMU保持一致
-
-// 定义测试程序类型
-#define TEST_NONE 0
-#define TEST_RTC  1
-#define TEST_KBD  2
-
-// 当前运行的测试程序类型
-int current_test = TEST_NONE;
 
 // 获取当前时间（毫秒）
 uint64_t get_time() {
