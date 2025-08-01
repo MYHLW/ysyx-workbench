@@ -13,6 +13,10 @@ Area heap = RANGE(&_heap_start, PMEM_END);
 static const char mainargs[MAINARGS_MAX_LEN] = TOSTRING(MAINARGS_PLACEHOLDER); // defined in CFLAGS
 
 void putch(char ch) {
+  // 通过MMIO向串口发送字符
+  // 串口地址与main_new.cpp中定义相同
+  #define SERIAL_PORT 0xa00003f8
+  *(volatile uint8_t *)SERIAL_PORT = ch;
 }
 
 void halt(int code) {
