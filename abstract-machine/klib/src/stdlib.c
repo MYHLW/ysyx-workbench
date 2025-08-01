@@ -1,6 +1,7 @@
 #include <am.h>
 #include <klib.h>
 #include <klib-macros.h>
+#include <nemu.h>
 
 #if !defined(__ISA_NATIVE__) || defined(__NATIVE_USE_KLIB__)
 static unsigned long int next = 1;
@@ -29,17 +30,32 @@ int atoi(const char* nptr) {
   return x;
 }
 
+// ============ malloc/free 实现部分 ============
+
+extern char _heap_start; 
+extern char _heap_end;  
+
+static char *heap_end = &_heap_start;  // 当前指向“未分配区域的起始地址”
+
 void *malloc(size_t size) {
-  // On native, malloc() will be called during initializaion of C runtime.
-  // Therefore do not call panic() here, else it will yield a dead recursion:
-  //   panic() -> putchar() -> (glibc) -> malloc() -> panic()
-#if !(defined(__ISA_NATIVE__) && defined(__NATIVE_USE_KLIB__))
-  panic("Not implemented");
+  // 简单对齐：8 字节对齐
+  size = (size + 7) & ~7;
+
+  char *old = heap_end;
+  char *new_end = old + size;
+
+#ifdef _heap_end
+  if (new_end > &_heap_end) {
+    panic("Out of heap memory: tried to malloc %d bytes", size);
+  }
 #endif
-  return NULL;
+
+  heap_end = new_end;
+  return old;
 }
 
 void free(void *ptr) {
+  // 不释放内存
 }
 
 #endif
