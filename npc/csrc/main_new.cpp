@@ -100,86 +100,20 @@ int main(int argc, char** argv) {
     std::memset(memory, 0, MEM_SIZE);
     load_program(argv[1]);  // 调用loader.h中的函数
     
-    // 在内存中查找mainargs
-    // 根据AM框架，mainargs应该位于数据段中
-    // 我们需要扫描内存来找到它
-    const char* placeholder = "the_insert-arg_rule_in_Makefile_will_insert_mainargs_here";
-    const int placeholder_len = strlen(placeholder);
-    const int max_scan_range = 1024 * 1024; // 限制扫描范围，避免扫描整个内存
-    const int mainargs_max_len = 128; // 根据AM框架中的定义
-    
-    // 从程序入口开始扫描一段内存，寻找mainargs
-    bool found_mainargs = false;
-    
-    // 首先尝试查找占位符，如果找到了，说明mainargs还没有被替换
-    for (int i = 0; i < max_scan_range - placeholder_len; i++) {
-        bool match = true;
-        for (int j = 0; j < placeholder_len; j++) {
-            if (memory[i + j] != placeholder[j]) {
-                match = false;
-                break;
-            }
-        }
-        
-        if (match) {
-            printf("Found placeholder at offset 0x%x, mainargs not replaced yet\n", i);
-            break;
-        }
-    }
-    
-    // 然后尝试查找已替换的mainargs
-    // 根据insert-arg.py的逻辑，mainargs应该是一个以空字符结尾的字符串
-    // 我们查找't'或'k'开头，后面跟着空字符的字符串
-    for (int i = 0; i < max_scan_range - 2; i++) {
-        // 检查当前位置是否是't'或'k'，并且是一个独立的字符串（前后都是空字符或前面是内存边界）
-        if ((memory[i] == 't' || memory[i] == 'k') && 
-            (i == 0 || memory[i-1] == 0) && // 前面是空字符或内存边界
-            memory[i+1] == 0) { // 后面是空字符
-            
-            // 找到可能的mainargs
-            printf("Found possible mainargs at offset 0x%x: %c\n", i, memory[i]);
-            
-            // 检查是否有更多字符
-            bool valid_mainargs = true;
-            for (int j = 2; j < mainargs_max_len && memory[i+j] != 0; j++) {
-                // 如果有非ASCII字符，可能不是有效的mainargs
-                if (memory[i+j] < 32 || memory[i+j] > 126) {
-                    valid_mainargs = false;
-                    break;
-                }
-            }
-            
-            if (valid_mainargs) {
-                if (memory[i] == 't') {
-                    current_test = TEST_RTC;
-                    printf("Running RTC test\n");
-                } else if (memory[i] == 'k') {
-                    current_test = TEST_KBD;
-                    printf("Running keyboard test\n");
-                }
-                
-                found_mainargs = true;
-                break;
-            }
-        }
-    }
-    
-    // 如果上述方法都找不到mainargs，尝试直接从命令行参数获取
-    if (!found_mainargs && argc >= 3) {
+    // 检查命令行参数，确定当前运行的测试程序类型
+    if (argc >= 3) {
         const char* mainargs = argv[2];
         if (mainargs[0] == 't') {
             current_test = TEST_RTC;
-            printf("Using command line argument: Running RTC test\n");
-            found_mainargs = true;
+            printf("Running RTC test\n");
         } else if (mainargs[0] == 'k') {
             current_test = TEST_KBD;
-            printf("Using command line argument: Running keyboard test\n");
-            found_mainargs = true;
+            printf("Running keyboard test\n");
+        } else if (mainargs[0] == 'h') {
+            // hello测试程序不需要特殊处理
+            current_test = TEST_NONE;
+            printf("Running hello test\n");
         }
-    }
-    
-    if (!found_mainargs) {
-        printf("Warning: Could not find mainargs in memory or command line, defaulting to TEST_NONE\n");
     }
 
     // 波形跟踪初始化
