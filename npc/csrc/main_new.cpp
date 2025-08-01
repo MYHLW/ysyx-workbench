@@ -10,6 +10,26 @@
 #include <verilated.h>
 #include <verilated_vcd_c.h>
 #include <verilated_dpi.h>
+#include <fstream>
+
+static uint32_t vga_fb[FB_WIDTH * FB_HEIGHT];
+
+// 保存PPM图像文件
+void save_ppm_image() {
+    std::ofstream ofs("vga_output.ppm", std::ios::binary);
+    ofs << "P6\n" << FB_WIDTH << " " << FB_HEIGHT << "\n255\n";
+    
+    for (int y = 0; y < FB_HEIGHT; y++) {
+        for (int x = 0; x < FB_WIDTH; x++) {
+            uint32_t pixel = vga_fb[y * FB_WIDTH + x];
+            uint8_t r = (pixel >> 16) & 0xFF;
+            uint8_t g = (pixel >> 8) & 0xFF;
+            uint8_t b = pixel & 0xFF;
+            ofs << r << g << b;
+        }
+    }
+    ofs.close();
+}
 
 #define MEM_FAULT_CODE   0xdeadbeef  // 定义内存故障码
 #define MEM_ACCESS_FAULT 1           // 定义内存访问错误trap码
@@ -191,9 +211,16 @@ extern "C" void pmem_write(uint32_t addr, uint32_t data, uint8_t wmask) {
         // 暂时不做任何操作
     }
     // 处理帧缓冲区写入（如果需要）
-    else if (addr >= FB_ADDR && addr < FB_ADDR + 400 * 300 * 4) {
-        // 这里可以实现VGA帧缓冲区的写入逻辑
-        // 暂时不做任何操作
+    else if (addr >= FB_ADDR && addr < FB_ADDR + FB_SIZE) {
+        // 处理帧缓冲区写入
+        uint32_t offset = (addr - FB_ADDR) / 4;
+        vga_fb[offset] = data;
+        
+        // 每写入10000像素保存一次图像
+        static int save_count = 0;
+        if (++save_count % 10000 == 0) {
+            save_ppm_image();
+        }
     }
     // 处理普通内存写入
     else if (addr >= MEM_BASE && addr < MEM_BASE + MEM_SIZE) {
