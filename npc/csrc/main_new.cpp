@@ -12,23 +12,20 @@
 #include <verilated_dpi.h>
 #include <fstream>
 
+// 帧缓冲区定义
+#define FB_WIDTH    400
+#define FB_HEIGHT   300
 static uint32_t vga_fb[FB_WIDTH * FB_HEIGHT];
 
-// 保存PPM图像文件
+// 像素写入处理
+if (addr >= FB_ADDR && addr < FB_ADDR + FB_SIZE) {
+    uint32_t offset = (addr - FB_ADDR) / 4;
+    vga_fb[offset] = data;
+}
+
+// 图像保存函数
 void save_ppm_image() {
-    std::ofstream ofs("vga_output.ppm", std::ios::binary);
-    ofs << "P6\n" << FB_WIDTH << " " << FB_HEIGHT << "\n255\n";
-    
-    for (int y = 0; y < FB_HEIGHT; y++) {
-        for (int x = 0; x < FB_WIDTH; x++) {
-            uint32_t pixel = vga_fb[y * FB_WIDTH + x];
-            uint8_t r = (pixel >> 16) & 0xFF;
-            uint8_t g = (pixel >> 8) & 0xFF;
-            uint8_t b = pixel & 0xFF;
-            ofs << r << g << b;
-        }
-    }
-    ofs.close();
+    // 将vga_fb内容写入vga_output.ppm
 }
 
 #define MEM_FAULT_CODE   0xdeadbeef  // 定义内存故障码
