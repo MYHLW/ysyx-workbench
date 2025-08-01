@@ -10,23 +10,6 @@
 #include <verilated.h>
 #include <verilated_vcd_c.h>
 #include <verilated_dpi.h>
-#include <fstream>
-
-// 帧缓冲区定义
-#define FB_WIDTH    400
-#define FB_HEIGHT   300
-static uint32_t vga_fb[FB_WIDTH * FB_HEIGHT];
-
-// 像素写入处理
-if (addr >= FB_ADDR && addr < FB_ADDR + FB_SIZE) {
-    uint32_t offset = (addr - FB_ADDR) / 4;
-    vga_fb[offset] = data;
-}
-
-// 图像保存函数
-void save_ppm_image() {
-    // 将vga_fb内容写入vga_output.ppm
-}
 
 #define MEM_FAULT_CODE   0xdeadbeef  // 定义内存故障码
 #define MEM_ACCESS_FAULT 1           // 定义内存访问错误trap码
