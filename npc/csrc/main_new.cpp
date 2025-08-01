@@ -5,6 +5,9 @@
 #include <cstdint>
 #include <cstring>
 #include <cstdio>
+#include <sys/time.h>
+#include <sys/select.h>
+#include <unistd.h>
 #include <string>
 #include <verilated.h>
 #include <verilated_vcd_c.h>
@@ -126,27 +129,117 @@ extern "C" void npc_trap(int code) {
     }
 }
 
+// 定义设备地址
+#define SERIAL_PORT 0xa00003f8  // 串口地址，与NEMU保持一致
+#define RTC_PORT    0xa0000048  // 时钟地址，与NEMU保持一致
+#define VGACTL_PORT 0xa0000100  // VGA控制器地址，与NEMU保持一致
+#define FB_ADDR     0xa1000000  // 帧缓冲区地址，与NEMU保持一致
+#define KBD_ADDR    0xa0000060  // 键盘地址，与NEMU保持一致
+
+// 获取当前时间（毫秒）
+uint64_t get_time() {
+    struct timeval tv;
+    gettimeofday(&tv, NULL);
+    return tv.tv_sec * 1000000 + tv.tv_usec;
+}
+
 extern "C" uint32_t pmem_read(uint32_t vaddr, int i) {  
-    if (vaddr < MEM_BASE || vaddr >= MEM_BASE + MEM_SIZE) {
+    // 处理MMIO读取
+    if (vaddr == RTC_PORT) {
+        // 返回当前时间的低32位
+        return (uint32_t)get_time();
+    }
+    else if (vaddr == RTC_PORT + 4) {
+        // 返回当前时间的高32位
+        return (uint32_t)(get_time() >> 32);
+    }
+    else if (vaddr == KBD_ADDR) {
+        // 简单实现：从标准输入读取一个字符作为键盘输入
+        // 在实际应用中，应该使用更复杂的键盘输入处理机制
+        static uint32_t last_key = 0;
+        
+        // 非阻塞方式检查是否有键盘输入
+        int ch = -1;
+        fd_set fds;
+        struct timeval tv;
+        FD_ZERO(&fds);
+        FD_SET(STDIN_FILENO, &fds);
+        tv.tv_sec = 0;
+        tv.tv_usec = 0;
+        
+        if (select(STDIN_FILENO + 1, &fds, NULL, NULL, &tv) > 0) {
+            ch = getchar();
+            if (ch != -1) {
+                // 将ASCII码转换为AM_KEY_xxx格式
+                // 这里简化处理，实际应用需要更复杂的映射
+                uint32_t keycode = ch;
+                // 设置按下标志（最高位为1）
+                last_key = 0x8000 | keycode;
+            }
+        } else {
+            // 如果没有新按键，清除按下标志
+            if (last_key & 0x8000) {
+                last_key = last_key & 0x7fff; // 保留键码但清除按下标志
+            } else {
+                last_key = 0; // 完全清除上一次的按键
+            }
+        }
+        
+        return last_key;
+    }
+    // 处理普通内存读取
+    else if (vaddr >= MEM_BASE && vaddr < MEM_BASE + MEM_SIZE) {
+        //printf("code:%d pmem_read: addr=0x%08X\n", i, vaddr);
+        uint32_t off = vaddr - MEM_BASE;
+        uint32_t value;
+        memcpy(&value, memory + off, sizeof(value));
+        return value;
+    }
+    // 处理帧缓冲区读取（如果需要）
+    else if (vaddr >= FB_ADDR && vaddr < FB_ADDR + 400 * 300 * 4) {
+        // 这里可以实现VGA帧缓冲区的读取逻辑
+        // 暂时返回0
+        return 0;
+    }
+    else {
         printf("pmem_read: address out of bounds: 0x%08X\n", vaddr);
         npc_trap(MEM_ACCESS_FAULT);
         return MEM_FAULT_CODE;
     }
-    //printf("code:%d pmem_read: addr=0x%08X\n", i, vaddr);
-    uint32_t off = vaddr - MEM_BASE;
-    uint32_t value;
-    memcpy(&value, memory + off, sizeof(value));
-    return value;
 }
 
 extern "C" void pmem_write(uint32_t addr, uint32_t data, uint8_t wmask) {
     //printf("pmem_write: addr=0x%08X, off_data=0x%08X, wmask=0x%02X\n", addr, data, wmask);
-    uint32_t off_byte = addr - MEM_BASE;
-    uint32_t off_word = off_byte & ~0x3u;
-    uint8_t *p = memory + off_word;
-    for (int i = 0; i < 4; i++) {
-        if (wmask & (1u << i)) {
-            p[i] = uint8_t((data >> (i * 8)) & 0xFF);
+    
+    // 处理MMIO写入
+    if (addr == SERIAL_PORT) {
+        // 串口输出，只取最低字节
+        putchar(data & 0xff);
+        fflush(stdout);
+    }
+    // 处理VGA控制器写入（如果需要）
+    else if (addr == VGACTL_PORT) {
+        // 这里可以实现VGA控制器的写入逻辑
+        // 暂时不做任何操作
+    }
+    // 处理帧缓冲区写入（如果需要）
+    else if (addr >= FB_ADDR && addr < FB_ADDR + 400 * 300 * 4) {
+        // 这里可以实现VGA帧缓冲区的写入逻辑
+        // 暂时不做任何操作
+    }
+    // 处理普通内存写入
+    else if (addr >= MEM_BASE && addr < MEM_BASE + MEM_SIZE) {
+        uint32_t off_byte = addr - MEM_BASE;
+        uint32_t off_word = off_byte & ~0x3u;
+        uint8_t *p = memory + off_word;
+        for (int i = 0; i < 4; i++) {
+            if (wmask & (1u << i)) {
+                p[i] = uint8_t((data >> (i * 8)) & 0xFF);
+            }
         }
+    }
+    else {
+        printf("pmem_write: address out of bounds: 0x%08X\n", addr);
+        npc_trap(MEM_ACCESS_FAULT);
     }
 }
