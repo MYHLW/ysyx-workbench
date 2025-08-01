@@ -1,10 +1,19 @@
 #include <am.h>
 
+// 定义RTC地址，与main_new.cpp中保持一致
+#define RTC_ADDR 0xa0000048
+
+static uint64_t boot_time = 0;
+
 void __am_timer_init() {
+  // 初始化启动时间
+  boot_time = *(volatile uint64_t *)RTC_ADDR;
 }
 
 void __am_timer_uptime(AM_TIMER_UPTIME_T *uptime) {
-  uptime->us = 0;
+  // 读取当前时间并计算uptime
+  uint64_t current_time = *(volatile uint64_t *)RTC_ADDR;
+  uptime->us = current_time - boot_time;
 }
 
 void __am_timer_rtc(AM_TIMER_RTC_T *rtc) {
