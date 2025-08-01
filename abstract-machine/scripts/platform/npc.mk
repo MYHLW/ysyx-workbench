@@ -14,7 +14,7 @@ LDFLAGS  += -T $(AM_HOME)/scripts/linker.ld \
 LDFLAGS  += --gc-sections -e _start
 NPCFLAGS += -b
 
-CFLAGS   += -DMAINARGS=\"$(mainargs)\"
+#CFLAGS   += -DMAINARGS=\"$(mainargs)\"
 CFLAGS += -I $(NPC_HOME)/csrc/include
 .PHONY: $(AM_HOME)/am/src/riscv/npc/trm.c
 
@@ -30,5 +30,5 @@ image: $(IMAGE).elf
 	@echo + OBJCOPY "->" $(IMAGE_REL).bin
 	@$(OBJCOPY) -S --set-section-flags .bss=alloc,contents -O binary $(IMAGE).elf $(IMAGE).bin
 
-run: image
+run: insert-arg
 	$(MAKE) -C $(NPC_HOME) ISA=$(ISA) run ARGS="$(NPCFLAGS)" IMG=$(IMAGE).bin
