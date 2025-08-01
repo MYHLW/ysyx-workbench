@@ -196,6 +196,10 @@ extern "C" uint32_t pmem_read(uint32_t vaddr, int i) {
         return value;
     }
     // 处理帧缓冲区读取（如果需要）
+    else if (vaddr == SERIAL_PORT) {
+        // 串口读取，返回0表示可以写入
+        return 0;
+    }
     else if (vaddr >= FB_ADDR && vaddr < FB_ADDR + 400 * 300 * 4) {
         // 这里可以实现VGA帧缓冲区的读取逻辑
         // 暂时返回0
