@@ -6,8 +6,6 @@
 #include <cstring>
 #include <cstdio>
 #include <sys/time.h>
-#include <sys/select.h>
-#include <unistd.h>
 #include <string>
 #include <verilated.h>
 #include <verilated_vcd_c.h>
@@ -152,40 +150,6 @@ extern "C" uint32_t pmem_read(uint32_t vaddr, int i) {
     else if (vaddr == RTC_PORT + 4) {
         // 返回当前时间的高32位
         return (uint32_t)(get_time() >> 32);
-    }
-    else if (vaddr == KBD_ADDR) {
-        // 简单实现：从标准输入读取一个字符作为键盘输入
-        // 在实际应用中，应该使用更复杂的键盘输入处理机制
-        static uint32_t last_key = 0;
-        
-        // 非阻塞方式检查是否有键盘输入
-        int ch = -1;
-        fd_set fds;
-        struct timeval tv;
-        FD_ZERO(&fds);
-        FD_SET(STDIN_FILENO, &fds);
-        tv.tv_sec = 0;
-        tv.tv_usec = 0;
-        
-        if (select(STDIN_FILENO + 1, &fds, NULL, NULL, &tv) > 0) {
-            ch = getchar();
-            if (ch != -1) {
-                // 将ASCII码转换为AM_KEY_xxx格式
-                // 这里简化处理，实际应用需要更复杂的映射
-                uint32_t keycode = ch;
-                // 设置按下标志（最高位为1）
-                last_key = 0x8000 | keycode;
-            }
-        } else {
-            // 如果没有新按键，清除按下标志
-            if (last_key & 0x8000) {
-                last_key = last_key & 0x7fff; // 保留键码但清除按下标志
-            } else {
-                last_key = 0; // 完全清除上一次的按键
-            }
-        }
-        
-        return last_key;
     }
     // 处理普通内存读取
     else if (vaddr >= MEM_BASE && vaddr < MEM_BASE + MEM_SIZE) {
