@@ -191,16 +191,9 @@ extern "C" void pmem_write(uint32_t addr, uint32_t data, uint8_t wmask) {
         // 暂时不做任何操作
     }
     // 处理帧缓冲区写入（如果需要）
-    else if (addr >= FB_ADDR && addr < FB_ADDR + FB_SIZE) {
-        // 处理帧缓冲区写入
-        uint32_t offset = (addr - FB_ADDR) / 4;
-        vga_fb[offset] = data;
-        
-        // 每写入10000像素保存一次图像
-        static int save_count = 0;
-        if (++save_count % 10000 == 0) {
-            save_ppm_image();
-        }
+    else if (addr >= FB_ADDR && addr < FB_ADDR + 400 * 300 * 4) {
+        // 这里可以实现VGA帧缓冲区的写入逻辑
+        // 暂时不做任何操作
     }
     // 处理普通内存写入
     else if (addr >= MEM_BASE && addr < MEM_BASE + MEM_SIZE) {
