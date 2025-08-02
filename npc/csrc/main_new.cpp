@@ -1,6 +1,7 @@
 #include "cli.h"
 #include "loader.h"  // 引入封装的加载接口
 #include "Vysyx_25020059_top.h"
+#include "trace/trace.h"  // 添加trace支持
 #include <cstdlib>
 #include <cstdint>
 #include <cstring>
@@ -15,7 +16,6 @@
 #define MEM_ACCESS_FAULT 1           // 定义内存访问错误trap码
 #define MAX_CYCLE 5000000  // 最大允许周期数，超过则触发trap
 
-
 // ----- 全局变量（供外部引用：loader.cpp和cli.cpp）-----
 const uint32_t MEM_BASE = 0x80000000U;
 const uint32_t MEM_SIZE = 128 * 1024 * 1024;  // 128MB
@@ -28,24 +28,27 @@ int               trap_code = -1;
 uint64_t          sim_cycle = 0;
 Vysyx_25020059_top dut;
 
-
 // 单周期执行
 void single_cycle() {    
     dut.clk = 0;
     dut.eval();
     tfp->dump(ctx->time());
     ctx->timeInc(1);
-    // dut.inst = pmem_read(dut.curr_pc);   
+    
+    // 添加指令追踪
+    trace_instruction(dut.curr_pc, dut.inst);
+    
     dut.clk = 1;
     dut.eval();        
     tfp->dump(ctx->time());
     ctx->timeInc(1);    
     sim_cycle++;
-    // 新增：检查周期数是否超过阈值
+    
+    // 检查周期数是否超过阈值
     if (sim_cycle >= MAX_CYCLE) {
         npc_trap(2);  // 用新的trap码（比如2）表示周期超限
         sim_done = true;
-    }  // 标记模拟结束，退出循环
+    }
 }
 
 // 复位用：不做pmem_read
@@ -90,6 +93,9 @@ int main(int argc, char** argv) {
     std::memset(memory, 0, MEM_SIZE);
     load_program(argv[1]);  // 调用loader.h中的函数
 
+    // 初始化trace功能
+    init_trace();
+
     // 波形跟踪初始化
     Verilated::traceEverOn(true);
     ctx = new VerilatedContext;
@@ -110,12 +116,13 @@ int main(int argc, char** argv) {
     return 0;
 }
 
-
 // ===================DPI 端口===========================
 extern "C" void npc_trap(int code) {
     if (!sim_done) {
         sim_done = true;
         trap_code = code;
+        // 在trap时打印指令环形缓冲区
+        print_iringbuf();
     }
     printf("NPC_TRAP: code=%d\n", code);
     printf("%ld cycles executed.\n", sim_cycle);
@@ -142,38 +149,48 @@ uint64_t get_time() {
 }
 
 extern "C" uint32_t pmem_read(uint32_t vaddr, int i) {  
+    uint32_t value = 0;
+    
     // 处理MMIO读取
     if (vaddr == RTC_PORT) {
-        // 返回当前时间的低32位
-        return (uint32_t)get_time();
+        value = (uint32_t)get_time();
     }
     else if (vaddr == RTC_PORT + 4) {
-        // 返回当前时间的高32位
-        return (uint32_t)(get_time() >> 32);
+        value = (uint32_t)(get_time() >> 32);
     }
     // 处理普通内存读取
     else if (vaddr >= MEM_BASE && vaddr < MEM_BASE + MEM_SIZE) {
         //printf("code:%d pmem_read: addr=0x%08X\n", i, vaddr);
         uint32_t off = vaddr - MEM_BASE;
-        uint32_t value;
         memcpy(&value, memory + off, sizeof(value));
-        return value;
     }
-    // 处理帧缓冲区读取（如果需要）
     else if (vaddr == SERIAL_PORT) {
-        // 串口读取，返回0表示可以写入
-        return 0;
+        value = 0;  // 串口读取，返回0表示可以写入
+    }
+    else if (vaddr == VGACTL_PORT) {
+        // 返回VGA控制寄存器的值（屏幕大小）
+        return (300 << 16) | 400;
+    }
+    else if (vaddr == VGACTL_PORT + 4) {
+        // 返回同步状态，始终为1表示就绪
+        return 1;
     }
     else if (vaddr >= FB_ADDR && vaddr < FB_ADDR + 400 * 300 * 4) {
-        // 这里可以实现VGA帧缓冲区的读取逻辑
-        // 暂时返回0
-        return 0;
+        // 从帧缓冲区读取像素数据
+        uint32_t fb_offset = vaddr - FB_ADDR;
+        uint32_t value;
+        memcpy(&value, memory + MEM_SIZE - (400 * 300 * 4) + fb_offset, sizeof(value));
+        return value;
     }
     else {
         printf("pmem_read: address out of bounds: 0x%08X\n", vaddr);
         npc_trap(MEM_ACCESS_FAULT);
         return MEM_FAULT_CODE;
     }
+    
+    // 添加内存读取追踪
+    trace_memory(false, vaddr, value, 4);
+    return value;
 }
 
 extern "C" void pmem_write(uint32_t addr, uint32_t data, uint8_t wmask) {
@@ -181,19 +198,26 @@ extern "C" void pmem_write(uint32_t addr, uint32_t data, uint8_t wmask) {
     
     // 处理MMIO写入
     if (addr == SERIAL_PORT) {
-        // 串口输出，只取最低字节
         putchar(data & 0xff);
         fflush(stdout);
     }
-    // 处理VGA控制器写入（如果需要）
+    // 处理VGA控制器写入
     else if (addr == VGACTL_PORT) {
-        // 这里可以实现VGA控制器的写入逻辑
-        // 暂时不做任何操作
+        static uint32_t vgactl = 0;
+        vgactl = data;
     }
-    // 处理帧缓冲区写入（如果需要）
+    else if (addr == VGACTL_PORT + 4) {
+        // VGA同步信号
+    }
+    // 处理帧缓冲区写入
     else if (addr >= FB_ADDR && addr < FB_ADDR + 400 * 300 * 4) {
-        // 这里可以实现VGA帧缓冲区的写入逻辑
-        // 暂时不做任何操作
+        uint32_t fb_offset = addr - FB_ADDR;
+        uint8_t *fb_ptr = (uint8_t *)&data;
+        for (int i = 0; i < 4; i++) {
+            if (wmask & (1 << i)) {
+                memory[MEM_SIZE - (400 * 300 * 4) + fb_offset + i] = fb_ptr[i];
+            }
+        }
     }
     // 处理普通内存写入
     else if (addr >= MEM_BASE && addr < MEM_BASE + MEM_SIZE) {
