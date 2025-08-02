@@ -1,5 +1,5 @@
 #include "trace.h"
-#include <capstone/capstone.h>
+#include "capstone.h"
 
 // 全局变量定义
 InstTrace iringbuf[IRINGBUF_SIZE];

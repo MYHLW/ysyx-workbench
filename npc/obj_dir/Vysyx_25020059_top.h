@@ -13,7 +13,6 @@
 
 class Vysyx_25020059_top__Syms;
 class Vysyx_25020059_top___024root;
-class VerilatedVcdC;
 class Vysyx_25020059_top___024unit;
 
 
@@ -27,7 +26,7 @@ class alignas(VL_CACHE_LINE_BYTES) Vysyx_25020059_top VL_NOT_FINAL : public Veri
 
     // CONSTEXPR CAPABILITIES
     // Verilated with --trace?
-    static constexpr bool traceCapable = true;
+    static constexpr bool traceCapable = false;
 
     // PORTS
     // The application code writes and reads these signals to
@@ -90,7 +89,6 @@ class alignas(VL_CACHE_LINE_BYTES) Vysyx_25020059_top VL_NOT_FINAL : public Veri
     /// Re-init after cloning the model at the process level (e.g. fork in Linux)
     /// Re-allocate necessary resources. Called after cloning.
     void atClone() const;
-    std::unique_ptr<VerilatedTraceConfig> traceConfig() const override final;
   private:
     // Internal functions - trace registration
     void traceBaseModel(VerilatedTraceBaseC* tfp, int levels, int options);

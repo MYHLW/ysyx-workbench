@@ -63,7 +63,6 @@ void Vysyx_25020059_top___024root___eval_nba(Vysyx_25020059_top___024root* vlSel
     // Body
     if ((3ULL & vlSelfRef.__VnbaTriggered.word(0U))) {
         Vysyx_25020059_top___024root___nba_sequent__TOP__0(vlSelf);
-        vlSelfRef.__Vm_traceActivity[1U] = 1U;
     }
 }
 
