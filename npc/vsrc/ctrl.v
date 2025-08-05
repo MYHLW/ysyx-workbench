@@ -7,7 +7,9 @@ module ctrl (
     input      [`CPU_WIDTH-1:0]        inst,       // instruction input
     input      [`CPU_WIDTH-1:0]        a0,         // a0 input
 
-    output reg                         branch,     // branch flag
+    output reg                         beq_branch,     // beq branch flag
+    output reg                         bne_branch,     // bne branch flag
+    output reg                         blt_branch,     // blt branch flag
     output reg                         jal_jump,       
     output reg                         jalr_jump,       // jalr jump flag
 
@@ -39,7 +41,9 @@ wire [11:0]             imm12   = inst[31:20];  // 用于 ebreak 指令的高 12
 wire [31:0]             code    = a0; 
 
 always @(*) begin
-    branch      = 1'b0;
+    beq_branch  = 1'b0;
+    bne_branch  = 1'b0;
+    blt_branch  = 1'b0;
     jal_jump    = 1'b0;
     jalr_jump   = 1'b0;
     reg_wen     = 1'b0;
@@ -70,6 +74,8 @@ always @(*) begin
             case (funct3)
                 `INST_ADD_SUB: 
                     alu_op = (funct7 == `FUNCT7_INST_A) ? `ALU_ADD : `ALU_SUB; // A:add B:sub 
+                `INST_SLT:
+                    alu_op = `ALU_SLT;
             endcase
         end
         `INST_TYPE_I: begin
@@ -101,12 +107,16 @@ always @(*) begin
             alu_src_sel = `ALU_SRC_REG;
             case (funct3)
                 `INST_BEQ: begin
-                    branch     = 1'b1;
+                    beq_branch = 1'b1;
                     alu_op     = `ALU_SUB;
                 end
                 `INST_BNE: begin
-                    branch     = 1'b1;
+                    bne_branch = 1'b1;
                     alu_op     = `ALU_SUB;
+                end
+                `INST_BLT: begin
+                    blt_branch = 1'b1;
+                    alu_op     = `ALU_BLT;
                 end
             endcase
         end

@@ -6,7 +6,9 @@ module muxpc #(
   parameter PC_INC = `CPU_WIDTH'h4
 )(
     input                        ena,         // 使能，复位后才开始更新 PC
-    input                        branch,      // 分支指令是否有效
+    input                        beq_branch,  // BEQ 分支指令是否有效
+    input                        bne_branch,  // BNE 分支指令是否有效
+    input                        blt_branch,  // BLT 分支指令是否有效
     input  [`CPU_WIDTH-1:0]      reg1_rdata,  // 寄存器1数据(忘记位宽这事了)
     input                        zero,        // ALU zero 标志
     input                        jal_jump,        // JAL
@@ -26,11 +28,14 @@ always @(*) begin
   end else if (jalr_jump) begin
     // 无条件跳转JALR
     next_pc = (reg1_rdata + imm) & ~32'h1; //
-  end else if (branch && zero) begin
+  end else if (beq_branch && zero) begin
     // BEQ 条件成立
     next_pc = curr_pc + imm;
-  end else if (branch && ~zero) begin
+  end else if (bne_branch && ~zero) begin
     // BNE 条件成立
+    next_pc = curr_pc + imm;
+  end else if (blt_branch && zero) begin
+    // BLT 条件成立
     next_pc = curr_pc + imm;
   end else begin
     // 默认顺序执行

@@ -192,7 +192,9 @@ VL_ATTR_COLD void Vysyx_25020059_top___024root___ctor_var_reset(Vysyx_25020059_t
     }
     vlSelf->ysyx_25020059_top__DOT__rst_n = VL_RAND_RESET_I(1);
     vlSelf->ysyx_25020059_top__DOT__ena = VL_RAND_RESET_I(1);
-    vlSelf->ysyx_25020059_top__DOT__branch = VL_RAND_RESET_I(1);
+    vlSelf->ysyx_25020059_top__DOT__beq_branch = VL_RAND_RESET_I(1);
+    vlSelf->ysyx_25020059_top__DOT__bne_branch = VL_RAND_RESET_I(1);
+    vlSelf->ysyx_25020059_top__DOT__blt_branch = VL_RAND_RESET_I(1);
     vlSelf->ysyx_25020059_top__DOT__zero = VL_RAND_RESET_I(1);
     vlSelf->ysyx_25020059_top__DOT__jal_jump = VL_RAND_RESET_I(1);
     vlSelf->ysyx_25020059_top__DOT__jalr_jump = VL_RAND_RESET_I(1);
@@ -214,6 +216,7 @@ VL_ATTR_COLD void Vysyx_25020059_top___024root___ctor_var_reset(Vysyx_25020059_t
     vlSelf->ysyx_25020059_top__DOT__mem_size = VL_RAND_RESET_I(2);
     vlSelf->ysyx_25020059_top__DOT__mem_unsigned = VL_RAND_RESET_I(1);
     vlSelf->ysyx_25020059_top__DOT__mem_rdata = VL_RAND_RESET_I(32);
+    vlSelf->ysyx_25020059_top__DOT__u_ctrl_0__DOT__blt_branch = VL_RAND_RESET_I(1);
     vlSelf->ysyx_25020059_top__DOT__u_mem_if_0__DOT__write_data = VL_RAND_RESET_I(32);
     vlSelf->ysyx_25020059_top__DOT__u_mem_if_0__DOT__raw = VL_RAND_RESET_I(32);
     vlSelf->__Vfunc_pmem_read__2__Vfuncout = 0;

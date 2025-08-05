@@ -15,7 +15,9 @@ wire                         ena;
 //wire [`CPU_WIDTH-1:0]        curr_pc;    // current pc addr
 //wire [`CPU_WIDTH-1:0]        next_pc;    // next pc addr
 
-wire                         branch;     // branch flag
+wire                         beq_branch;     // beq branch flag
+wire                         bne_branch;     // bne branch flag
+wire                         blt_branch;     // blt branch flag
 wire                         zero;       // alu result is zero
 wire                         jal_jump;       // jump flag
 wire                         jalr_jump;       // jalr jump flag
@@ -60,7 +62,9 @@ pc_reg u_pc_reg_0(
 
 muxpc u_mux_pc_0(
     .ena                            ( ena                           ),
-    .branch                         ( branch                        ),
+    .beq_branch                     ( beq_branch                    ),
+    .bne_branch                     ( bne_branch                    ),
+    .blt_branch                     ( blt_branch                    ),
     .reg1_rdata                     ( reg1_rdata                    ),
     .zero                           ( zero                          ),
     .jal_jump                       ( jal_jump                      ),
@@ -75,7 +79,8 @@ muxpc u_mux_pc_0(
 ctrl u_ctrl_0(
     .inst                           ( inst                          ),
     .a0                             ( reg_f[10]                     ), // 假设 a0 寄存器为 reg_f[10]
-    .branch                         ( branch                        ),
+    .beq_branch                     ( beq_branch                    ),
+    .bne_branch                     ( bne_branch                    ),
     .jal_jump                       ( jal_jump                      ),
     .jalr_jump                      ( jalr_jump                     ),
     .reg_wen                        ( reg_wen                       ),
