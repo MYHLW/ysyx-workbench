@@ -52,7 +52,7 @@ VL_ATTR_COLD void Vysyx_25020059_top___024root___eval_settle(Vysyx_25020059_top_
 #ifdef VL_DEBUG
             Vysyx_25020059_top___024root___dump_triggers__stl(vlSelf);
 #endif
-            VL_FATAL_MT("vsrc/top.v", 4, "", "Settle region did not converge.");
+            VL_FATAL_MT("/home/wang/ysyx-workbench/npc/vsrc/top.v", 4, "", "Settle region did not converge.");
         }
         __VstlIterCount = ((IData)(1U) + __VstlIterCount);
         __VstlContinue = 0U;
@@ -80,6 +80,7 @@ VL_ATTR_COLD void Vysyx_25020059_top___024root___dump_triggers__stl(Vysyx_250200
 #endif  // VL_DEBUG
 
 VL_ATTR_COLD void Vysyx_25020059_top___024root___stl_sequent__TOP__0(Vysyx_25020059_top___024root* vlSelf);
+VL_ATTR_COLD void Vysyx_25020059_top___024root____Vm_traceActivitySetAll(Vysyx_25020059_top___024root* vlSelf);
 
 VL_ATTR_COLD void Vysyx_25020059_top___024root___eval_stl(Vysyx_25020059_top___024root* vlSelf) {
     (void)vlSelf;  // Prevent unused variable warning
@@ -89,6 +90,7 @@ VL_ATTR_COLD void Vysyx_25020059_top___024root___eval_stl(Vysyx_25020059_top___0
     // Body
     if ((1ULL & vlSelfRef.__VstlTriggered.word(0U))) {
         Vysyx_25020059_top___024root___stl_sequent__TOP__0(vlSelf);
+        Vysyx_25020059_top___024root____Vm_traceActivitySetAll(vlSelf);
     }
 }
 
@@ -164,6 +166,16 @@ VL_ATTR_COLD void Vysyx_25020059_top___024root___dump_triggers__nba(Vysyx_250200
 }
 #endif  // VL_DEBUG
 
+VL_ATTR_COLD void Vysyx_25020059_top___024root____Vm_traceActivitySetAll(Vysyx_25020059_top___024root* vlSelf) {
+    (void)vlSelf;  // Prevent unused variable warning
+    Vysyx_25020059_top__Syms* const __restrict vlSymsp VL_ATTR_UNUSED = vlSelf->vlSymsp;
+    VL_DEBUG_IF(VL_DBG_MSGF("+    Vysyx_25020059_top___024root____Vm_traceActivitySetAll\n"); );
+    auto &vlSelfRef = std::ref(*vlSelf).get();
+    // Body
+    vlSelfRef.__Vm_traceActivity[0U] = 1U;
+    vlSelfRef.__Vm_traceActivity[1U] = 1U;
+}
+
 VL_ATTR_COLD void Vysyx_25020059_top___024root___ctor_var_reset(Vysyx_25020059_top___024root* vlSelf) {
     (void)vlSelf;  // Prevent unused variable warning
     Vysyx_25020059_top__Syms* const __restrict vlSymsp VL_ATTR_UNUSED = vlSelf->vlSymsp;
@@ -207,4 +219,7 @@ VL_ATTR_COLD void Vysyx_25020059_top___024root___ctor_var_reset(Vysyx_25020059_t
     vlSelf->__Vfunc_pmem_read__2__Vfuncout = 0;
     vlSelf->__Vtrigprevexpr___TOP__clk__0 = VL_RAND_RESET_I(1);
     vlSelf->__Vtrigprevexpr___TOP__ysyx_25020059_top__DOT__rst_n__0 = VL_RAND_RESET_I(1);
+    for (int __Vi0 = 0; __Vi0 < 2; ++__Vi0) {
+        vlSelf->__Vm_traceActivity[__Vi0] = 0;
+    }
 }

@@ -19,6 +19,8 @@ always @(*) begin
             alu_res = alu_src1 -  alu_src2;
             zero = (alu_res == `CPU_WIDTH'b0) ? 1'b1 : 1'b0;
         end
+        `ALU_SLTU:
+            alu_res = (alu_src1 < alu_src2) ? `CPU_WIDTH'd1 : `CPU_WIDTH'd0;
     endcase
 end
 endmodule

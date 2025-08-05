@@ -1,7 +1,7 @@
 #include "cli.h"
 #include "loader.h"  // 引入封装的加载接口
 #include "Vysyx_25020059_top.h"
-#include "trace/trace.h"  // 添加trace支持
+#include "itrace.h"  // 添加itrace支持
 #include <cstdlib>
 #include <cstdint>
 #include <cstring>
@@ -14,7 +14,7 @@
 
 #define MEM_FAULT_CODE   0xdeadbeef  // 定义内存故障码
 #define MEM_ACCESS_FAULT 1           // 定义内存访问错误trap码
-#define MAX_CYCLE 5000000  // 最大允许周期数，超过则触发trap
+#define MAX_CYCLE 10000000  // 最大允许周期数，超过则触发trap
 
 // ----- 全局变量（供外部引用：loader.cpp和cli.cpp）-----
 const uint32_t MEM_BASE = 0x80000000U;
@@ -36,7 +36,7 @@ void single_cycle() {
     ctx->timeInc(1);
     
     // 添加指令追踪
-    trace_instruction(dut.curr_pc, dut.inst);
+    trace_inst(dut.next_pc, dut.inst);
     
     dut.clk = 1;
     dut.eval();        
@@ -93,8 +93,8 @@ int main(int argc, char** argv) {
     std::memset(memory, 0, MEM_SIZE);
     load_program(argv[1]);  // 调用loader.h中的函数
 
-    // 初始化trace功能
-    init_trace();
+    // // 初始化trace功能
+    // init_trace();
 
     // 波形跟踪初始化
     Verilated::traceEverOn(true);
@@ -122,7 +122,7 @@ extern "C" void npc_trap(int code) {
         sim_done = true;
         trap_code = code;
         // 在trap时打印指令环形缓冲区
-        print_iringbuf();
+        display_inst();
     }
     printf("NPC_TRAP: code=%d\n", code);
     printf("%ld cycles executed.\n", sim_cycle);
@@ -188,8 +188,8 @@ extern "C" uint32_t pmem_read(uint32_t vaddr, int i) {
         return MEM_FAULT_CODE;
     }
     
-    // 添加内存读取追踪
-    trace_memory(false, vaddr, value, 4);
+    // // 添加内存读取追踪
+    // trace_memory(false, vaddr, value, 4);
     return value;
 }
 

@@ -37,23 +37,28 @@ VM_PREFIX = Vysyx_25020059_top
 VM_MODPREFIX = Vysyx_25020059_top
 # User CFLAGS (from -CFLAGS on Verilator command line)
 VM_USER_CFLAGS = \
+	-Wall -g -I/home/wang/ysyx-workbench/npc/csrc/include -I/home/wang/ysyx-workbench/npc/csrc/include/sdb -I/home/wang/ysyx-workbench/npc/csrc/include/cpu  -I /home/wang/ysyx-workbench/npc/csrc/tools/capstone/repo/include \
 
 # User LDLIBS (from -LDFLAGS on Verilator command line)
 VM_USER_LDLIBS = \
-	-ldl -lreadline /home/wang/ysyx-workbench/npc/tools/capstone/lib/libcapstone.a \
+	-lreadline \
 
 # User .cpp files (from .cpp's on Verilator command line)
 VM_USER_CLASSES = \
-	cli \
 	loader \
 	main_new \
-	trace \
+	cli \
+	itrace \
+	disasm \
+	log \
 
 # User .cpp directories (from .cpp's on Verilator command line)
 VM_USER_DIR = \
 	.. \
 	../csrc \
-	../csrc/trace \
+	../csrc/src/sdb \
+	../csrc/src/trace \
+	../csrc/src/utils \
 
 
 ### Default rules...
@@ -65,13 +70,17 @@ include $(VERILATOR_ROOT)/include/verilated.mk
 ### Executable rules... (from --exe)
 VPATH += $(VM_USER_DIR)
 
-cli.o: ./csrc/cli.cpp 
+loader.o: /home/wang/ysyx-workbench/npc/csrc/loader.cpp 
 	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST)  -c -o $@ $<
-loader.o: ./csrc/loader.cpp 
+main_new.o: /home/wang/ysyx-workbench/npc/csrc/main_new.cpp 
 	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST)  -c -o $@ $<
-main_new.o: ./csrc/main_new.cpp 
+cli.o: /home/wang/ysyx-workbench/npc/csrc/src/sdb/cli.cpp 
 	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST)  -c -o $@ $<
-trace.o: ./csrc/trace/trace.cpp 
+itrace.o: /home/wang/ysyx-workbench/npc/csrc/src/trace/itrace.cpp 
+	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST)  -c -o $@ $<
+disasm.o: /home/wang/ysyx-workbench/npc/csrc/src/utils/disasm.c 
+	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST)  -c -o $@ $<
+log.o: /home/wang/ysyx-workbench/npc/csrc/src/utils/log.c 
 	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST)  -c -o $@ $<
 
 ### Link rules... (from --exe)

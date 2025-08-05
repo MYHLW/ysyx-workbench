@@ -80,6 +80,8 @@ always @(*) begin
             case (funct3)
                 `INST_ADDI: 
                     alu_op = `ALU_ADD; 
+                `INST_SLTIU:
+                    alu_op = `ALU_SLTU;
             endcase
         end
         // JALR: I 型跳转指令
@@ -98,6 +100,10 @@ always @(*) begin
             imm_gen_op  = `IMM_GEN_B;
             alu_src_sel = `ALU_SRC_REG;
             case (funct3)
+                `INST_BEQ: begin
+                    branch     = 1'b1;
+                    alu_op     = `ALU_SUB;
+                end
                 `INST_BNE: begin
                     branch     = 1'b1;
                     alu_op     = `ALU_SUB;
