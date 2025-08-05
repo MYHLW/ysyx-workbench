@@ -25,6 +25,8 @@ always @(*) begin
             alu_res = ($signed(alu_src1) < $signed(alu_src2)) ? `CPU_WIDTH'd1 : `CPU_WIDTH'd0;
         `ALU_SLT:
             alu_res = ($signed(alu_src1) < $signed(alu_src2)) ? `CPU_WIDTH'd1 : `CPU_WIDTH'd0;
+        `ALU_AND:
+            alu_res = alu_src1 & alu_src2;
     endcase
 end
 endmodule

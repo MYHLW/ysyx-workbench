@@ -88,6 +88,8 @@ always @(*) begin
                     alu_op = `ALU_ADD; 
                 `INST_SLTIU:
                     alu_op = `ALU_SLTU;
+                `INST_ANDI:
+                    alu_op = `ALU_AND;
             endcase
         end
         // JALR: I 型跳转指令
