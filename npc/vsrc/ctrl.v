@@ -88,6 +88,8 @@ always @(*) begin
                     alu_op = `ALU_XOR;
                 `INST_OR:
                     alu_op = `ALU_OR;
+                `INST_AND:
+                    alu_op = `ALU_AND;
             endcase
         end
         `INST_TYPE_I: begin
@@ -98,6 +100,8 @@ always @(*) begin
             case (funct3)
                 `INST_ADDI: 
                     alu_op = `ALU_ADD; 
+                `INST_XORI:
+                    alu_op = `ALU_XOR;
                 `INST_SLTIU:
                     alu_op = `ALU_SLTU;
                 `INST_ANDI:

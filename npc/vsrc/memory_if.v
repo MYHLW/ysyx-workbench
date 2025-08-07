@@ -45,6 +45,8 @@ module memory_if (
         write_data = wdata;
         if (size == 2'b00) begin
           write_data = wdata << (addr[1:0] * 8);
+        end else if(size == 2'b01) begin
+          write_data = (wdata & 16'hFFFF) << (addr[1:0] * 8);
         end
         pmem_write(addr, write_data, wmask);
       end

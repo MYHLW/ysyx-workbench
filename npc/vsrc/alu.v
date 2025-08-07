@@ -19,6 +19,8 @@ always @(*) begin
             alu_res = alu_src1 -  alu_src2;
             zero = (alu_res == `CPU_WIDTH'b0) ? 1'b1 : 1'b0;
         end
+        `ALU_SLT:
+            alu_res = ($signed(alu_src1) < $signed(alu_src2)) ? `CPU_WIDTH'd1 : `CPU_WIDTH'd0;
         `ALU_SLTU:
             alu_res = (alu_src1 < alu_src2) ? `CPU_WIDTH'd1 : `CPU_WIDTH'd0;
         `ALU_BLT: begin
@@ -28,9 +30,7 @@ always @(*) begin
         `ALU_BLTU: begin
             alu_res = (alu_src1 < alu_src2) ? `CPU_WIDTH'd1 : `CPU_WIDTH'd0;
             zero = ~alu_res[0];
-        end
-        `ALU_SLT:
-            alu_res = ($signed(alu_src1) < $signed(alu_src2)) ? `CPU_WIDTH'd1 : `CPU_WIDTH'd0;
+        end        
         `ALU_AND:
             alu_res = alu_src1 & alu_src2;
         `ALU_OR:
