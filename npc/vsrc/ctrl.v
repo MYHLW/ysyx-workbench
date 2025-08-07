@@ -82,6 +82,12 @@ always @(*) begin
                     alu_op = (funct7 == `FUNCT7_INST_A) ? `ALU_ADD : `ALU_SUB; // A:add B:sub 
                 `INST_SLT:
                     alu_op = `ALU_SLT;
+                `INST_SLTU:
+                    alu_op = `ALU_SLTU;
+                `INST_XOR:
+                    alu_op = `ALU_XOR;
+                `INST_OR:
+                    alu_op = `ALU_OR;
             endcase
         end
         `INST_TYPE_I: begin
