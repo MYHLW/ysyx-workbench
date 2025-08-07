@@ -86,6 +86,8 @@ ctrl u_ctrl_0(
     .beq_branch                     ( beq_branch                    ),
     .bne_branch                     ( bne_branch                    ),
     .blt_branch                     ( blt_branch                    ),
+    .bltu_branch                    ( bltu_branch                   ),
+    .bgeu_branch                    ( bgeu_branch                   ),
     .jal_jump                       ( jal_jump                      ),
     .jalr_jump                      ( jalr_jump                     ),
     .reg_wen                        ( reg_wen                       ),
