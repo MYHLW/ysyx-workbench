@@ -10,6 +10,8 @@ module ctrl (
     output reg                         beq_branch,     // beq branch flag
     output reg                         bne_branch,     // bne branch flag
     output reg                         blt_branch,     // blt branch flag
+    output reg                         bltu_branch,    // bltu branch flag
+    output reg                         bgeu_branch,    // bgeu branch flag
     output reg                         jal_jump,       
     output reg                         jalr_jump,       // jalr jump flag
 
@@ -44,6 +46,8 @@ always @(*) begin
     beq_branch  = 1'b0;
     bne_branch  = 1'b0;
     blt_branch  = 1'b0;
+    bltu_branch = 1'b0;
+    bgeu_branch = 1'b0;
     jal_jump    = 1'b0;
     jalr_jump   = 1'b0;
     reg_wen     = 1'b0;
@@ -73,9 +77,7 @@ always @(*) begin
             alu_src_sel = `ALU_SRC_REG;
             case (funct3)
                 `INST_ADD_SUB: 
-                    alu_op = (funct7 == `FUNCT7_INST_A) ? `ALU_ADD : 
-                             (funct7 == `FUNCT7_INST_B) ? `ALU_SUB : 
-                             (funct7 == 7'b0000001) ? `ALU_MUL : `ALU_ADD; // A:add B:sub, 01:mul
+                    alu_op = (funct7 == `FUNCT7_INST_A) ? `ALU_ADD : `ALU_SUB; // A:add B:sub 
                 `INST_SLT:
                     alu_op = `ALU_SLT;
             endcase
@@ -92,6 +94,10 @@ always @(*) begin
                     alu_op = `ALU_SLTU;
                 `INST_ANDI:
                     alu_op = `ALU_AND;
+                `INST_SLLI:
+                    alu_op = `ALU_SLL;
+                `INST_SRLI_SRAI:
+                    alu_op = (funct7 == `FUNCT7_INST_A) ? `ALU_SRL : `ALU_SRA;
             endcase
         end
         // JALR: I 型跳转指令
@@ -121,6 +127,14 @@ always @(*) begin
                 `INST_BLT: begin
                     blt_branch = 1'b1;
                     alu_op     = `ALU_BLT;
+                end
+                `INST_BLTU: begin
+                    bltu_branch = 1'b1;
+                    alu_op      = `ALU_BLTU;
+                end
+                `INST_BGEU: begin
+                    bgeu_branch = 1'b1;
+                    alu_op      = `ALU_BLTU;
                 end
             endcase
         end

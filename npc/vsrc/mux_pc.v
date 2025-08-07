@@ -9,6 +9,8 @@ module muxpc #(
     input                        beq_branch,  // BEQ 分支指令是否有效
     input                        bne_branch,  // BNE 分支指令是否有效
     input                        blt_branch,  // BLT 分支指令是否有效
+    input                        bltu_branch, // BLTU 分支指令是否有效
+    input                        bgeu_branch, // BGEU 分支指令是否有效
     input  [`CPU_WIDTH-1:0]      reg1_rdata,  // 寄存器1数据(忘记位宽这事了)
     input                        zero,        // ALU zero 标志
     input                        jal_jump,        // JAL
@@ -36,6 +38,12 @@ always @(*) begin
     next_pc = curr_pc + imm;
   end else if (blt_branch && ~zero) begin
     // BLT 条件成立
+    next_pc = curr_pc + imm;
+  end else if (bltu_branch && ~zero) begin
+    // BLTU 条件成立
+    next_pc = curr_pc + imm;
+  end else if (bgeu_branch && zero) begin
+    // BGEU 条件成立
     next_pc = curr_pc + imm;
   end else begin
     // 默认顺序执行
