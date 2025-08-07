@@ -25,6 +25,7 @@ class alignas(VL_CACHE_LINE_BYTES) Vysyx_25020059_top___024root final : public V
     CData/*0:0*/ ysyx_25020059_top__DOT__bne_branch;
     CData/*0:0*/ ysyx_25020059_top__DOT__blt_branch;
     CData/*0:0*/ ysyx_25020059_top__DOT__bltu_branch;
+    CData/*0:0*/ ysyx_25020059_top__DOT__bge_branch;
     CData/*0:0*/ ysyx_25020059_top__DOT__bgeu_branch;
     CData/*0:0*/ ysyx_25020059_top__DOT__zero;
     CData/*0:0*/ ysyx_25020059_top__DOT__jal_jump;

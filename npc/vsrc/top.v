@@ -19,6 +19,7 @@ wire                         beq_branch;     // beq branch flag
 wire                         bne_branch;     // bne branch flag
 wire                         blt_branch;     // blt branch flag
 wire                         bltu_branch;    // bltu branch flag
+wire                         bge_branch;
 wire                         bgeu_branch;    // bgeu branch flag
 wire                         zero;       // alu result is zero
 wire                         jal_jump;       // jump flag
@@ -68,6 +69,7 @@ muxpc u_mux_pc_0(
     .bne_branch                     ( bne_branch                    ),
     .blt_branch                     ( blt_branch                    ),
     .bltu_branch                    ( bltu_branch                   ),
+    .bge_branch                     ( bge_branch                    ),
     .bgeu_branch                    ( bgeu_branch                   ),
     .reg1_rdata                     ( reg1_rdata                    ),
     .zero                           ( zero                          ),
@@ -87,6 +89,7 @@ ctrl u_ctrl_0(
     .bne_branch                     ( bne_branch                    ),
     .blt_branch                     ( blt_branch                    ),
     .bltu_branch                    ( bltu_branch                   ),
+    .bge_branch                     ( bge_branch                    ),
     .bgeu_branch                    ( bgeu_branch                   ),
     .jal_jump                       ( jal_jump                      ),
     .jalr_jump                      ( jalr_jump                     ),

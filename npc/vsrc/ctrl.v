@@ -11,6 +11,7 @@ module ctrl (
     output reg                         bne_branch,     // bne branch flag
     output reg                         blt_branch,     // blt branch flag
     output reg                         bltu_branch,    // bltu branch flag
+    output reg                         bge_branch,     // bge branch flag
     output reg                         bgeu_branch,    // bgeu branch flag
     output reg                         jal_jump,       
     output reg                         jalr_jump,       // jalr jump flag
@@ -47,6 +48,7 @@ always @(*) begin
     bne_branch  = 1'b0;
     blt_branch  = 1'b0;
     bltu_branch = 1'b0;
+    bge_branch  = 1'b0;
     bgeu_branch = 1'b0;
     jal_jump    = 1'b0;
     jalr_jump   = 1'b0;
@@ -131,6 +133,10 @@ always @(*) begin
                 `INST_BLTU: begin
                     bltu_branch = 1'b1;
                     alu_op      = `ALU_BLTU;
+                end
+                `INST_BGE: begin
+                    bge_branch = 1'b1; // 新增 bge_branch 信号
+                    alu_op      = `ALU_BLT; // bge 可以通过 blt 的反向逻辑实现
                 end
                 `INST_BGEU: begin
                     bgeu_branch = 1'b1;
