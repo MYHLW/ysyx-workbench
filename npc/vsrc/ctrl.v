@@ -90,6 +90,8 @@ always @(*) begin
                     alu_op = `ALU_OR;
                 `INST_AND:
                     alu_op = `ALU_AND;
+                `INST_SLL:
+                    alu_op = `ALU_SLL;
             endcase
         end
         `INST_TYPE_I: begin

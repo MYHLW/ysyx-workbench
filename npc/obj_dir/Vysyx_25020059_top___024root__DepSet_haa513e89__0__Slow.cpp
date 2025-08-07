@@ -119,6 +119,9 @@ VL_ATTR_COLD void Vysyx_25020059_top___024root___stl_sequent__TOP__0(Vysyx_25020
             } else if ((7U == (7U & (vlSelfRef.inst 
                                      >> 0xcU)))) {
                 vlSelfRef.ysyx_25020059_top__DOT__alu_op = 0U;
+            } else if ((1U == (7U & (vlSelfRef.inst 
+                                     >> 0xcU)))) {
+                vlSelfRef.ysyx_25020059_top__DOT__alu_op = 5U;
             }
             vlSelfRef.ysyx_25020059_top__DOT__reg1_raddr 
                 = (0x1fU & (vlSelfRef.inst >> 0xfU));
