@@ -28,32 +28,32 @@ void Vysyx_25020059_top___024root__trace_chg_0_sub_0(Vysyx_25020059_top___024roo
         bufp->chgBit(oldp+0,(vlSelfRef.ysyx_25020059_top__DOT__ena));
         bufp->chgBit(oldp+1,(vlSelfRef.ysyx_25020059_top__DOT__beq_branch));
         bufp->chgBit(oldp+2,(vlSelfRef.ysyx_25020059_top__DOT__bne_branch));
-        bufp->chgBit(oldp+3,(vlSelfRef.ysyx_25020059_top__DOT__zero));
-        bufp->chgBit(oldp+4,(vlSelfRef.ysyx_25020059_top__DOT__jal_jump));
-        bufp->chgBit(oldp+5,(vlSelfRef.ysyx_25020059_top__DOT__jalr_jump));
-        bufp->chgBit(oldp+6,(vlSelfRef.ysyx_25020059_top__DOT__reg_wen));
-        bufp->chgCData(oldp+7,(vlSelfRef.ysyx_25020059_top__DOT__reg_waddr),5);
-        bufp->chgIData(oldp+8,((((~ (IData)(vlSelfRef.ysyx_25020059_top__DOT__mem_wen)) 
+        bufp->chgBit(oldp+3,(vlSelfRef.ysyx_25020059_top__DOT__blt_branch));
+        bufp->chgBit(oldp+4,(vlSelfRef.ysyx_25020059_top__DOT__zero));
+        bufp->chgBit(oldp+5,(vlSelfRef.ysyx_25020059_top__DOT__jal_jump));
+        bufp->chgBit(oldp+6,(vlSelfRef.ysyx_25020059_top__DOT__jalr_jump));
+        bufp->chgBit(oldp+7,(vlSelfRef.ysyx_25020059_top__DOT__reg_wen));
+        bufp->chgCData(oldp+8,(vlSelfRef.ysyx_25020059_top__DOT__reg_waddr),5);
+        bufp->chgIData(oldp+9,((((~ (IData)(vlSelfRef.ysyx_25020059_top__DOT__mem_wen)) 
                                  & (IData)(vlSelfRef.ysyx_25020059_top__DOT__mem_valid))
                                  ? vlSelfRef.ysyx_25020059_top__DOT__mem_rdata
                                  : vlSelfRef.ysyx_25020059_top__DOT__alu_res)),32);
-        bufp->chgCData(oldp+9,(vlSelfRef.ysyx_25020059_top__DOT__reg1_raddr),5);
-        bufp->chgCData(oldp+10,(vlSelfRef.ysyx_25020059_top__DOT__reg2_raddr),5);
-        bufp->chgIData(oldp+11,(vlSelfRef.ysyx_25020059_top__DOT__reg1_rdata),32);
-        bufp->chgIData(oldp+12,(vlSelfRef.ysyx_25020059_top__DOT__reg2_rdata),32);
-        bufp->chgCData(oldp+13,(vlSelfRef.ysyx_25020059_top__DOT__imm_gen_op),3);
-        bufp->chgIData(oldp+14,(vlSelfRef.ysyx_25020059_top__DOT__imm),32);
-        bufp->chgCData(oldp+15,(vlSelfRef.ysyx_25020059_top__DOT__alu_op),4);
-        bufp->chgCData(oldp+16,(vlSelfRef.ysyx_25020059_top__DOT__alu_src_sel),2);
-        bufp->chgIData(oldp+17,(vlSelfRef.ysyx_25020059_top__DOT__alu_src1),32);
-        bufp->chgIData(oldp+18,(vlSelfRef.ysyx_25020059_top__DOT__alu_src2),32);
-        bufp->chgIData(oldp+19,(vlSelfRef.ysyx_25020059_top__DOT__alu_res),32);
-        bufp->chgBit(oldp+20,(vlSelfRef.ysyx_25020059_top__DOT__mem_valid));
-        bufp->chgBit(oldp+21,(vlSelfRef.ysyx_25020059_top__DOT__mem_wen));
-        bufp->chgCData(oldp+22,(vlSelfRef.ysyx_25020059_top__DOT__mem_size),2);
-        bufp->chgBit(oldp+23,(vlSelfRef.ysyx_25020059_top__DOT__mem_unsigned));
-        bufp->chgIData(oldp+24,(vlSelfRef.ysyx_25020059_top__DOT__mem_rdata),32);
-        bufp->chgBit(oldp+25,(vlSelfRef.ysyx_25020059_top__DOT__u_ctrl_0__DOT__blt_branch));
+        bufp->chgCData(oldp+10,(vlSelfRef.ysyx_25020059_top__DOT__reg1_raddr),5);
+        bufp->chgCData(oldp+11,(vlSelfRef.ysyx_25020059_top__DOT__reg2_raddr),5);
+        bufp->chgIData(oldp+12,(vlSelfRef.ysyx_25020059_top__DOT__reg1_rdata),32);
+        bufp->chgIData(oldp+13,(vlSelfRef.ysyx_25020059_top__DOT__reg2_rdata),32);
+        bufp->chgCData(oldp+14,(vlSelfRef.ysyx_25020059_top__DOT__imm_gen_op),3);
+        bufp->chgIData(oldp+15,(vlSelfRef.ysyx_25020059_top__DOT__imm),32);
+        bufp->chgCData(oldp+16,(vlSelfRef.ysyx_25020059_top__DOT__alu_op),4);
+        bufp->chgCData(oldp+17,(vlSelfRef.ysyx_25020059_top__DOT__alu_src_sel),2);
+        bufp->chgIData(oldp+18,(vlSelfRef.ysyx_25020059_top__DOT__alu_src1),32);
+        bufp->chgIData(oldp+19,(vlSelfRef.ysyx_25020059_top__DOT__alu_src2),32);
+        bufp->chgIData(oldp+20,(vlSelfRef.ysyx_25020059_top__DOT__alu_res),32);
+        bufp->chgBit(oldp+21,(vlSelfRef.ysyx_25020059_top__DOT__mem_valid));
+        bufp->chgBit(oldp+22,(vlSelfRef.ysyx_25020059_top__DOT__mem_wen));
+        bufp->chgCData(oldp+23,(vlSelfRef.ysyx_25020059_top__DOT__mem_size),2);
+        bufp->chgBit(oldp+24,(vlSelfRef.ysyx_25020059_top__DOT__mem_unsigned));
+        bufp->chgIData(oldp+25,(vlSelfRef.ysyx_25020059_top__DOT__mem_rdata),32);
         bufp->chgCData(oldp+26,((0xfU & ((0U == (IData)(vlSelfRef.ysyx_25020059_top__DOT__mem_size))
                                           ? ((IData)(1U) 
                                              << (3U 

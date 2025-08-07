@@ -38,7 +38,6 @@ class alignas(VL_CACHE_LINE_BYTES) Vysyx_25020059_top___024root final : public V
     CData/*0:0*/ ysyx_25020059_top__DOT__mem_wen;
     CData/*1:0*/ ysyx_25020059_top__DOT__mem_size;
     CData/*0:0*/ ysyx_25020059_top__DOT__mem_unsigned;
-    CData/*0:0*/ ysyx_25020059_top__DOT__u_ctrl_0__DOT__blt_branch;
     CData/*0:0*/ __VstlFirstIteration;
     CData/*0:0*/ __VicoFirstIteration;
     CData/*0:0*/ __Vtrigprevexpr___TOP__clk__0;

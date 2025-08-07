@@ -21,8 +21,10 @@ always @(*) begin
         end
         `ALU_SLTU:
             alu_res = (alu_src1 < alu_src2) ? `CPU_WIDTH'd1 : `CPU_WIDTH'd0;
-        `ALU_BLT:
+        `ALU_BLT: begin
             alu_res = ($signed(alu_src1) < $signed(alu_src2)) ? `CPU_WIDTH'd1 : `CPU_WIDTH'd0;
+            zero = ~alu_res[0];
+        end
         `ALU_SLT:
             alu_res = ($signed(alu_src1) < $signed(alu_src2)) ? `CPU_WIDTH'd1 : `CPU_WIDTH'd0;
         `ALU_AND:

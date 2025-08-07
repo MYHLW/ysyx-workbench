@@ -81,6 +81,7 @@ ctrl u_ctrl_0(
     .a0                             ( reg_f[10]                     ), // 假设 a0 寄存器为 reg_f[10]
     .beq_branch                     ( beq_branch                    ),
     .bne_branch                     ( bne_branch                    ),
+    .blt_branch                     ( blt_branch                    ),
     .jal_jump                       ( jal_jump                      ),
     .jalr_jump                      ( jalr_jump                     ),
     .reg_wen                        ( reg_wen                       ),
