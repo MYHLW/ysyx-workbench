@@ -441,7 +441,7 @@ VL_ATTR_COLD void Vysyx_25020059_top___024root___stl_sequent__TOP__0(Vysyx_25020
                                           ? (vlSelfRef.curr_pc 
                                              + vlSelfRef.ysyx_25020059_top__DOT__imm)
                                           : (((IData)(vlSelfRef.ysyx_25020059_top__DOT__blt_branch) 
-                                              & (IData)(vlSelfRef.ysyx_25020059_top__DOT__zero))
+                                              & (~ (IData)(vlSelfRef.ysyx_25020059_top__DOT__zero)))
                                               ? (vlSelfRef.curr_pc 
                                                  + vlSelfRef.ysyx_25020059_top__DOT__imm)
                                               : ((IData)(4U) 

@@ -507,7 +507,7 @@ VL_INLINE_OPT void Vysyx_25020059_top___024root___nba_sequent__TOP__0(Vysyx_2502
                                           ? (vlSelfRef.curr_pc 
                                              + vlSelfRef.ysyx_25020059_top__DOT__imm)
                                           : (((IData)(vlSelfRef.ysyx_25020059_top__DOT__blt_branch) 
-                                              & (IData)(vlSelfRef.ysyx_25020059_top__DOT__zero))
+                                              & (~ (IData)(vlSelfRef.ysyx_25020059_top__DOT__zero)))
                                               ? (vlSelfRef.curr_pc 
                                                  + vlSelfRef.ysyx_25020059_top__DOT__imm)
                                               : ((IData)(4U) 

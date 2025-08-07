@@ -34,7 +34,7 @@ always @(*) begin
   end else if (bne_branch && ~zero) begin
     // BNE 条件成立
     next_pc = curr_pc + imm;
-  end else if (blt_branch && zero) begin
+  end else if (blt_branch && ~zero) begin
     // BLT 条件成立
     next_pc = curr_pc + imm;
   end else begin
