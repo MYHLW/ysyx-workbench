@@ -32,7 +32,7 @@ bool isa_difftest_checkregs(CPU_state *ref_r, vaddr_t pc) {
   bool same = true;
 
   printf("\n==== Register Compare at PC = 0x%08lx ====\n", (unsigned long)pc);
-  printf("%-4s %-12s %-12s %s\n", "Reg", "REF", "DUT", "Diff?");
+  printf("%-4s %-12s %-12s %s\n", "Reg", "REF", "DUT", "Diff");
   printf("---------------------------------------------\n");
 
   for (int i = 0; i < reg_num; i++) {
