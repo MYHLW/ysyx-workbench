@@ -26,33 +26,28 @@ static const char *reg_names[] = {
 
 bool isa_difftest_checkregs(CPU_state *ref_r, vaddr_t pc) {
   int reg_num = ARRLEN(cpu.gpr);
-  bool ok = true;
+  bool same = true;
+
+  printf("\n==== Register Compare at PC = 0x%08lx ====\n", (unsigned long)pc);
+  printf("%-4s %-12s %-12s %s\n", "Reg", "REF", "DUT", "Diff?");
+  printf("---------------------------------------------\n");
 
   for (int i = 0; i < reg_num; i++) {
-    if (ref_r->gpr[i] != cpu.gpr[i]) {
-      if (ok) {
-        printf("\n==== Register Mismatch Detected at PC = 0x%08lx ====\n", (unsigned long)pc);
-        printf("%-4s %-12s %-12s\n", "Reg", "REF", "DUT");
-        printf("----------------------------------\n");
-        ok = false;
-      }
-      printf("%-4s 0x%08x  0x%08x\n", reg_names[i],
-             ref_r->gpr[i], cpu.gpr[i]);
-    }
+    bool diff = (ref_r->gpr[i] != cpu.gpr[i]);
+    if (diff) same = false;
+    printf("%-4s 0x%08x  0x%08x  %s\n", reg_names[i],
+           ref_r->gpr[i], cpu.gpr[i],
+           diff ? "<--" : "");
   }
 
-  if (ref_r->pc != cpu.pc) {
-    if (ok) {
-      printf("\n==== PC Mismatch Detected ====\n");
-      printf("%-4s %-12s %-12s\n", "Reg", "REF", "DUT");
-      printf("----------------------------------\n");
-      ok = false;
-    }
-    printf("%-4s 0x%08x  0x%08x\n", "pc",
-           ref_r->pc, cpu.pc);
-  }
+  // 最后比较 PC
+  bool diff_pc = (ref_r->pc != cpu.pc);
+  if (diff_pc) same = false;
+  printf("%-4s 0x%08x  0x%08x  %s\n", "pc",
+         ref_r->pc, cpu.pc,
+         diff_pc ? "<--" : "");
 
-  return ok;
+  return same;
 }
 
 void isa_difftest_attach() {
