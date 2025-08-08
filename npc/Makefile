@@ -56,7 +56,7 @@ wave:
 # 
 clean:
 	rm -rf $(OBJ_DIR) *.log
-	rm dump.vcd
+	rm *.vcd
 
 # 
 .PHONY: all build run clean

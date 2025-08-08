@@ -20,6 +20,8 @@ always @(*) begin
              imm = {{12{inst[31]}},inst[19:12],inst[20],inst[30:21], 1'b0};
         `IMM_GEN_U: 
              imm = {inst[31:12],12'b0};
+        `IMM_GEN_SHAMT:
+             imm = {{27{1'b0}}, inst[`SHAMT_WIDTH+`SHAMT_BASE-1:`SHAMT_BASE]};
     endcase
 end
 

@@ -1,6 +1,6 @@
-LIBCAPSTONE = $(CSRC)/tools/capstone/repo/libcapstone.so.5
-CFLAGS += -I $(CSRC)/tools/capstone/repo/include
+LIBCAPSTONE = $(NPC_HOME)/tools/capstone/repo/libcapstone.so.5
+CFLAGS += -I $(NPC_HOME)/tools/capstone/repo/include
 src/utils/disasm.c: $(LIBCAPSTONE)
 $(LIBCAPSTONE):
-	$(MAKE) -C $(CSRC)/tools/capstone
+	$(MAKE) -C $(NPC_HOME)/tools/capstone
 

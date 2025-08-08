@@ -7,8 +7,9 @@
 #define MAX_IRINGBUF 16
 
 typedef struct {
-  word_t pc;
-  uint32_t inst;
+    uint64_t pc;
+    uint32_t inst;
+    char logbuf[128];
 } ItraceNode;
 
 extern ItraceNode iringbuf[MAX_IRINGBUF];

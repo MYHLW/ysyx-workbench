@@ -25,6 +25,8 @@
 `define RD_BASE     7
 `define RS1_BASE    15
 `define RS2_BASE    20
+`define SHAMT_BASE  20
+`define SHAMT_WIDTH 5
 
 // opcode
 `define OPCODE_WIDTH 7
@@ -117,6 +119,7 @@
 `define IMM_GEN_B `IMM_GEN_OP_WIDTH'b010
 `define IMM_GEN_J `IMM_GEN_OP_WIDTH'b011
 `define IMM_GEN_U `IMM_GEN_OP_WIDTH'b100
+`define IMM_GEN_SHAMT `IMM_GEN_OP_WIDTH'b101
 
 
 	

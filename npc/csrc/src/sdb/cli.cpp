@@ -11,6 +11,7 @@
 #include <cstdlib>
 #include <cstdio>
 #include <cstdint>
+#include "trace.h"
 
 // 引用 main_new.cpp 中的全局变量
 extern VerilatedContext* ctx;
@@ -27,6 +28,7 @@ extern uint8_t memory[];             // 仿真内存（数组形式外部引用�
 
 // single_cycle 在 main_new.cpp 中实现
 extern void single_cycle();
+void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);  
 
 
 // “si” 命令：单步 n 周期
@@ -36,9 +38,27 @@ void cmd_si(const char* args) {
         std::printf("Invalid steps: %d\n", steps);
         return;
     }
+
+    static bool disasm_inited = false;
+    if (!disasm_inited) {
+        init_disasm();
+        disasm_inited = true;
+    }
+
     for (int i = 0; i < steps && !sim_done; i++) {
         single_cycle();
-        std::printf("PC=0x%08X, inst=0x%08X\n", dut.curr_pc, dut.inst);
+
+        uint32_t pc = (uint32_t)dut.curr_pc;
+        uint32_t inst = (uint32_t)dut.inst;
+
+        // 将 inst 拷成字节数组传给 capstone（明确字节序）
+        uint8_t code[4];
+        std::memcpy(code, &inst, sizeof(inst)); // 小端主机下这就是 little-endian bytes
+
+        char asm_buf[128] = {0};
+        disassemble(asm_buf, sizeof(asm_buf), (uint64_t)pc, code, 4);
+
+        std::printf("0x%08X: %08x  %s\n", pc, inst, asm_buf);
     }
 }
 

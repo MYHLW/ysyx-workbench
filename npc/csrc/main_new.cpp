@@ -36,7 +36,7 @@ void single_cycle() {
     ctx->timeInc(1);
     
     // 添加指令追踪
-    trace_inst(dut.next_pc, dut.inst);
+    trace_inst(dut.curr_pc, dut.inst);
     
     dut.clk = 1;
     dut.eval();        

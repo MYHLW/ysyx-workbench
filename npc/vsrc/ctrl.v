@@ -80,6 +80,8 @@ always @(*) begin
             case (funct3)
                 `INST_ADD_SUB: 
                     alu_op = (funct7 == `FUNCT7_INST_A) ? `ALU_ADD : `ALU_SUB; // A:add B:sub 
+                `INST_SRL_SRA:
+                    alu_op = (funct7 == `FUNCT7_INST_A) ? `ALU_SRL : `ALU_SRA; //SRL SRA
                 `INST_SLT:
                     alu_op = `ALU_SLT;
                 `INST_SLTU:
@@ -108,10 +110,16 @@ always @(*) begin
                     alu_op = `ALU_SLTU;
                 `INST_ANDI:
                     alu_op = `ALU_AND;
-                `INST_SLLI:
+                `INST_SLLI: begin
                     alu_op = `ALU_SLL;
-                `INST_SRLI_SRAI:
+                    imm_gen_op = `IMM_GEN_SHAMT;
+                    alu_src_sel = `ALU_SRC_IMM;
+                end
+                `INST_SRLI_SRAI: begin
                     alu_op = (funct7 == `FUNCT7_INST_A) ? `ALU_SRL : `ALU_SRA;
+                    imm_gen_op = `IMM_GEN_SHAMT;
+                    alu_src_sel = `ALU_SRC_IMM;
+                end
             endcase
         end
         // JALR: I 型跳转指令
