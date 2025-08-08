@@ -17,6 +17,9 @@
 #include <cpu/difftest.h>
 #include "../local-include/reg.h"
 
+#define ANSI_RED     "\033[31m"
+#define ANSI_RESET   "\033[0m"
+
 static const char *reg_names[] = {
   "x0", "ra", "sp", "gp", "tp", "t0", "t1", "t2",
   "s0", "s1", "a0", "a1", "a2", "a3", "a4", "a5",
@@ -34,18 +37,24 @@ bool isa_difftest_checkregs(CPU_state *ref_r, vaddr_t pc) {
 
   for (int i = 0; i < reg_num; i++) {
     bool diff = (ref_r->gpr[i] != cpu.gpr[i]);
-    if (diff) same = false;
-    printf("%-4s 0x%08x  0x%08x  %s\n", reg_names[i],
-           ref_r->gpr[i], cpu.gpr[i],
-           diff ? "<--" : "");
+    if (diff) {
+      same = false;
+      printf("%-4s " ANSI_RED "0x%08x" ANSI_RESET "  " ANSI_RED "0x%08x" ANSI_RESET "  " ANSI_RED "<--" ANSI_RESET "\n",
+             reg_names[i], ref_r->gpr[i], cpu.gpr[i]);
+    } else {
+      printf("%-4s 0x%08x  0x%08x\n", reg_names[i], ref_r->gpr[i], cpu.gpr[i]);
+    }
   }
 
   // 最后比较 PC
   bool diff_pc = (ref_r->pc != cpu.pc);
-  if (diff_pc) same = false;
-  printf("%-4s 0x%08x  0x%08x  %s\n", "pc",
-         ref_r->pc, cpu.pc,
-         diff_pc ? "<--" : "");
+  if (diff_pc) {
+    same = false;
+    printf("%-4s " ANSI_RED "0x%08x" ANSI_RESET "  " ANSI_RED "0x%08x" ANSI_RESET "  " ANSI_RED "<--" ANSI_RESET "\n",
+           "pc", ref_r->pc, cpu.pc);
+  } else {
+    printf("%-4s 0x%08x  0x%08x\n", "pc", ref_r->pc, cpu.pc);
+  }
 
   return same;
 }
