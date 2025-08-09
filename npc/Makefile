@@ -33,8 +33,10 @@ VCD_FILE = Vysyx_25020059.vcd
 # 
 CFLAGS = -Wall -g
 CFLAGS += -I$(CSRC)/include -I$(CSRC)/include/sdb -I$(CSRC)/include/cpu 
+CFLAGS += -I$(NPC_HOME)/../nemu/include
 
 LDFLAGS += -lreadline
+LDFLAGS += -L$(NPC_HOME)/../nemu/build $(NPC_HOME)/../nemu/build/riscv32-nemu-interpreter-so
 
 #include
 include $(CSRC)/src/utils/filelist.mk

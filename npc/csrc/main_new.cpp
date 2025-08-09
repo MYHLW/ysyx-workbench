@@ -11,6 +11,7 @@
 #include <verilated.h>
 #include <verilated_vcd_c.h>
 #include <verilated_dpi.h>
+#include <difftest-def.h>
 
 #define MEM_FAULT_CODE   0xdeadbeef  // 定义内存故障码
 #define MEM_ACCESS_FAULT 1           // 定义内存访问错误trap码
@@ -28,6 +29,19 @@ int               trap_code = -1;
 uint64_t          sim_cycle = 0;
 Vysyx_25020059_top dut;
 
+typedef struct {
+  uint32_t gpr[32];
+  uint32_t pc;
+} CPU_state;
+
+CPU_state cpu;
+
+void difftest_exec(uint64_t n);
+void difftest_regcpy(void *dut, bool direction);
+void difftest_memcpy(paddr_t addr, void *buf, size_t n, bool direction);
+void difftest_raise_intr(word_t NO);
+void difftest_init(int port);
+
 // 单周期执行
 void single_cycle() {    
     dut.clk = 0;
@@ -44,6 +58,14 @@ void single_cycle() {
     ctx->timeInc(1);    
     sim_cycle++;
     
+    // difftest
+    difftest_exec(1);
+    for (int i = 0; i < 32; i++) {
+        cpu.gpr[i] = dut.reg_f[i];
+    }
+    cpu.pc = dut.curr_pc;
+    difftest_regcpy(&cpu, DIFFTEST_TO_DUT);
+
     // 检查周期数是否超过阈值
     if (sim_cycle >= MAX_CYCLE) {
         npc_trap(2);  // 用新的trap码（比如2）表示周期超限
@@ -92,6 +114,10 @@ int main(int argc, char** argv) {
     // 初始化内存并加载程序（使用封装的接口）
     std::memset(memory, 0, MEM_SIZE);
     load_program(argv[1]);  // 调用loader.h中的函数
+    
+    // 初始化difftest
+    difftest_init(0);
+    difftest_memcpy(MEM_BASE, memory, MEM_SIZE, DIFFTEST_TO_REF);
 
     // // 初始化trace功能
     // init_trace();
@@ -129,8 +155,10 @@ extern "C" void npc_trap(int code) {
     std::printf("\n");
     if (trap_code == 0) {
         std::printf("\033[32m[NPC] HIT GOOD TRAP: program exited successfully.\033[0m\n");
+        //difftest_exit(0);
     } else {
         std::printf("\033[31m[NPC] HIT BAD TRAP: program failed (code=%d).\033[0m\n", trap_code);
+        //difftest_exit(1);
     }
 }
 

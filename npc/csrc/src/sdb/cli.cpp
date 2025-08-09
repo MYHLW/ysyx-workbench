@@ -12,6 +12,7 @@
 #include <cstdio>
 #include <cstdint>
 #include "trace.h"
+#include <difftest-def.h>
 
 // 引用 main_new.cpp 中的全局变量
 extern VerilatedContext* ctx;
