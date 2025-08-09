@@ -33,12 +33,8 @@ VCD_FILE = Vysyx_25020059.vcd
 # 
 CFLAGS = -Wall -g
 CFLAGS += -I$(CSRC)/include -I$(CSRC)/include/sdb -I$(CSRC)/include/cpu 
-# NEMU 动态库路径
-NEMU_SO = /home/wang/ysyx-workbench/nemu/build/riscv32-nemu-interpreter-so
 
-# LDFLAGS 增加 .so
-LDFLAGS += -lreadline $(NEMU_SO)
-
+LDFLAGS += -lreadline
 
 #include
 include $(CSRC)/src/utils/filelist.mk

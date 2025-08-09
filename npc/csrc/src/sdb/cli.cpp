@@ -20,18 +20,18 @@ extern Vysyx_25020059_top dut;
 extern bool sim_done;
 extern int trap_code;
 extern uint64_t sim_cycle;
+// 原错误声明（指针类型，与main_new中数组不匹配）
+// extern uint8_t* memory;             // 仿真内存
 
-// 修正后的仿真内存外部声明（数组形式）
-extern uint8_t memory[];             // 仿真内存（数组形式外部引用）        
+// 修正后（数组类型，匹配main_new中的static uint8_t memory[MEM_SIZE]）
+extern uint8_t memory[];             // 仿真内存（数组形式外部引用）        // 仿真内存
 
 // single_cycle 在 main_new.cpp 中实现
 extern void single_cycle();
 void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);  
 
-// difftest 接口（在 difftest.cpp 中实现）
-extern "C" bool difftest_step_and_check(uint32_t dut_pc);
 
-// “si” 命令：单步 n 周期（在检测到 PC 变化时认为一条指令完成，并触发 difftest）
+// “si” 命令：单步 n 周期
 void cmd_si(const char* args) {
     int steps = args ? std::atoi(args) : 1;
     if (steps <= 0) {
@@ -46,10 +46,6 @@ void cmd_si(const char* args) {
     }
 
     for (int i = 0; i < steps && !sim_done; i++) {
-        // 记录单步前 PC，用于检测指令是否完成（PC 发生变化时认为指令已退出来）
-        uint32_t prev_pc = (uint32_t)dut.curr_pc;
-
-        // 走一个时钟周期
         single_cycle();
 
         uint32_t pc = (uint32_t)dut.curr_pc;
@@ -63,19 +59,6 @@ void cmd_si(const char* args) {
         disassemble(asm_buf, sizeof(asm_buf), (uint64_t)pc, code, 4);
 
         std::printf("0x%08X: %08x  %s\n", pc, inst, asm_buf);
-
-        // 如果 PC 变化，认为 DUT 已完成一条指令（commit），这时让 REF 执行并比对
-        if (pc != prev_pc) {
-            bool ok = true;
-            // 调用 difftest（如果已启用）并检查结果
-            ok = difftest_step_and_check(pc);
-            if (!ok) {
-                std::fprintf(stderr, "[DIFTEST] mismatch detected at DUT PC = 0x%08X\n", pc);
-                // 停止仿真，方便调试
-                sim_done = true;
-                break;
-            }
-        }
     }
 }
 
@@ -101,7 +84,7 @@ void cmd_info(const char* /*args*/) {
 // “help” 命令
 void cmd_help(const char* /*args*/) {
      std::printf("Supported commands:\n");
-     std::printf("  si [n]   - Step n cycles (default 1). difftest is triggered when PC changes (i.e., instruction commit)\n");
+     std::printf("  si [n]   - Step n cycles (default 1)\n");
      std::printf("  c        - Continue until trap\n");
      std::printf("  info     - Show registers\n");
      std::printf("  x addr(0x80000000) [n] - Scan memory: dump n words from addr (default n=1)\n");
