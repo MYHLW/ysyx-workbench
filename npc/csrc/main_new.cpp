@@ -60,11 +60,11 @@ void single_cycle() {
     
     // difftest
     difftest_exec(1);
-    for (int i = 0; i < 32; i++) {
+    for (int i = 0; i < 16; i++) {
         cpu.gpr[i] = dut.reg_f[i];
-    }
-    cpu.pc = dut.curr_pc;
-    difftest_regcpy(&cpu, DIFFTEST_TO_DUT);
+    }  // 复制dut的寄存器状态到cpu结构体
+    cpu.pc = dut.curr_pc; // 复制dut的pc状态到cpu结构体
+    difftest_regcpy(&cpu, DIFFTEST_TO_REF); // 复制cpu(dut)的状态到REF的状态
 
     // 检查周期数是否超过阈值
     if (sim_cycle >= MAX_CYCLE) {

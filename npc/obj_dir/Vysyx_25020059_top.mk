@@ -37,11 +37,11 @@ VM_PREFIX = Vysyx_25020059_top
 VM_MODPREFIX = Vysyx_25020059_top
 # User CFLAGS (from -CFLAGS on Verilator command line)
 VM_USER_CFLAGS = \
-	-Wall -g -I/home/wang/ysyx-workbench/npc/csrc/include -I/home/wang/ysyx-workbench/npc/csrc/include/sdb -I/home/wang/ysyx-workbench/npc/csrc/include/cpu  -I /home/wang/ysyx-workbench/npc/tools/capstone/repo/include \
+	-Wall -g -I/home/wang/ysyx-workbench/npc/csrc/include -I/home/wang/ysyx-workbench/npc/csrc/include/sdb -I/home/wang/ysyx-workbench/npc/csrc/include/cpu  -I/home/wang/ysyx-workbench/npc/../nemu/include -I /home/wang/ysyx-workbench/npc/tools/capstone/repo/include \
 
 # User LDLIBS (from -LDFLAGS on Verilator command line)
 VM_USER_LDLIBS = \
-	-lreadline \
+	-lreadline -L/home/wang/ysyx-workbench/npc/../nemu/build /home/wang/ysyx-workbench/npc/../nemu/build/riscv32-nemu-interpreter-so \
 
 # User .cpp files (from .cpp's on Verilator command line)
 VM_USER_CLASSES = \
