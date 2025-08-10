@@ -21,7 +21,7 @@ CSRC = $(NPC_HOME)/csrc
 SRC = $(shell find $(VSRCDIR) -name "*.v")
 
 # C++（递归查找所有 .cpp）
-CPP_SRC = $(shell find $(CSRC) -name "*.cpp" ! -path "*/tools/*")
+CPP_SRC = $(shell find $(CSRC) -name "*.cpp" ! -path "*/tools/*") $(NPC_HOME)/top.cpp
 C_SRC = $(shell find $(CSRC) -name "*.c" ! -path "*/tools/*") $(CSRC)/src/utils/log.c
 
 # Verilator 
@@ -36,7 +36,10 @@ CFLAGS += -I$(CSRC)/include -I$(CSRC)/include/sdb -I$(CSRC)/include/cpu
 CFLAGS += -I$(NPC_HOME)/../nemu/include
 
 LDFLAGS += -lreadline
-LDFLAGS += -L$(NPC_HOME)/../nemu/build $(NPC_HOME)/../nemu/build/riscv32-nemu-interpreter-so
+LDFLAGS += -L$(NPC_HOME)/../nemu/build -lriscv32-nemu-interpreter-so
+LDFLAGS += -Wl,-rpath=$(NPC_HOME)/../nemu/build
+
+#LDFLAGS += -L$(NPC_HOME)/../nemu/build -lnemu
 
 #include
 include $(CSRC)/src/utils/filelist.mk

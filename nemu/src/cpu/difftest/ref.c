@@ -26,12 +26,17 @@ __EXPORT void difftest_memcpy(paddr_t addr, void *buf, size_t n, bool direction)
   }
 }
 
-__EXPORT void difftest_regcpy(void *dut, bool direction) {
-  if (direction == DIFFTEST_TO_REF) {
-    memcpy(&cpu, dut, DIFFTEST_REG_SIZE);
-  } else {
-    memcpy(dut, &cpu, DIFFTEST_REG_SIZE);
-  }
+__EXPORT void difftest_regcpy(uint32_t *pc_out_or_in, uint32_t *gpr_buf, bool direction) {
+    if (direction == DIFFTEST_TO_REF) {
+        /* 从 NPC -> REF：把传入的 gpr/pc 写入 nemu cpu */
+        for (int i = 0; i < 16; i++) cpu.gpr[i] = gpr_buf[i];
+        cpu.pc = (uint32_t)(*pc_out_or_in);
+        cpu.gpr[0] = 0; /* 确保 x0 = 0 */
+    } else {
+        /* 从 REF -> NPC：把 nemu cpu 的内容写回调用者提供的缓冲 */
+        *pc_out_or_in = (uint32_t)cpu.pc;
+        for (int i = 0; i < 16; i++) gpr_buf[i] = cpu.gpr[i];
+    }
 }
 
 __EXPORT void difftest_exec(uint64_t n) {
@@ -47,4 +52,6 @@ __EXPORT void difftest_init(int port) {
   init_mem();
   /* Perform ISA dependent initialization. */
   init_isa();
+  cpu.gpr[0]=0;
+  cpu.pc=RESET_VECTOR;
 }

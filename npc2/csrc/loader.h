@@ -8,6 +8,7 @@ extern uint8_t memory[];
 extern const uint32_t MEM_BASE;
 extern const uint32_t MEM_SIZE;
 
+extern uint32_t img_size;
 // 加载程序（根据文件后缀自动选择方式）
 void load_program(const char* filename);
 

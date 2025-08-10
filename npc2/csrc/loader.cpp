@@ -6,6 +6,7 @@
 #include <cstdlib>
 #include <cstring>
 
+uint32_t img_size = 0;
 // 加载二进制镜像（.bin等）
 static void load_image(const char* filename) {
     FILE* fp = std::fopen(filename, "rb");
@@ -17,6 +18,7 @@ static void load_image(const char* filename) {
     std::fclose(fp);
     std::printf("Loaded binary '%s' (%zu bytes) at 0x%08X\n",
                 filename, sz, MEM_BASE);
+    img_size = sz;  // 更新全局变量img_size
 }
 
 // 加载HEX格式程序（.hex）

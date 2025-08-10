@@ -75,11 +75,15 @@ void cmd_continue(const char* /*args*/) {
 // “info” 命令：打印寄存器
 void cmd_info(const char* /*args*/) {
     std::printf("Registers:\n");
-    for (int i = 0; i < 32; i++) {
-        std::printf("x%02d: 0x%08X  ", i, (uint32_t)dut.reg_f[i]);
-        if ((i + 1) % 4 == 0) std::printf("\n");
+    static const char *reg_names[] = {
+        "x0", "ra", "sp", "gp", "tp", "t0", "t1", "t2",
+        "s0", "s1", "a0", "a1", "a2", "a3", "a4", "a5"
+    };
+
+    for (int i = 0; i < 16; i++) {
+        std::printf("%4s: 0x%08X\n", reg_names[i], (uint32_t)dut.reg_f[i]);
     }
-    std::printf("\n");
+    std::printf("  pc: 0x%08X\n", (uint32_t)dut.curr_pc);
 }
 
 // “help” 命令

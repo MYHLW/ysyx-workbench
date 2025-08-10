@@ -48,9 +48,9 @@ void Vysyx_25020059_top___024root___eval_triggers__act(Vysyx_25020059_top___024r
 #endif
 }
 
-void Vysyx_25020059_top___024unit____Vdpiimwrap_pmem_read_TOP____024unit(IData/*31:0*/ raddr, IData/*31:0*/ i, IData/*31:0*/ &pmem_read__Vfuncrtn);
+void Vysyx_25020059_top___024unit____Vdpiimwrap_pmem_r_TOP____024unit(IData/*31:0*/ raddr, IData/*31:0*/ i, IData/*31:0*/ &pmem_r__Vfuncrtn);
 void Vysyx_25020059_top___024unit____Vdpiimwrap_npc_trap_TOP____024unit(IData/*31:0*/ code);
-void Vysyx_25020059_top___024unit____Vdpiimwrap_pmem_write_TOP____024unit(IData/*31:0*/ waddr, IData/*31:0*/ wdata, CData/*7:0*/ wmask);
+void Vysyx_25020059_top___024unit____Vdpiimwrap_pmem_w_TOP____024unit(IData/*31:0*/ waddr, IData/*31:0*/ wdata, CData/*7:0*/ wmask);
 
 VL_INLINE_OPT void Vysyx_25020059_top___024root___nba_sequent__TOP__0(Vysyx_25020059_top___024root* vlSelf) {
     (void)vlSelf;  // Prevent unused variable warning
@@ -58,8 +58,8 @@ VL_INLINE_OPT void Vysyx_25020059_top___024root___nba_sequent__TOP__0(Vysyx_2502
     VL_DEBUG_IF(VL_DBG_MSGF("+    Vysyx_25020059_top___024root___nba_sequent__TOP__0\n"); );
     auto &vlSelfRef = std::ref(*vlSelf).get();
     // Init
-    IData/*31:0*/ __Vfunc_pmem_read__0__Vfuncout;
-    __Vfunc_pmem_read__0__Vfuncout = 0;
+    IData/*31:0*/ __Vfunc_pmem_r__0__Vfuncout;
+    __Vfunc_pmem_r__0__Vfuncout = 0;
     IData/*31:0*/ __VdlyVal__reg_f__v0;
     __VdlyVal__reg_f__v0 = 0;
     CData/*4:0*/ __VdlyDim0__reg_f__v0;
@@ -88,9 +88,9 @@ VL_INLINE_OPT void Vysyx_25020059_top___024root___nba_sequent__TOP__0(Vysyx_2502
         __VdlySet__reg_f__v1 = 1U;
     }
     if (vlSelfRef.ysyx_25020059_top__DOT__rst_n) {
-        Vysyx_25020059_top___024unit____Vdpiimwrap_pmem_read_TOP____024unit(vlSelfRef.next_pc, 1U, __Vfunc_pmem_read__0__Vfuncout);
+        Vysyx_25020059_top___024unit____Vdpiimwrap_pmem_r_TOP____024unit(vlSelfRef.next_pc, 1U, __Vfunc_pmem_r__0__Vfuncout);
         vlSelfRef.ysyx_25020059_top__DOT__ena = 1U;
-        vlSelfRef.inst = __Vfunc_pmem_read__0__Vfuncout;
+        vlSelfRef.inst = __Vfunc_pmem_r__0__Vfuncout;
         vlSelfRef.curr_pc = vlSelfRef.next_pc;
     } else {
         vlSelfRef.ysyx_25020059_top__DOT__ena = 0U;
@@ -639,9 +639,9 @@ VL_INLINE_OPT void Vysyx_25020059_top___024root___nba_sequent__TOP__0(Vysyx_2502
             VL_SHIFTRS_III(32,32,32, vlSelfRef.ysyx_25020059_top__DOT__alu_src1, vlSelfRef.ysyx_25020059_top__DOT__alu_src2);
     }
     if (vlSelfRef.ysyx_25020059_top__DOT__mem_valid) {
-        Vysyx_25020059_top___024unit____Vdpiimwrap_pmem_read_TOP____024unit(vlSelfRef.ysyx_25020059_top__DOT__alu_res, 2U, vlSelfRef.__Vfunc_pmem_read__2__Vfuncout);
+        Vysyx_25020059_top___024unit____Vdpiimwrap_pmem_r_TOP____024unit(vlSelfRef.ysyx_25020059_top__DOT__alu_res, 2U, vlSelfRef.__Vfunc_pmem_r__2__Vfuncout);
         vlSelfRef.ysyx_25020059_top__DOT__u_mem_if_0__DOT__raw 
-            = vlSelfRef.__Vfunc_pmem_read__2__Vfuncout;
+            = vlSelfRef.__Vfunc_pmem_r__2__Vfuncout;
         if (vlSelfRef.ysyx_25020059_top__DOT__mem_wen) {
             vlSelfRef.ysyx_25020059_top__DOT__u_mem_if_0__DOT__write_data 
                 = vlSelfRef.ysyx_25020059_top__DOT__reg2_rdata;
@@ -659,9 +659,9 @@ VL_INLINE_OPT void Vysyx_25020059_top___024root___nba_sequent__TOP__0(Vysyx_2502
                                                   (3U 
                                                    & vlSelfRef.ysyx_25020059_top__DOT__alu_res), 3U));
             }
-            Vysyx_25020059_top___024unit____Vdpiimwrap_pmem_write_TOP____024unit(vlSelfRef.ysyx_25020059_top__DOT__alu_res, vlSelfRef.ysyx_25020059_top__DOT__u_mem_if_0__DOT__write_data, 
-                                                                                (0xfU 
-                                                                                & ((0U 
+            Vysyx_25020059_top___024unit____Vdpiimwrap_pmem_w_TOP____024unit(vlSelfRef.ysyx_25020059_top__DOT__alu_res, vlSelfRef.ysyx_25020059_top__DOT__u_mem_if_0__DOT__write_data, 
+                                                                             (0xfU 
+                                                                              & ((0U 
                                                                                 == (IData)(vlSelfRef.ysyx_25020059_top__DOT__mem_size))
                                                                                  ? 
                                                                                 ((IData)(1U) 

@@ -5,21 +5,21 @@
 
 // state
 
-// enum {
-//     NPC_RUNNING,
-//     NPC_END,  //正常指令退出
-//     NPC_STOP,   //停止运行
-//     NPC_ABORT,
-//     NPC_QUIT,
-// };
+enum {
+    NPC_RUNNING,
+    NPC_END,  //正常指令退出
+    NPC_STOP,   //停止运行
+    NPC_ABORT,
+    NPC_QUIT,
+};
 
-// typedef struct {
-//     int state;
-//     vaddr_t halt_pc;
-//     word_t halt_ret;
-// }NPCState;
+typedef struct {
+    int state;
+    vaddr_t halt_pc;
+    word_t halt_ret;
+}NPCState;
 
-// extern NPCState npc_state;
+extern NPCState npc_state;
 
 // ----------- log -----------
 

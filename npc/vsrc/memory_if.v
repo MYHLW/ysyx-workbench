@@ -2,8 +2,8 @@
 
 // === 1. DPI‑C 接口导入 ===
 // 使用 SystemVerilog 内建类型，不用 C 头文件里的 uint32_t
-import "DPI-C" function int unsigned      pmem_read  (input int unsigned raddr,input int i);
-import "DPI-C" function        void       pmem_write (input int unsigned waddr,
+import "DPI-C" function int unsigned      pmem_r  (input int unsigned raddr,input int i);
+import "DPI-C" function        void       pmem_w (input int unsigned waddr,
                                                         input int unsigned wdata,
                                                         input byte           wmask);
 
@@ -36,7 +36,7 @@ module memory_if (
   always @(*) begin
     if (valid) begin
       // 1) 直接从 DPI-C 读整字
-      raw = pmem_read(addr,2);
+      raw = pmem_r(addr,2);
 
       // 2) 如果是写操作（store），马上发起
             // Write path: shift wdata before calling pmem_write for SB
@@ -48,7 +48,7 @@ module memory_if (
         end else if(size == 2'b01) begin
           write_data = (wdata & 16'hFFFF) << (addr[1:0] * 8);
         end
-        pmem_write(addr, write_data, wmask);
+        pmem_w(addr, write_data, wmask);
       end
 
       // 3) 如果是读操作，根据 size 和 unsigned_load 提取/扩展
