@@ -14,6 +14,7 @@
 //初始化
 //处理参数 把img_file传出去
 //启动sdb
+
 bool              sim_done  = false;
 int               trap_code = -1;
 uint64_t          sim_cycle = 0;
