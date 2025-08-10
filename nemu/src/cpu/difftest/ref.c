@@ -52,6 +52,6 @@ __EXPORT void difftest_init(int port) {
   init_mem();
   /* Perform ISA dependent initialization. */
   init_isa();
-  cpu.gpr[0]=0;
-  cpu.pc=RESET_VECTOR;
+  // cpu.gpr[0]=0;
+  // cpu.pc=RESET_VECTOR;
 }
