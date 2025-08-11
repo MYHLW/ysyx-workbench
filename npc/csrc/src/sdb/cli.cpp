@@ -50,7 +50,6 @@ void cmd_si(const char* args) {
     for (int i = 0; i < steps && !sim_done; i++) {
         single_cycle();
         get_regs();  // 获取寄存器状态
-        printf("77777777777777777777777\n");
         difftest_step(dut.curr_pc,dut.next_pc);// 调用差分测试步进
 
 
