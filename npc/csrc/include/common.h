@@ -10,7 +10,8 @@
 #include <assert.h>
 #include <stdlib.h>
 
-
+#define FMT_WORD "0x%08" PRIx32
+#define FMT_PADDR "0x%08" PRIx32
 
 typedef uint32_t word_t;
 typedef int32_t sword_t;

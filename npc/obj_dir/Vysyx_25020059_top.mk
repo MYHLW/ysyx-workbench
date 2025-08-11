@@ -37,44 +37,32 @@ VM_PREFIX = Vysyx_25020059_top
 VM_MODPREFIX = Vysyx_25020059_top
 # User CFLAGS (from -CFLAGS on Verilator command line)
 VM_USER_CFLAGS = \
-	-Wall -g -I/home/wang/ysyx-workbench/npc/csrc/include -I/home/wang/ysyx-workbench/npc/csrc/include/sdb -I/home/wang/ysyx-workbench/npc/csrc/include/cpu  -I/home/wang/ysyx-workbench/npc/../nemu/include -I /home/wang/ysyx-workbench/npc/tools/capstone/repo/include \
+	-Wall -g -I/home/wang/ysyx-workbench/npc/csrc/include -I/home/wang/ysyx-workbench/npc/csrc/include/sdb -I/home/wang/ysyx-workbench/npc/csrc/include/cpu  -I /home/wang/ysyx-workbench/npc/tools/capstone/repo/include \
 
 # User LDLIBS (from -LDFLAGS on Verilator command line)
 VM_USER_LDLIBS = \
-	-lreadline -L/home/wang/ysyx-workbench/npc/../nemu/build -lriscv32-nemu-interpreter-so -Wl,-rpath=/home/wang/ysyx-workbench/npc/../nemu/build \
+	-lreadline \
 
 # User .cpp files (from .cpp's on Verilator command line)
 VM_USER_CLASSES = \
-	cpu_exec \
+	loader \
+	main_new \
 	dut \
-	ft_stack \
-	ftrace \
-	RingBuffer \
-	bstrlib \
-	iritrace \
-	registers \
-	utils \
-	trace \
 	memory \
-	breakpoint \
-	expr \
-	sdb \
-	watchpoint \
+	registers \
+	cli \
+	itrace \
 	disasm \
 	log \
-	top \
 
 # User .cpp directories (from .cpp's on Verilator command line)
 VM_USER_DIR = \
 	.. \
-	../csrc/src/cpu \
+	../csrc \
 	../csrc/src/cpu/difftest \
-	../csrc/src/cpu/ftrace \
-	../csrc/src/cpu/iritrace \
-	../csrc/src/debug \
-	../csrc/src/device \
 	../csrc/src/memory \
 	../csrc/src/sdb \
+	../csrc/src/trace \
 	../csrc/src/utils \
 
 
@@ -87,41 +75,23 @@ include $(VERILATOR_ROOT)/include/verilated.mk
 ### Executable rules... (from --exe)
 VPATH += $(VM_USER_DIR)
 
-cpu_exec.o: /home/wang/ysyx-workbench/npc/csrc/src/cpu/cpu_exec.cpp 
+loader.o: /home/wang/ysyx-workbench/npc/csrc/loader.cpp 
+	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST)  -c -o $@ $<
+main_new.o: /home/wang/ysyx-workbench/npc/csrc/main_new.cpp 
 	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST)  -c -o $@ $<
 dut.o: /home/wang/ysyx-workbench/npc/csrc/src/cpu/difftest/dut.c 
 	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST)  -c -o $@ $<
-ft_stack.o: /home/wang/ysyx-workbench/npc/csrc/src/cpu/ftrace/ft_stack.c 
-	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST)  -c -o $@ $<
-ftrace.o: /home/wang/ysyx-workbench/npc/csrc/src/cpu/ftrace/ftrace.c 
-	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST)  -c -o $@ $<
-RingBuffer.o: /home/wang/ysyx-workbench/npc/csrc/src/cpu/iritrace/RingBuffer.c 
-	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST)  -c -o $@ $<
-bstrlib.o: /home/wang/ysyx-workbench/npc/csrc/src/cpu/iritrace/bstrlib.c 
-	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST)  -c -o $@ $<
-iritrace.o: /home/wang/ysyx-workbench/npc/csrc/src/cpu/iritrace/iritrace.c 
-	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST)  -c -o $@ $<
-registers.o: /home/wang/ysyx-workbench/npc/csrc/src/cpu/registers.cpp 
-	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST)  -c -o $@ $<
-utils.o: /home/wang/ysyx-workbench/npc/csrc/src/debug/utils.cpp 
-	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST)  -c -o $@ $<
-trace.o: /home/wang/ysyx-workbench/npc/csrc/src/device/trace.cpp 
-	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST)  -c -o $@ $<
 memory.o: /home/wang/ysyx-workbench/npc/csrc/src/memory/memory.cpp 
 	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST)  -c -o $@ $<
-breakpoint.o: /home/wang/ysyx-workbench/npc/csrc/src/sdb/breakpoint.cpp 
+registers.o: /home/wang/ysyx-workbench/npc/csrc/src/memory/registers.cpp 
 	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST)  -c -o $@ $<
-expr.o: /home/wang/ysyx-workbench/npc/csrc/src/sdb/expr.cpp 
+cli.o: /home/wang/ysyx-workbench/npc/csrc/src/sdb/cli.cpp 
 	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST)  -c -o $@ $<
-sdb.o: /home/wang/ysyx-workbench/npc/csrc/src/sdb/sdb.cpp 
-	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST)  -c -o $@ $<
-watchpoint.o: /home/wang/ysyx-workbench/npc/csrc/src/sdb/watchpoint.cpp 
+itrace.o: /home/wang/ysyx-workbench/npc/csrc/src/trace/itrace.cpp 
 	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST)  -c -o $@ $<
 disasm.o: /home/wang/ysyx-workbench/npc/csrc/src/utils/disasm.c 
 	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST)  -c -o $@ $<
 log.o: /home/wang/ysyx-workbench/npc/csrc/src/utils/log.c 
-	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST)  -c -o $@ $<
-top.o: /home/wang/ysyx-workbench/npc/top.cpp 
 	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST)  -c -o $@ $<
 
 ### Link rules... (from --exe)

@@ -19,9 +19,9 @@ extern "C" {
     // DPI import at /home/wang/ysyx-workbench/npc/vsrc/ctrl.v:4:30
     extern void npc_trap(int code);
     // DPI import at /home/wang/ysyx-workbench/npc/vsrc/memory_if.v:5:43
-    extern unsigned int pmem_r(unsigned int raddr, int i);
+    extern unsigned int pmem_read(unsigned int raddr, int i);
     // DPI import at /home/wang/ysyx-workbench/npc/vsrc/memory_if.v:6:43
-    extern void pmem_w(unsigned int waddr, unsigned int wdata, char wmask);
+    extern void pmem_write(unsigned int waddr, unsigned int wdata, char wmask);
 
 #ifdef __cplusplus
 }

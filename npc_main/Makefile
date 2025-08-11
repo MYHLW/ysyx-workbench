@@ -1,4 +1,4 @@
-all: run build
+all: build run
 
 sim:
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
@@ -9,11 +9,11 @@ sim:
 VERILATOR = verilator
 
 #
-TA = ysyx_25020059_top
+TA = tao_top
 TARGET = V$(TA)
 
 # Verilog  C++ 
-NPC_HOME = /home/wang/ysyx-workbench/npc
+NPC_HOME = /home/wang/ysyx-workbench/npc_main
 VSRCDIR = $(NPC_HOME)/vsrc
 CSRC = $(NPC_HOME)/csrc
 
@@ -22,13 +22,13 @@ SRC = $(shell find $(VSRCDIR) -name "*.v")
 
 # C++（递归查找所有 .cpp）
 CPP_SRC = $(shell find $(CSRC) -name "*.cpp" ! -path "*/tools/*")
-C_SRC = $(shell find $(CSRC) -name "*.c" ! -path "*/tools/*") $(CSRC)/src/utils/log.c
+C_SRC = $(shell find $(CSRC) -name "*.c" ! -path "*/tools/*")
 
 # Verilator 
 OBJ_DIR = obj_dir
 
 # 
-VCD_FILE = Vysyx_25020059.vcd
+VCD_FILE = dump.vcd
 
 # 
 CFLAGS = -Wall -g
@@ -40,14 +40,18 @@ LDFLAGS += -lreadline
 include $(CSRC)/src/utils/filelist.mk
 
 #  Verilator  Verilog 
-run: 
-	$(VERILATOR) -cc -exe -Wno-lint -build \
-	-I$(VSRCDIR) \
+build:
+	$(VERILATOR) -cc -exe -build \
+	-I$(VSRCDIR) -I$(VSRCDIR)/core -I$(VSRCDIR)/general \
 	-CFLAGS "$(CFLAGS)" \
 	-LDFLAGS "$(LDFLAGS)" \
 	-top-module $(TA) -trace $(SRC) $(CPP_SRC) $(C_SRC)
+
+# 
+run:
 	@echo "Running simulation..."
 	./$(OBJ_DIR)/$(TARGET) $(IMG) $(ELF)
+
 # 
 wave:
 	@echo "Opening waveform..."
@@ -56,7 +60,8 @@ wave:
 # 
 clean:
 	rm -rf $(OBJ_DIR) *.log
-	rm *.vcd
+	rm dump.vcd
 
 # 
 .PHONY: all build run clean
+
