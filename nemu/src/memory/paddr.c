@@ -52,6 +52,8 @@ void init_mem() {
 }
 
 word_t paddr_read(paddr_t addr, int len) {
+  printf("REF: paddr_read addr=0x%08x len=%d\n", (uint32_t)addr, len);
+  fflush(stdout);
   IFDEF(CONFIG_MTRACE, display_pread(addr, len));
   if (likely(in_pmem(addr))) return pmem_read(addr, len);
   IFDEF(CONFIG_DEVICE, return mmio_read(addr, len));
@@ -60,6 +62,9 @@ word_t paddr_read(paddr_t addr, int len) {
 }
 
 void paddr_write(paddr_t addr, int len, word_t data) {
+  printf("REF: paddr_write addr=0x%08x len=%d data=0x%lx\n", (uint32_t)addr, len, (unsigned long)data);
+  fflush(stdout);
+
   IFDEF(CONFIG_MTRACE, display_pwrite(addr, len, data));
   if (likely(in_pmem(addr))) { pmem_write(addr, len, data); return; }
   IFDEF(CONFIG_DEVICE, mmio_write(addr, len, data); return);
