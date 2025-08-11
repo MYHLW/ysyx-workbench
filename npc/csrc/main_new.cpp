@@ -33,6 +33,7 @@ Vysyx_25020059_top dut;
 CPU_state cpu;  // 当前 CPU 状态
 void get_regs(); // 获取寄存器状态
 long load_img(char *img_file); // 加载程序镜像
+void init_difftest(char *ref_so_file, long img_size, int port);
 
 // 单周期执行
 void single_cycle() {    

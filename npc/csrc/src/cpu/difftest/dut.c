@@ -7,6 +7,7 @@
 #include <string.h>
 #include <stddef.h>
 extern CPU_state cpu;
+extern uint8_t memory[];
 
 //bool diff_checkregs(CPU_state *dut, vaddr_t pc);   !!!!!!!!!!!!!!
 bool isa_difftest_checkregs(CPU_state *ref_r, vaddr_t pc) {
@@ -86,7 +87,8 @@ void init_difftest(char *ref_so_file, long img_size, int port) {
         "If it is not necessary, you can turn it off in menuconfig.", ref_so_file);
 
     ref_difftest_init(port);
-    ref_difftest_memcpy(RESET_VECTOR, guest_to_host(RESET_VECTOR), img_size, DIFFTEST_TO_REF);
+    printf("66666666666666666666\n");
+    ref_difftest_memcpy(RESET_VECTOR, memory, img_size, DIFFTEST_TO_REF);
     ref_difftest_regcpy(&cpu, DIFFTEST_TO_REF);
     printf("1\n");
 }

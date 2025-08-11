@@ -1,11 +1,21 @@
 #include "../../include/memory.h"
 #include <stdio.h>
-
-
+#include <cassert>
+#include "cli.h"
 // //memory
-static uint8_t pmem[CONFIG_MSIZE] PG_ALIGN = {};
+//static uint8_t pmem[CONFIG_MSIZE] PG_ALIGN = {};
 
-uint8_t* guest_to_host(paddr_t paddr) { return pmem + paddr - CONFIG_MBASE; }
+
+
+// paddr_t 如果没有定义，可以 typedef 一下
+typedef uint32_t paddr_t;
+extern uint8_t memory[];
+
+uint8_t* guest_to_host(paddr_t paddr) {
+    // 检查物理地址是否在模拟内存范围内
+    assert(paddr >= MEM_BASE && paddr < MEM_BASE + MEM_SIZE);
+    return memory + (paddr - MEM_BASE);
+}
 // paddr_t host_to_guest(uint8_t *haddr) { return haddr - pmem + CONFIG_MBASE; }
 
 // word_t pmem_read(paddr_t addr, int len) {
