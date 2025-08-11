@@ -101,6 +101,8 @@ int main(int argc, char** argv) {
     std::memset(memory, 0, MEM_SIZE);
     load_program(argv[1]);  // 调用loader.h中的函数
 
+    
+
 
 
     // // 初始化trace功能
@@ -117,8 +119,17 @@ int main(int argc, char** argv) {
     reset(2);
     //single_cycle();  // 执行一次单周期以清除复位状态
     //get_regs();  // 获取寄存器状态
+    void *ptr = NULL;
+  // guest_to_host 可能在 paddr.h，所以需要包含或声明
+  ptr = guest_to_host(dut.curr_pc);
+  printf("REF: guest_to_host(dut.pc) -> %p\n", ptr);
+  if (ptr) {
+    uint8_t *b = (uint8_t*)ptr;
+    printf("REF: bytes at pc: %02x %02x %02x %02x %02x %02x %02x %02x\n",
+           b[0], b[1], b[2], b[3], b[4], b[5], b[6], b[7]);
+  } 
     //diff
-    printf("PC: 0x%08X\n", dut.curr_pc);
+    //printf("PC: 0x%08X\n", dut.curr_pc);
     cpu.pc = dut.curr_pc;  // 设置初始PC
     long img_size = load_img(argv[1]);
     //printf("Loaded program size: %ld bytes\n", img_size);
