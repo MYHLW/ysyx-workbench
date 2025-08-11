@@ -32,7 +32,7 @@ Vysyx_25020059_top dut;
 
 CPU_state cpu;  // 当前 CPU 状态
 void get_regs(); // 获取寄存器状态
-long load_img(char *img_file); // 加载程序镜像
+long load_img(char *img_file); // 获取程序大小
 void init_difftest(char *ref_so_file, long img_size, int port);
 
 // 单周期执行
@@ -44,6 +44,7 @@ void single_cycle() {
     
     // 添加指令追踪
     trace_inst(dut.curr_pc, dut.inst);
+    get_regs();
     
     dut.clk = 1;
     dut.eval();        
@@ -114,9 +115,13 @@ int main(int argc, char** argv) {
 
     // 复位CPU
     reset(2);
-
+    //single_cycle();  // 执行一次单周期以清除复位状态
+    //get_regs();  // 获取寄存器状态
     //diff
+    printf("PC: 0x%08X\n", dut.curr_pc);
+    cpu.pc = dut.curr_pc;  // 设置初始PC
     long img_size = load_img(argv[1]);
+    //printf("Loaded program size: %ld bytes\n", img_size);
     const char *diff_so_file = "/home/wang/ysyx-workbench/nemu/build/libriscv32-nemu-interpreter-so.so";
     init_difftest((char *)diff_so_file, img_size, 1234);
 

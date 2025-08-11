@@ -1,5 +1,6 @@
 // csrc/cli.cpp
 #include "cli.h"
+#include "registers.h"
 #include "Vysyx_25020059_top.h"
 #include <verilated.h>
 #include <verilated_vcd_c.h>
@@ -28,7 +29,8 @@ extern uint8_t memory[];             // 仿真内存（数组形式外部引用�
 
 // single_cycle 在 main_new.cpp 中实现
 extern void single_cycle();
-void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);  
+void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);
+void difftest_step(vaddr_t pc, vaddr_t npc);
 
 
 // “si” 命令：单步 n 周期
@@ -47,6 +49,11 @@ void cmd_si(const char* args) {
 
     for (int i = 0; i < steps && !sim_done; i++) {
         single_cycle();
+        get_regs();  // 获取寄存器状态
+        printf("77777777777777777777777\n");
+        difftest_step(dut.curr_pc,dut.next_pc);// 调用差分测试步进
+
+
 
         uint32_t pc = (uint32_t)dut.curr_pc;
         uint32_t inst = (uint32_t)dut.inst;
@@ -73,12 +80,18 @@ void cmd_continue(const char* /*args*/) {
 
 // “info” 命令：打印寄存器
 void cmd_info(const char* /*args*/) {
-    std::printf("Registers:\n");
-    for (int i = 0; i < 32; i++) {
-        std::printf("x%02d: 0x%08X  ", i, (uint32_t)dut.reg_f[i]);
-        if ((i + 1) % 4 == 0) std::printf("\n");
+    static const char* reg_names[32] = {
+        "$0",  "ra",  "sp",  "gp",  "tp",  "t0",  "t1",  "t2",
+        "s0",  "s1",  "a0",  "a1",  "a2",  "a3",  "a4",  "a5",
+        "a6",  "a7",  "s2",  "s3",  "s4",  "s5",  "s6",  "s7",
+        "s8",  "s9",  "s10", "s11", "t3",  "t4",  "t5",  "t6"
+    };
+
+    std::printf("Register Information:\n");
+    std::printf("pc     0x%08X\n", (uint32_t)dut.curr_pc);
+    for (int i = 0; i < 16; i++) {
+        std::printf("%-5s  0x%08X\n", reg_names[i], (uint32_t)dut.reg_f[i]);
     }
-    std::printf("\n");
 }
 
 // “help” 命令
