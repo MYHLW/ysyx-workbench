@@ -35,8 +35,25 @@ __EXPORT void difftest_regcpy(void *dut, bool direction) {
 }
 
 __EXPORT void difftest_exec(uint64_t n) {
-  printf("cpu.pc : 0x%08x\n", (uint32_t)cpu.pc);
+  printf("REF: difftest_exec called with n=%lu. cpu.pc=0x%08x\n", n, (uint32_t)cpu.pc);
+
+  void *ptr = NULL;
+  // guest_to_host 可能在 paddr.h，所以需要包含或声明
+  ptr = guest_to_host(cpu.pc);
+  printf("REF: guest_to_host(cpu.pc) -> %p\n", ptr);
+  if (ptr) {
+    uint8_t *b = (uint8_t*)ptr;
+    printf("REF: bytes at pc: %02x %02x %02x %02x %02x %02x %02x %02x\n",
+           b[0], b[1], b[2], b[3], b[4], b[5], b[6], b[7]);
+  } else {
+    printf("REF: guest_to_host returned NULL or invalid\n");
+  }
+  fflush(stdout); // 确保打印在崩溃前被写出
+
   cpu_exec(n);
+
+  printf("REF: cpu_exec returned normally\n");
+  fflush(stdout);
 }
 
 __EXPORT void difftest_raise_intr(word_t NO) {
