@@ -151,6 +151,34 @@ static int decode_exec(Decode *s) {
   //INSTPAT("0000000 00000 00000 000 00000 11100 11", ecall  , N, NEMUTRAP(s->pc, R(10)));
 
   INSTPAT("0000000 00001 00000 000 00000 11100 11", ebreak , N, NEMUTRAP(s->pc, R(10))); // R(10) is $a0
+
+  // CSR instructions
+  INSTPAT("??????? ????? ????? 001 ????? 11100 11", csrrw  , I, 
+    word_t old_val = 0;
+    switch (imm) {
+      case 0x305: old_val = cpu.mtvec; cpu.mtvec = src1; break;
+      case 0x342: old_val = cpu.mcause; cpu.mcause = src1; break;
+      case 0x341: old_val = cpu.mepc; cpu.mepc = src1; break;
+      case 0x300: old_val = cpu.mstatus; cpu.mstatus = src1; break;
+      default: panic("unsupported CSR register: 0x%x", imm);
+    }
+    R(rd) = old_val;
+  );
+
+  // MRET instruction
+  INSTPAT("0011000 00010 00000 000 00000 11100 11", mret, N, 
+    // 跳回 mepc
+    s->dnpc = cpu.mepc;
+    // 提取 MPIE（保存的中断使能）
+    word_t mpie = (cpu.mstatus >> 7) & 1;
+    // MIE <- MPIE (恢复进入异常前的中断使能)
+    cpu.mstatus = (cpu.mstatus & ~((word_t)1 << 3)) | (mpie << 3);
+    // MPIE <- 1 (规范要求)
+    cpu.mstatus |= ((word_t)1 << 7);
+    // MPP <- 0 (将 MPP 清为 U-mode 编码，为下一次使用做准备)
+    cpu.mstatus &= ~((word_t)3 << 11);
+  );
+
   INSTPAT("??????? ????? ????? ??? ????? ????? ??", inv    , N, INV(s->pc));
   INSTPAT_END();
 
