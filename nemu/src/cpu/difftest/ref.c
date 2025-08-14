@@ -65,4 +65,7 @@ __EXPORT void difftest_init(int port) {
   init_mem();
   /* Perform ISA dependent initialization. */
   init_isa();
+
+  extern void init_disasm(void);
+  init_disasm();   // 让 disassemble() 的函数指针/handle 都初始化好
 }

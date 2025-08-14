@@ -29,7 +29,7 @@ extern uint8_t memory[];             // 仿真内存（数组形式外部引用�
 
 // single_cycle 在 main_new.cpp 中实现
 extern void single_cycle();
-void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);
+void disassemble2(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);
 void difftest_step(vaddr_t pc, vaddr_t npc);
 
 
@@ -62,7 +62,7 @@ void cmd_si(const char* args) {
         std::memcpy(code, &inst, sizeof(inst)); // 小端主机下这就是 little-endian bytes
 
         char asm_buf[128] = {0};
-        disassemble(asm_buf, sizeof(asm_buf), (uint64_t)pc, code, 4);
+        disassemble2(asm_buf, sizeof(asm_buf), (uint64_t)pc, code, 4);
 
         std::printf("0x%08X: %08x  %s\n", pc, inst, asm_buf);
     }

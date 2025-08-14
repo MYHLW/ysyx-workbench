@@ -34,6 +34,7 @@ CPU_state cpu;  // 当前 CPU 状态
 void get_regs(); // 获取寄存器状态
 long load_img(char *img_file); // 获取程序大小
 void init_difftest(char *ref_so_file, long img_size, int port);
+void init_disasm(); // 初始化反汇编
 
 // 单周期执行
 void single_cycle() {    
@@ -128,6 +129,7 @@ int main(int argc, char** argv) {
     printf("REF: bytes at pc: %02x %02x %02x %02x %02x %02x %02x %02x\n",
            b[0], b[1], b[2], b[3], b[4], b[5], b[6], b[7]);
   } 
+    init_disasm();  // 初始化反汇编
     //diff
     //printf("PC: 0x%08X\n", dut.curr_pc);
     cpu.pc = dut.curr_pc;  // 设置初始PC

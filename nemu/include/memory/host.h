@@ -17,44 +17,12 @@
 #define __MEMORY_HOST_H__
 
 #include <common.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
 
 static inline word_t host_read(void *addr, int len) {
   switch (len) {
     case 1: return *(uint8_t  *)addr;
     case 2: return *(uint16_t *)addr;
-    case 4: //return *(uint32_t *)addr;printf("DEBUG: host_read called haddr=%p len=%d\n", haddr, len);
-  fflush(stdout);
-
-  if (addr == NULL) {
-    fprintf(stderr, "ERROR: host_read haddr is NULL\n");
-    fflush(stderr);
-    abort();
-  }
-
-  // safety: use local buffer to avoid unaligned/unsafe direct deref
-  uint8_t tmp[8] = {0};
-  if (len < 0 || len > (int)sizeof(tmp)) {
-    fprintf(stderr, "ERROR: host_read unexpected len=%d\n", len);
-    fflush(stderr);
-    abort();
-  }
-  // try to memcpy from host memory
-  memcpy(tmp, addr, len);
-
-  printf("DEBUG: host_read bytes:");
-  for (int i = 0; i < len; i++) printf(" %02x", tmp[i]);
-  printf("\n");
-  fflush(stdout);
-
-  word_t val = 0;
-  for (int i = 0; i < len; i++) val |= (word_t)tmp[i] << (8 * i);
-  printf("DEBUG: host_read returning 0x%016lx\n", (unsigned long)val);
-  fflush(stdout);
-  return val;
+    case 4: return *(uint32_t *)addr;
     IFDEF(CONFIG_ISA64, case 8: return *(uint64_t *)addr);
     default: MUXDEF(CONFIG_RT_CHECK, assert(0), return 0);
   }
