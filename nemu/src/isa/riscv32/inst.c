@@ -179,6 +179,8 @@ static int decode_exec(Decode *s) {
 
   // MPP <- 0 (U-mode)，规范要求，但如果你不支持 U 模式可忽略
   cpu.mstatus &= ~((word_t)3 << 11);
+  // Clear MPRV (bit 17)
+  cpu.mstatus &= ~((word_t)1 << 17);
 );
 
   INSTPAT("0000000 00001 00000 000 00000 11100 11", ebreak , N, NEMUTRAP(s->pc, R(10))); // R(10) is $a0
