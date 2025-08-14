@@ -33,6 +33,9 @@ word_t isa_raise_intr(word_t NO, vaddr_t epc) {
   /* 1) 保存 mepc / mcause */
   cpu.mepc = epc;
   cpu.mcause = NO; /* NO 应当是完整 mcause 编码（含 interrupt 位） */
+  #ifdef CONFIG_ETRACE
+    printf("\n[etrace] Trap! mcause = 0x%lx, mepc = 0x%lx\n", cpu.mcause, cpu.mepc);
+  #endif
 
   /* 2) MPIE <- MIE ; MIE <- 0 */
   if (cpu.mstatus & MSTATUS_MIE) cpu.mstatus |= MSTATUS_MPIE;

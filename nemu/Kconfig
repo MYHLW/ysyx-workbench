@@ -185,6 +185,11 @@ config FTRACE_COND
   string "Only trace function calls when the condition is true"
   default "true"
 
+config ETRACE
+  depend on TRACE
+  bool "Enable interupt tracer"
+  default y
+
 config DIFFTEST
   depends on TARGET_NATIVE_ELF
   bool "Enable differential testing"
