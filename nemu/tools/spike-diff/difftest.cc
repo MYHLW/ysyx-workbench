@@ -65,10 +65,18 @@ void sim_t::diff_get_regs(void* diff_context) {
   }
   ctx->pc = state->pc;
     /* 新增：同步 CSR 到 diff context */
-  ctx->mepc   = state->mepc;
-  ctx->mcause = state->mcause;
-  ctx->mtvec  = state->mtvec;
-  ctx->mstatus= state->mstatus;
+  /* --- CSR fields: use CSR object read() API --- */
+  if (state->mepc)   ctx->mepc   = state->mepc->read();
+  else               ctx->mepc   = 0;
+
+  if (state->mcause) ctx->mcause = state->mcause->read();
+  else               ctx->mcause = 0;
+
+  if (state->mtvec)  ctx->mtvec  = state->mtvec->read();
+  else               ctx->mtvec  = 0;
+
+  if (state->mstatus) ctx->mstatus = state->mstatus->read();
+  else                ctx->mstatus = 0;
 }
 
 void sim_t::diff_set_regs(void* diff_context) {
@@ -78,11 +86,11 @@ void sim_t::diff_set_regs(void* diff_context) {
   }
   state->pc = ctx->pc;
 
-    /* 新增：从 diff context 设置 CSR 到参考模型 */
-  state->mepc    = ctx->mepc;
-  state->mcause  = ctx->mcause;
-  state->mtvec   = ctx->mtvec;
-  state->mstatus = ctx->mstatus;
+  /* --- CSR fields: use CSR object write() API --- */
+  if (state->mepc)   state->mepc->write((reg_t)ctx->mepc);
+  if (state->mcause) state->mcause->write((reg_t)ctx->mcause);
+  if (state->mtvec)  state->mtvec->write((reg_t)ctx->mtvec);
+  if (state->mstatus) state->mstatus->write((reg_t)ctx->mstatus);
 }
 
 void sim_t::diff_memcpy(reg_t dest, void* src, size_t n) {
