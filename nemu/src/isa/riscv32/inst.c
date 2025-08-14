@@ -180,12 +180,12 @@ static int decode_exec(Decode *s) {
   //INSTPAT("0000000 00000 00000 000 00000 11100 11", ecall  , N, NEMUTRAP(s->pc, R(10)));
 INSTPAT("0011000 00010 00000 000 00000 11100 11", mret, N, {
   /* 1) 先读取 MPP 的值以便恢复特权 */
-//  word_t mpp = (cpu.mstatus >> 11) & 0x3;
+//   word_t mpp = (cpu.mstatus >> 11) & 0x3;
 
-// #ifdef CPU_HAS_PRIV
-//   /* 2) 恢复特权级为 MPP */
-//   cpu.priv = (int)mpp;
-// #endif
+//  #ifdef CPU_HAS_PRIV
+//    /* 2) 恢复特权级为 MPP */
+//    cpu.priv = (int)mpp;
+//  #endif
 
   /* 3) 恢复 MIE <- MPIE */
   word_t mpie = (cpu.mstatus >> 7) & 1;

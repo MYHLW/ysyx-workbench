@@ -39,11 +39,15 @@ word_t isa_raise_intr(word_t NO, vaddr_t epc) {
   else                           cpu.mstatus &= ~MSTATUS_MPIE;
   cpu.mstatus &= ~MSTATUS_MIE;
 
-  /* 3) 保存当前特权级到 MPP 并切到 Machine（如果有 cpu.priv 字段） */
-// #ifdef CPU_HAS_PRIV
-//   cpu.mstatus = (cpu.mstatus & ~MSTATUS_MPP_MASK) | ((word_t)(cpu.priv & 0x3) << 11);
-//   cpu.priv = PRV_M;
-// #endif
+  /* 3) 保存当前特权级到 MPP 并切到 Machine。
+     如果你维护 cpu.priv，就保存 cpu.priv；否则假定之前是 Machine（PRV_M）。 */
+  #ifdef CPU_HAS_PRIV
+    cpu.mstatus = (cpu.mstatus & ~MSTATUS_MPP_MASK) | ((word_t)(cpu.priv & 0x3) << 11);
+    cpu.priv = PRV_M; /* 切换到 Machine 模式 */
+  #else
+    /* 没有 cpu.priv 时也要写 MPP=3（因为 REF 会这么做） */
+    cpu.mstatus = (cpu.mstatus & ~MSTATUS_MPP_MASK) | ((word_t)PRV_M << 11);
+  #endif
 
   /* 4) 根据 mtvec.mode 计算 trap 入口 */
   word_t mtvec = cpu.mtvec;
