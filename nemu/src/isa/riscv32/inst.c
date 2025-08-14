@@ -49,6 +49,20 @@ static vaddr_t *csr_register(word_t imm) {
 
 #define CSR(i) *csr_register(i)
 
+#ifndef MSTATUS_MIE
+#define MSTATUS_MIE       (1UL << 3)
+#endif
+#ifndef MSTATUS_MPIE
+#define MSTATUS_MPIE      (1UL << 7)
+#endif
+#ifndef MSTATUS_MPP_MASK
+#define MSTATUS_MPP_MASK  (3UL << 11)
+#endif
+
+#ifndef PRV_M
+#define PRV_M 3
+#endif
+
 #define src1R() do { *src1 = R(rs1); } while (0)
 #define src2R() do { *src2 = R(rs2); } while (0)
 #define immI() do { *imm = SEXT(BITS(i, 31, 20), 12); } while(0)
@@ -164,22 +178,29 @@ static int decode_exec(Decode *s) {
   INSTPAT("??????? ????? ????? 010 ????? 11100 11", csrrs  , I, R(rd) = CSR(imm); CSR(imm) |= src1);
   INSTPAT("0000000 00000 00000 000 00000 11100 11", ecall  , I, s->dnpc = isa_raise_intr(11, s->pc));
   //INSTPAT("0000000 00000 00000 000 00000 11100 11", ecall  , N, NEMUTRAP(s->pc, R(10)));
-  INSTPAT("0011000 00010 00000 000 00000 11100 11", mret, N, 
-  // 恢复 PC
-  s->dnpc = cpu.mepc;
+INSTPAT("0011000 00010 00000 000 00000 11100 11", mret, N, {
+  /* 1) 先读取 MPP 的值以便恢复特权 */
+//  word_t mpp = (cpu.mstatus >> 11) & 0x3;
 
-  // 取出 MPIE 位
+// #ifdef CPU_HAS_PRIV
+//   /* 2) 恢复特权级为 MPP */
+//   cpu.priv = (int)mpp;
+// #endif
+
+  /* 3) 恢复 MIE <- MPIE */
   word_t mpie = (cpu.mstatus >> 7) & 1;
+  if (mpie) cpu.mstatus |= MSTATUS_MIE;
+  else      cpu.mstatus &= ~MSTATUS_MIE;
 
-  // MIE <- MPIE
-  cpu.mstatus = (cpu.mstatus & ~((word_t)1 << 3)) | (mpie << 3);
+  /* 4) MPIE <- 1 */
+  cpu.mstatus |= MSTATUS_MPIE;
 
-  // MPIE <- 1
-  cpu.mstatus |= ((word_t)1 << 7);
+  /* 5) 清除 MPP (MPP <- 0) */
+  cpu.mstatus &= ~MSTATUS_MPP_MASK;
 
-  // MPP <- 0 (U-mode)，规范要求，但如果你不支持 U 模式可忽略
-  cpu.mstatus &= ~((word_t)3 << 11);
-);
+  /* 6) 恢复 PC */
+  s->dnpc = cpu.mepc;
+});
 
   INSTPAT("0000000 00001 00000 000 00000 11100 11", ebreak , N, NEMUTRAP(s->pc, R(10))); // R(10) is $a0
   INSTPAT("??????? ????? ????? ??? ????? ????? ??", inv    , N, INV(s->pc));
