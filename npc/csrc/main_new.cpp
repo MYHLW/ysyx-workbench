@@ -56,7 +56,8 @@ int main(int argc, char** argv) {
 
     // 复位CPU
     reset(2);
-    single_cycle();  // 执行一次单周期与nemu保持一致
+    //single_cycle();
+    init_cycle();  
 
     init_disasm();  // 初始化反汇编
     

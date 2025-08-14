@@ -49,17 +49,13 @@ void cmd_si(const char* args) {
 
     for (int i = 0; i < steps && !sim_done; i++) {
         single_cycle();
-        get_regs();  // 获取寄存器状态
-        difftest_step(dut.curr_pc,dut.next_pc);// 调用差分测试步进
-
-
 
         uint32_t pc = (uint32_t)dut.curr_pc;
         uint32_t inst = (uint32_t)dut.inst;
 
         // 将 inst 拷成字节数组传给 capstone（明确字节序）
         uint8_t code[4];
-        std::memcpy(code, &inst, sizeof(inst)); // 小端主机下这就是 little-endian bytes
+        std::memcpy(code, &inst, sizeof(inst)); 
 
         char asm_buf[128] = {0};
         disassemble(asm_buf, sizeof(asm_buf), (uint64_t)pc, code, 4);

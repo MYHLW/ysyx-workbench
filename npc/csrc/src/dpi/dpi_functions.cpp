@@ -5,6 +5,9 @@
 #include "memory.h"
 #include "trace/itrace.h"
 
+// 定义内存访问错误码
+#define MEM_ACCESS_FAULT 0xdeadbeef
+
 // 引用 main_new.cpp 中的全局变量
 extern bool sim_done;
 extern int trap_code;
@@ -101,7 +104,7 @@ extern "C" void pmem_write(uint32_t vaddr, uint32_t data, int i) {
         // Framebuffer access, not implemented yet
     }
     else {
-        //printf("Invalid pmem_write address: 0x%08X\n", vaddr);
-        //npc_trap(MEM_ACCESS_FAULT); // 触发内存访问错误
+        printf("Invalid pmem_write address: 0x%08X\n", vaddr);
+        npc_trap(MEM_ACCESS_FAULT); // 触发内存访问错误
     }
 }

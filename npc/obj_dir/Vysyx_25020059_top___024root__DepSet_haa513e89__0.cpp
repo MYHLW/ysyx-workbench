@@ -202,7 +202,7 @@ VL_INLINE_OPT void Vysyx_25020059_top___024root___nba_sequent__TOP__0(Vysyx_2502
                 vlSelfRef.ysyx_25020059_top__DOT__reg_waddr 
                     = (0x1fU & (vlSelfRef.inst >> 7U));
                 if ((0U == (7U & (vlSelfRef.inst >> 0xcU)))) {
-                    vlSelfRef.ysyx_25020059_top__DOT__alu_op = 4U;
+                    vlSelfRef.ysyx_25020059_top__DOT__alu_op = 3U;
                 } else if ((4U == (7U & (vlSelfRef.inst 
                                          >> 0xcU)))) {
                     vlSelfRef.ysyx_25020059_top__DOT__alu_op = 2U;

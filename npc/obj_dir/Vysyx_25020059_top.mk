@@ -48,7 +48,6 @@ VM_USER_CLASSES = \
 	main_new \
 	cpu_operations \
 	loader \
-	difftest_check \
 	dut \
 	dpi_functions \
 	memory \
@@ -85,8 +84,6 @@ main_new.o: /home/wang/ysyx-workbench/npc/csrc/main_new.cpp
 cpu_operations.o: /home/wang/ysyx-workbench/npc/csrc/src/cpu/cpu_operations.cpp 
 	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST)  -c -o $@ $<
 loader.o: /home/wang/ysyx-workbench/npc/csrc/src/cpu/loader.cpp 
-	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST)  -c -o $@ $<
-difftest_check.o: /home/wang/ysyx-workbench/npc/csrc/src/difftest/difftest_check.c 
 	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST)  -c -o $@ $<
 dut.o: /home/wang/ysyx-workbench/npc/csrc/src/difftest/dut.c 
 	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST)  -c -o $@ $<
