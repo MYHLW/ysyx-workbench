@@ -8,19 +8,37 @@
 #include <stddef.h>
 extern CPU_state cpu;
 extern uint8_t memory[];
+extern void npc_trap(int code);
+
+
+const char *ref_regname[] = {
+    "$0", "ra", "sp", "gp", "tp", "t0", "t1", "t2",
+    "s0", "s1", "a0", "a1", "a2", "a3", "a4", "a5"
+} ;
 
 //bool diff_checkregs(CPU_state *dut, vaddr_t pc);   !!!!!!!!!!!!!!
 bool isa_difftest_checkregs(CPU_state *ref_r, vaddr_t pc) {
-  int reg_num = ARRLEN(cpu.gpr);
-  for (int i = 0; i < reg_num; i++) {
-    if (ref_r->gpr[i] != cpu.gpr[i]) {
-      return false;
+  bool same = true;
+
+  // 假设 NPC 里目前只存了 16 个寄存器
+  for (int i = 0; i < 16; i++) {
+    if (cpu.gpr[i] != ref_r->gpr[i]) {
+      same = false;
+      printf("\33[1;31m[DIFFTEST] Reg %-3s mismatch at PC = 0x%08lx\33[0m\n",
+             ref_regname[i], pc);
+      printf("    DUT = 0x%08lx | REF = 0x%08lx\n",
+             cpu.gpr[i], ref_r->gpr[i]);
     }
   }
-  if (ref_r->pc != cpu.pc) {
-    return false;
+
+  // 检查 PC
+  if (cpu.pc != ref_r->pc) {
+    same = false;
+    printf("\33[1;31m[DIFFTEST] PC mismatch\33[0m\n");
+    printf("    DUT = 0x%08lx | REF = 0x%08lx\n", cpu.pc, ref_r->pc);
   }
-  return true;
+
+  return same;
 }
 
 void (*ref_difftest_memcpy)(paddr_t addr, void *buf, size_t n, bool direction) = NULL;
@@ -88,42 +106,40 @@ void init_difftest(char *ref_so_file, long img_size, int port) {
 
     ref_difftest_init(port);
     ref_difftest_memcpy(RESET_VECTOR, guest_to_host(RESET_VECTOR), img_size, DIFFTEST_TO_REF);
-    printf("NPC: sizeof(CPU_state) = %zu\n", sizeof(cpu));
-printf("NPC: DIFFTEST_REG_SIZE (macro) = %d\n", DIFFTEST_REG_SIZE);
-printf("NPC: cpu.pc = 0x%08x\n", (uint32_t)cpu.pc);
-for (int i = 0; i < 8; i++) {
-  printf("NPC: gpr[%2d] = 0x%08x\n", i, (uint32_t)cpu.gpr[i]);
-}
+//     printf("NPC: sizeof(CPU_state) = %zu\n", sizeof(cpu));
+// printf("NPC: DIFFTEST_REG_SIZE (macro) = %d\n", DIFFTEST_REG_SIZE);
+// printf("NPC: cpu.pc = 0x%08x\n", (uint32_t)cpu.pc);
+// for (int i = 0; i < 8; i++) {
+//   printf("NPC: gpr[%2d] = 0x%08x\n", i, (uint32_t)cpu.gpr[i]);
+// }
 
-// Dump the first few 32-bit words of the cpu struct buffer that will be memcpy'd
-uint32_t *buf = (uint32_t *)&cpu;
-printf("NPC: last words of &cpu: %08x %08x %08x %08x %08x\n",
-       buf[28], buf[29], buf[30], buf[31], buf[32]);
+// // Dump the first few 32-bit words of the cpu struct buffer that will be memcpy'd
+// uint32_t *buf = (uint32_t *)&cpu;
+// printf("NPC: last words of &cpu: %08x %08x %08x %08x %08x\n",
+//        buf[28], buf[29], buf[30], buf[31], buf[32]);
+//     ref_difftest_regcpy(&cpu, DIFFTEST_TO_REF);
+//     printf("1\n");
     ref_difftest_regcpy(&cpu, DIFFTEST_TO_REF);
-    printf("1\n");
 }
 
-const char *ref_regname[] = {
-    "$0", "ra", "sp", "gp", "tp", "t0", "t1", "t2",
-    "s0", "s1", "a0", "a1", "a2", "a3", "a4", "a5"
-} ;
+
 
 static void checkregs(CPU_state *ref, vaddr_t pc) {
     if (!isa_difftest_checkregs(ref, pc)) {  
         //npc_state.state = NPC_ABORT;
         //npc_state.halt_pc = pc;
         //print_regs();
-        int line_i = 0;
-        const int line = 4;  //每行个数 
-        printf("ref_regs\n");
-        for (int i = 0; i < 16; i++) {
-            if (line_i == line) {
-                printf("\n");
-                line_i = 0;
-            } 
-            printf("%-3s 0x%.8x ", ref_regname[i], ref->gpr[i]);
-            line_i++;
-        }
+        // int line_i = 0;
+        // const int line = 4;  //每行个数 
+        // printf("ref_regs\n");
+        // for (int i = 0; i < 16; i++) {
+        //     if (line_i == line) {
+        //         printf("\n");
+        //         line_i = 0;
+        //     } 
+        //     printf("%-3s 0x%.8x ", ref_regname[i], ref->gpr[i]);
+        //     line_i++;
+        // }
     }
 }
 

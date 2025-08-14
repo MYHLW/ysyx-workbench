@@ -118,17 +118,17 @@ int main(int argc, char** argv) {
 
     // 复位CPU
     reset(2);
-    //single_cycle();  // 执行一次单周期以清除复位状态
-    //get_regs();  // 获取寄存器状态
+    single_cycle();  // 执行一次单周期以清除复位状态
+    get_regs();  // 获取寄存器状态
     void *ptr = NULL;
   // guest_to_host 可能在 paddr.h，所以需要包含或声明
-  ptr = guest_to_host(dut.curr_pc);
-  printf("REF: guest_to_host(dut.pc) -> %p\n", ptr);
-  if (ptr) {
-    uint8_t *b = (uint8_t*)ptr;
-    printf("REF: bytes at pc: %02x %02x %02x %02x %02x %02x %02x %02x\n",
+    ptr = guest_to_host(dut.curr_pc);
+    printf("REF: guest_to_host(dut.pc) -> %p\n", ptr);
+    if (ptr) {
+        uint8_t *b = (uint8_t*)ptr;
+        printf("REF: bytes at pc: %02x %02x %02x %02x %02x %02x %02x %02x\n",
            b[0], b[1], b[2], b[3], b[4], b[5], b[6], b[7]);
-  } 
+    } 
     init_disasm();  // 初始化反汇编
     //diff
     //printf("PC: 0x%08X\n", dut.curr_pc);

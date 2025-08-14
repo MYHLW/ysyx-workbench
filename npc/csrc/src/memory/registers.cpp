@@ -18,5 +18,5 @@ void get_regs() {
         cpu.gpr[i] = dut.reg_f[i];
     }
     cpu.pc = dut.curr_pc;
-    printf("Current PC: 0x%08X\n", cpu.pc);
+    //printf("Current PC: 0x%08X\n", cpu.pc);
 }
