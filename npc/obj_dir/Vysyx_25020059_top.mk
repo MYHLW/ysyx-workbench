@@ -45,9 +45,11 @@ VM_USER_LDLIBS = \
 
 # User .cpp files (from .cpp's on Verilator command line)
 VM_USER_CLASSES = \
-	loader \
 	main_new \
+	cpu_operations \
+	loader \
 	dut \
+	dpi_functions \
 	memory \
 	registers \
 	cli \
@@ -59,7 +61,9 @@ VM_USER_CLASSES = \
 VM_USER_DIR = \
 	.. \
 	../csrc \
-	../csrc/src/cpu/difftest \
+	../csrc/src/cpu \
+	../csrc/src/difftest \
+	../csrc/src/dpi \
 	../csrc/src/memory \
 	../csrc/src/sdb \
 	../csrc/src/trace \
@@ -75,11 +79,15 @@ include $(VERILATOR_ROOT)/include/verilated.mk
 ### Executable rules... (from --exe)
 VPATH += $(VM_USER_DIR)
 
-loader.o: /home/wang/ysyx-workbench/npc/csrc/loader.cpp 
-	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST)  -c -o $@ $<
 main_new.o: /home/wang/ysyx-workbench/npc/csrc/main_new.cpp 
 	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST)  -c -o $@ $<
-dut.o: /home/wang/ysyx-workbench/npc/csrc/src/cpu/difftest/dut.c 
+cpu_operations.o: /home/wang/ysyx-workbench/npc/csrc/src/cpu/cpu_operations.cpp 
+	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST)  -c -o $@ $<
+loader.o: /home/wang/ysyx-workbench/npc/csrc/src/cpu/loader.cpp 
+	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST)  -c -o $@ $<
+dut.o: /home/wang/ysyx-workbench/npc/csrc/src/difftest/dut.c 
+	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST)  -c -o $@ $<
+dpi_functions.o: /home/wang/ysyx-workbench/npc/csrc/src/dpi/dpi_functions.cpp 
 	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST)  -c -o $@ $<
 memory.o: /home/wang/ysyx-workbench/npc/csrc/src/memory/memory.cpp 
 	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST)  -c -o $@ $<

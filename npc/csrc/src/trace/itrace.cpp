@@ -1,7 +1,7 @@
 //#ifdef CONFIG_ITRACE
 #include "common.h"   
-#include "itrace.h"
-#include "trace.h"
+#include "trace/itrace.h"
+#include "trace/trace.h"
 
 // 定义全局变量
 ItraceNode iringbuf[MAX_IRINGBUF];  
@@ -20,7 +20,7 @@ void display_inst() {
   init_disasm();
   int end = p_cur;  
   int i = full ? p_cur : 0;  
-  void disassemble2(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);  
+  void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);  
   char buf[128];  
   char *p;  
 
@@ -32,7 +32,7 @@ void display_inst() {
                 (i+1)%MAX_IRINGBUF == end ? "--> " : "    ",  
                 iringbuf[i].pc, iringbuf[i].inst);  
     size_t remaining = sizeof(buf) - (p - buf);  
-    disassemble2(p, remaining, iringbuf[i].pc, (uint8_t *)&iringbuf[i].inst, 4);  
+    disassemble(p, remaining, iringbuf[i].pc, (uint8_t *)&iringbuf[i].inst, 4);  
 
     if ((i+1)%MAX_IRINGBUF == end) {  
       printf(ANSI_FG_RED);  

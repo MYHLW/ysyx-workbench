@@ -1,5 +1,5 @@
 #include <dlfcn.h>
-#include "difftest-def.h"
+#include "difftest/difftest-def.h"
 #include "memory.h"
 #include "cpu_state.h"
 #include <stdio.h>
@@ -8,7 +8,7 @@
 #include <stddef.h>
 extern CPU_state cpu;
 extern uint8_t memory[];
-extern void npc_trap(int code);
+extern "C" void npc_trap(int code);
 
 
 const char *ref_regname[] = {
@@ -16,11 +16,8 @@ const char *ref_regname[] = {
     "s0", "s1", "a0", "a1", "a2", "a3", "a4", "a5"
 } ;
 
-//bool diff_checkregs(CPU_state *dut, vaddr_t pc);   !!!!!!!!!!!!!!
 bool isa_difftest_checkregs(CPU_state *ref_r, vaddr_t pc) {
   bool same = true;
-
-  // 假设 NPC 里目前只存了 16 个寄存器
   for (int i = 0; i < 16; i++) {
     if (cpu.gpr[i] != ref_r->gpr[i]) {
       same = false;
@@ -106,84 +103,38 @@ void init_difftest(char *ref_so_file, long img_size, int port) {
 
     ref_difftest_init(port);
     ref_difftest_memcpy(RESET_VECTOR, guest_to_host(RESET_VECTOR), img_size, DIFFTEST_TO_REF);
-//     printf("NPC: sizeof(CPU_state) = %zu\n", sizeof(cpu));
-// printf("NPC: DIFFTEST_REG_SIZE (macro) = %d\n", DIFFTEST_REG_SIZE);
-// printf("NPC: cpu.pc = 0x%08x\n", (uint32_t)cpu.pc);
-// for (int i = 0; i < 8; i++) {
-//   printf("NPC: gpr[%2d] = 0x%08x\n", i, (uint32_t)cpu.gpr[i]);
-// }
-
-// // Dump the first few 32-bit words of the cpu struct buffer that will be memcpy'd
-// uint32_t *buf = (uint32_t *)&cpu;
-// printf("NPC: last words of &cpu: %08x %08x %08x %08x %08x\n",
-//        buf[28], buf[29], buf[30], buf[31], buf[32]);
-//     ref_difftest_regcpy(&cpu, DIFFTEST_TO_REF);
-//     printf("1\n");
     ref_difftest_regcpy(&cpu, DIFFTEST_TO_REF);
 }
 
 
-
 static void checkregs(CPU_state *ref, vaddr_t pc) {
     if (!isa_difftest_checkregs(ref, pc)) {  
-        //npc_state.state = NPC_ABORT;
-        //npc_state.halt_pc = pc;
-        //print_regs();
-        // int line_i = 0;
-        // const int line = 4;  //每行个数 
-        // printf("ref_regs\n");
-        // for (int i = 0; i < 16; i++) {
-        //     if (line_i == line) {
-        //         printf("\n");
-        //         line_i = 0;
-        //     } 
-        //     printf("%-3s 0x%.8x ", ref_regname[i], ref->gpr[i]);
-        //     line_i++;
-        // }
+        npc_trap(1);  //这里暂时用1表示寄存器不一致
     }
 }
 
-// void difftest_step(vaddr_t dut_pc, vaddr_t dut_npc) {
-//     vaddr_t ref_npc;
-//     uint32_t ref_reg[16];
-
-    
-//     ref_difftest_regcpy(&ref_npc, ref_reg, DIFFTEST_TO_DUT);
-//     printf("dut_pc:0x%.8x (ref_npc:0x%.8x ≠ dut_npc:0x%.8x)\n", dut_pc, ref_npc, dut_npc);
-//     if (ref_npc == dut_pc) {
-//         checkregs(ref_reg, dut_pc);
-//         printf("1\n");
-//     }
-//     else {
-//         printf("2\n");
-//         Assert(0, "dut_pc:0x%.8x (ref_npc:0x%.8x ≠ dut_npc:0x%.8x)", dut_pc, ref_npc, dut_npc);
-//     }
-
-//     ref_difftest_exec(1);
-//     return;
-// }
 void difftest_step(vaddr_t pc, vaddr_t npc) {
   CPU_state ref_r;
 
-  // if (skip_dut_nr_inst > 0) {
-  //   ref_difftest_regcpy(&ref_r, DIFFTEST_TO_DUT);
-  //   if (ref_r.pc == npc) {
-  //     skip_dut_nr_inst = 0;
-  //     checkregs(&ref_r, npc);
-  //     return;
-  //   }
-  //   skip_dut_nr_inst --;
-  //   if (skip_dut_nr_inst == 0)
-  //     //panic("can not catch up with ref.pc = " FMT_WORD " at pc = " FMT_WORD, ref_r.pc, pc);
-  //   return;
-  // }
+  if (skip_dut_nr_inst > 0) {
+    ref_difftest_regcpy(&ref_r, DIFFTEST_TO_DUT);
+    if (ref_r.pc == npc) {
+      skip_dut_nr_inst = 0;
+      checkregs(&ref_r, npc);
+      return;
+    }
+    skip_dut_nr_inst --;
+    if (skip_dut_nr_inst == 0)
+      //panic("can not catch up with ref.pc = " FMT_WORD " at pc = " FMT_WORD, ref_r.pc, pc);
+    return;
+  }
 
-  // if (is_skip_ref) {
-  //   // to skip the checking of an instruction, just copy the reg state to reference design
-  //   ref_difftest_regcpy(&cpu, DIFFTEST_TO_REF);
-  //   is_skip_ref = false;
-  //   return;
-  // }
+  if (is_skip_ref) {
+    // to skip the checking of an instruction, just copy the reg state to reference design
+    ref_difftest_regcpy(&cpu, DIFFTEST_TO_REF);
+    is_skip_ref = false;
+    return;
+  }
   
   ref_difftest_exec(1);
   ref_difftest_regcpy(&ref_r, DIFFTEST_TO_DUT);

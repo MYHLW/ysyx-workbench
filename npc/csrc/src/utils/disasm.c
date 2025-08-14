@@ -1,7 +1,7 @@
 #include <dlfcn.h>
 #include <capstone/capstone.h>
 #include <common.h>
-#include "../../include/sdb/trace.h"
+#include "trace/trace.h"
 
 static size_t (*cs_disasm_dl)(csh handle, const uint8_t *code,
     size_t code_size, uint64_t address, size_t count, cs_insn **insn);
@@ -30,7 +30,7 @@ void init_disasm() {
   assert(ret == CS_ERR_OK);
 }
 
-void disassemble2(char *str, int size, uint64_t pc, uint8_t *code, int nbyte) {
+void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte) {
 	cs_insn *insn;
 	size_t count = cs_disasm_dl(handle, code, nbyte, pc, 1, &insn);
   assert(count == 1);
