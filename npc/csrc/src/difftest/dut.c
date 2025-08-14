@@ -6,37 +6,13 @@
 #include <stdint.h>
 #include <string.h>
 #include <stddef.h>
+#include "difftest/difftest_check.h"
 extern CPU_state cpu;
 extern uint8_t memory[];
 extern "C" void npc_trap(int code);
 
 
-const char *ref_regname[] = {
-    "$0", "ra", "sp", "gp", "tp", "t0", "t1", "t2",
-    "s0", "s1", "a0", "a1", "a2", "a3", "a4", "a5"
-} ;
 
-bool isa_difftest_checkregs(CPU_state *ref_r, vaddr_t pc) {
-  bool same = true;
-  for (int i = 0; i < 16; i++) {
-    if (cpu.gpr[i] != ref_r->gpr[i]) {
-      same = false;
-      printf("\33[1;31m[DIFFTEST] Reg %-3s mismatch at PC = 0x%08lx\33[0m\n",
-             ref_regname[i], pc);
-      printf("    DUT = 0x%08lx | REF = 0x%08lx\n",
-             cpu.gpr[i], ref_r->gpr[i]);
-    }
-  }
-
-  // 检查 PC
-  if (cpu.pc != ref_r->pc) {
-    same = false;
-    printf("\33[1;31m[DIFFTEST] PC mismatch\33[0m\n");
-    printf("    DUT = 0x%08lx | REF = 0x%08lx\n", cpu.pc, ref_r->pc);
-  }
-
-  return same;
-}
 
 void (*ref_difftest_memcpy)(paddr_t addr, void *buf, size_t n, bool direction) = NULL;
 void (*ref_difftest_regcpy)(void *dut, bool direction) = NULL;
