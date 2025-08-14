@@ -64,6 +64,11 @@ void sim_t::diff_get_regs(void* diff_context) {
     ctx->gpr[i] = state->XPR[i];
   }
   ctx->pc = state->pc;
+    /* 新增：同步 CSR 到 diff context */
+  ctx->mepc   = state->mepc;
+  ctx->mcause = state->mcause;
+  ctx->mtvec  = state->mtvec;
+  ctx->mstatus= state->mstatus;
 }
 
 void sim_t::diff_set_regs(void* diff_context) {
@@ -72,6 +77,12 @@ void sim_t::diff_set_regs(void* diff_context) {
     state->XPR.write(i, (sword_t)ctx->gpr[i]);
   }
   state->pc = ctx->pc;
+
+    /* 新增：从 diff context 设置 CSR 到参考模型 */
+  state->mepc    = ctx->mepc;
+  state->mcause  = ctx->mcause;
+  state->mtvec   = ctx->mtvec;
+  state->mstatus = ctx->mstatus;
 }
 
 void sim_t::diff_memcpy(reg_t dest, void* src, size_t n) {

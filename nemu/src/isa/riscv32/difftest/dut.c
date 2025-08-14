@@ -30,10 +30,10 @@ bool isa_difftest_checkregs(CPU_state *ref_r, vaddr_t pc) {
   if (cpu.pc != ref_r->pc) return false;
 
   /* 比较常用 CSR（若你的 CPU_state 包含这些字段） */
-  // if (cpu.mstatus != ref_r->mstatus) return false;
-  // if (cpu.mcause  != ref_r->mcause)  return false;
-  // if (cpu.mepc    != ref_r->mepc)    return false;
-  // if (cpu.mtvec   != ref_r->mtvec)   return false;
+  if (cpu.mstatus != ref_r->mstatus) return false;
+  if (cpu.mcause  != ref_r->mcause)  return false;
+  if (cpu.mepc    != ref_r->mepc)    return false;
+  if (cpu.mtvec   != ref_r->mtvec)   return false;
 
   return true;
 }
@@ -48,7 +48,7 @@ void isa_difftest_print_diff(CPU_state *ref_r, vaddr_t pc) {
   printf("| %-3s |      DUT (NEMU)     |      REF (Other)    | Status  |\n", "Reg");
   printf("-------------------------------------------------------------------\n");
 
-  for (int i = 0; i < 32; i++) {
+  for (int i = 0; i < 16; i++) {
     bool diff = (cpu.gpr[i] != ref_r->gpr[i]);
 
     printf("| %-3s | 0x%08x         | 0x%08x         | %s%-7s\033[0m |\n",
