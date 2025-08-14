@@ -17,8 +17,10 @@ void display_inst() {
   if (!full && !p_cur) return;  
 
   int end = p_cur;  
-  int i = full ? p_cur : 0;  
-  void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);  
+  int i = full ? p_cur : 0;
+  #ifdef CONFIG_ITRACE  
+  void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);
+  #endif  
   char buf[128];  
   char *p;  
 
@@ -28,9 +30,11 @@ void display_inst() {
     p = buf;  
     p += sprintf(p, "%s" FMT_WORD ": %08x ",  
                 (i+1)%MAX_IRINGBUF == end ? "--> " : "    ",  
-                iringbuf[i].pc, iringbuf[i].inst);  
-    size_t remaining = sizeof(buf) - (p - buf);  
-    disassemble(p, remaining, iringbuf[i].pc, (uint8_t *)&iringbuf[i].inst, 4);  
+                iringbuf[i].pc, iringbuf[i].inst); 
+    #ifdef CONFIG_ITRACE 
+    size_t remaining = sizeof(buf) - (p - buf);    
+    disassemble(p, remaining, iringbuf[i].pc, (uint8_t *)&iringbuf[i].inst, 4);
+    #endif  
 
     if ((i+1)%MAX_IRINGBUF == end) {  
       printf(ANSI_FG_RED);  
