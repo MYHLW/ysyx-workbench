@@ -10,7 +10,7 @@ Context* __am_irq_handle(Context *c) {
   if (user_handler) {
     Event ev = {0};
     switch (c->mcause) {
-      case 11: ev.event = EVENT_YIELD; break; // 11: interrupt y
+      case 11: ev.event = EVENT_YIELD;c->mepc += 4; break; // 11: interrupt y
       default: ev.event = EVENT_ERROR; break;
     }
 
