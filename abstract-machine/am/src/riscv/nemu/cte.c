@@ -51,12 +51,8 @@ void yield() {
 }
 
 bool ienabled() {
-  uintptr_t mstatus;
-  asm volatile("csrr %0, mstatus" : "=r"(mstatus));
-  return (mstatus & (1<<3)) != 0; // MIE bit (check platform)
+  return false;
 }
 
 void iset(bool enable) {
-  if (enable) asm volatile("csrsi mstatus, %0" :: "i"(1<<3));
-  else       asm volatile("csrci mstatus, %0" :: "i"(1<<3));
 }
