@@ -36,6 +36,16 @@ word_t isa_raise_intr(word_t NO, vaddr_t epc) {
   #ifdef CONFIG_ETRACE
     printf("\n[etrace] Trap! mcause = 0x%x, mepc = 0x%x\n", cpu.mcause, cpu.mepc);
   #endif
+  // 更新 mstatus
+  word_t mstatus = cpu.mstatus;
+  // 1. 保存中断使能位
+  uint32_t mie = (mstatus >> 3) & 0x1;
+  mstatus = (mstatus & ~(1 << 7)) | (mie << 7);  // MPIE <- MIE
+  mstatus &= ~(1 << 3);  // MIE <- 0
+  // 2. 保存当前特权级
+  uint32_t prev_mode = (cpu.mstatus >> 10) & 0x3; // 你的模式字段
+  mstatus = (mstatus & ~(3 << 11)) | (prev_mode << 11); // MPP <- mode
+  cpu.mstatus = mstatus;
   return cpu.mtvec;
   
 }
