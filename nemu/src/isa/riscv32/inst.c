@@ -178,7 +178,7 @@ static int decode_exec(Decode *s) {
   INSTPAT("??????? ????? ????? 010 ????? 11100 11", csrrs  , I, R(rd) = CSR(imm); CSR(imm) |= src1);
   INSTPAT("0000000 00000 00000 000 00000 11100 11", ecall, I, {
   // 取出 mstate[14:12] (对应 MPP 域)
-  uint32_t priv = (cpu.mstatus >> 12) & 0x3;
+  uint32_t priv = (cpu.mstatus >> 10) & 0x3;
   int cause;
 
   switch (priv) {
