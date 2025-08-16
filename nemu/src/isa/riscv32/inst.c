@@ -59,12 +59,9 @@ static vaddr_t *csr_register(word_t imm) {
 #define MSTATUS_MPP_MASK  (3UL << 11)
 #endif
 
-#ifndef PRV_U
-#define PRV_U 0
-#define PRV_S 1
+#ifndef PRV_M
 #define PRV_M 3
 #endif
-int current_priv = PRV_M; // 当前特权级，初始为 Machine 模式
 
 #define src1R() do { *src1 = R(rs1); } while (0)
 #define src2R() do { *src2 = R(rs2); } while (0)
@@ -179,36 +176,9 @@ static int decode_exec(Decode *s) {
   INSTPAT("??????? ????? ????? ??? ????? 01101 11", lui    , U, R(rd) = imm);  // U-type
   INSTPAT("??????? ????? ????? 001 ????? 11100 11", csrrw  , I, R(rd) = CSR(imm); CSR(imm) = src1);
   INSTPAT("??????? ????? ????? 010 ????? 11100 11", csrrs  , I, R(rd) = CSR(imm); CSR(imm) |= src1);
-  INSTPAT("0000000 00000 00000 000 00000 11100 11", ecall, I, {
-  word_t cause;
-  if (current_priv == PRV_U) cause = 8;   /* environment call from U-mode */
-  else if (current_priv == PRV_S) cause = 9; /* from S-mode */
-  else cause = 11;                        /* from M-mode */
-
-  s->dnpc = isa_raise_intr(cause, s->pc);
-  });
+  INSTPAT("0000000 00000 00000 000 00000 11100 11", ecall  , I, s->dnpc = isa_raise_intr(11, s->pc));
   //INSTPAT("0000000 00000 00000 000 00000 11100 11", ecall  , N, NEMUTRAP(s->pc, R(10)));
- INSTPAT("0011000 00010 00000 000 00000 11100 11", mret, N, {
-  /* 1) 读取 MPP 的值以便恢复特权 */
-  word_t mpp = (cpu.mstatus >> 11) & 0x3;
-
-  /* 2) 恢复特权级为 MPP（写回全局 current_priv） */
-  current_priv = (int)mpp;
-
-  /* 3) 恢复 MIE <- MPIE */
-  word_t mpie = (cpu.mstatus >> 7) & 1;
-  if (mpie) cpu.mstatus |= MSTATUS_MIE;
-  else      cpu.mstatus &= ~MSTATUS_MIE;
-
-  /* 4) MPIE <- 1 */
-  cpu.mstatus |= MSTATUS_MPIE;
-
-  /* 5) 清除 MPP (MPP <- 0) */
-  cpu.mstatus &= ~MSTATUS_MPP_MASK;
-
-  /* 6) 恢复 PC */
-  s->dnpc = cpu.mepc;
-});
+INSTPAT("0011000 00010 00000 000 00000 11100 11", mret, N, s->dnpc = cpu.mepc);
 
   INSTPAT("0000000 00001 00000 000 00000 11100 11", ebreak , N, NEMUTRAP(s->pc, R(10))); // R(10) is $a0
   INSTPAT("??????? ????? ????? ??? ????? ????? ??", inv    , N, INV(s->pc));
