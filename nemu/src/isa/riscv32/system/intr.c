@@ -25,29 +25,29 @@
 #define MSTATUS_MPP_MASK  (3UL << 11)
 #endif
 
-#ifndef PRV_M
-#define PRV_M 3
+#ifndef PRV_U
+#define PRV_U 0   // User mode
+#define PRV_S 1   // Supervisor mode
+#define PRV_M 3   // Machine mode
 #endif
 
+
 word_t isa_raise_intr(word_t NO, vaddr_t epc) {
-  /* 1) 保存 mepc / mcause */
-  cpu.mepc = epc;
-  cpu.mcause = NO; /* NO 应当是完整 mcause 编码（含 interrupt 位） */
-  #ifdef CONFIG_ETRACE
-    printf("\n[etrace] Trap! mcause = 0x%x, mepc = 0x%x\n", cpu.mcause, cpu.mepc);
-  #endif
-  // 更新 mstatus
-  word_t mstatus = cpu.mstatus;
-  // 1. 保存中断使能位
-  uint32_t mie = (mstatus >> 3) & 0x1;
-  mstatus = (mstatus & ~(1 << 7)) | (mie << 7);  // MPIE <- MIE
-  mstatus &= ~(1 << 3);  // MIE <- 0
-  // 2. 保存当前特权级
-  uint32_t prev_mode = (cpu.mstatus >> 10) & 0x3; // 你的模式字段
-  mstatus = (mstatus & ~(3 << 11)) | (prev_mode << 11); // MPP <- mode
-  cpu.mstatus = mstatus;
-  return cpu.mtvec;
-  
+  cpu.mepc   = epc;
+  cpu.mcause = NO; // 完整 mcause 编码
+
+  // 2) MPIE <- MIE ; MIE <- 0
+  if (cpu.mstatus & MSTATUS_MIE)
+      cpu.mstatus |= MSTATUS_MPIE;  // trap 前允许中断
+  else
+      cpu.mstatus &= ~MSTATUS_MPIE;
+  cpu.mstatus &= ~MSTATUS_MIE;
+
+  // 3) 保存当前特权级到 MPP（PA不管priv，但要写入位）
+  cpu.mstatus = (cpu.mstatus & ~MSTATUS_MPP_MASK) | (PRV_U << 11); // 假设 trap 从 U 模式
+  // 如果是 S 模式 trap 就写 PRV_S，如果是 M 模式 trap 就写 PRV_M
+
+  return cpu.mtvec; // trap 入口
 }
 
 word_t isa_query_intr() {

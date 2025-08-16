@@ -192,7 +192,22 @@ static int decode_exec(Decode *s) {
   s->dnpc = isa_raise_intr(code, s->pc);
 });
   //INSTPAT("0000000 00000 00000 000 00000 11100 11", ecall  , N, NEMUTRAP(s->pc, R(10)));
-INSTPAT("0011000 00010 00000 000 00000 11100 11", mret, N, s->dnpc = cpu.mepc);
+INSTPAT("0011000 00010 00000 000 00000 11100 11", mret, N, {
+  // 1) 恢复 MIE <- MPIE
+  if (cpu.mstatus & MSTATUS_MPIE)
+      cpu.mstatus |= MSTATUS_MIE;
+  else
+      cpu.mstatus &= ~MSTATUS_MIE;
+
+  // 2) MPIE <- 1
+  cpu.mstatus |= MSTATUS_MPIE;
+
+  // 3) 清除 MPP
+  cpu.mstatus &= ~MSTATUS_MPP_MASK;
+
+  // 4) 恢复 PC
+  s->dnpc = cpu.mepc;
+});
 
   INSTPAT("0000000 00001 00000 000 00000 11100 11", ebreak , N, NEMUTRAP(s->pc, R(10))); // R(10) is $a0
   INSTPAT("??????? ????? ????? ??? ????? ????? ??", inv    , N, INV(s->pc));
