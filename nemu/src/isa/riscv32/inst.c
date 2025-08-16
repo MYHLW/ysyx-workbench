@@ -62,6 +62,16 @@ static vaddr_t *csr_register(word_t imm) {
 #ifndef PRV_M
 #define PRV_M 3
 #endif
+// 放在头部或公共头文件里
+#ifndef MSTATUS_MPP_SHIFT
+#define MSTATUS_MPP_SHIFT 11
+#endif
+#ifndef MSTATUS_MPP_MASK
+#define MSTATUS_MPP_MASK  (3u << MSTATUS_MPP_SHIFT)
+#endif
+static inline uint32_t mstatus_get_mpp(word_t mstatus) {
+  return (mstatus & MSTATUS_MPP_MASK) >> MSTATUS_MPP_SHIFT;  // 取 [12:11]
+}
 
 #define src1R() do { *src1 = R(rs1); } while (0)
 #define src2R() do { *src2 = R(rs2); } while (0)
@@ -177,19 +187,10 @@ static int decode_exec(Decode *s) {
   INSTPAT("??????? ????? ????? 001 ????? 11100 11", csrrw  , I, R(rd) = CSR(imm); CSR(imm) = src1);
   INSTPAT("??????? ????? ????? 010 ????? 11100 11", csrrs  , I, R(rd) = CSR(imm); CSR(imm) |= src1);
   INSTPAT("0000000 00000 00000 000 00000 11100 11", ecall, I, {
-  // 取出 mstate[14:12] (对应 MPP 域)
-  uint32_t priv = (cpu.mstatus >> 10) & 0x3;
-  int cause;
-
-  switch (priv) {
-    case 0: cause = 8;  break;  // U-mode ecall
-    case 1: cause = 9;  break;  // S-mode ecall
-    case 3: cause = 11; break;  // M-mode ecall
-    default: cause = 11;        // 保底
-  }
-
-  s->dnpc = isa_raise_intr(cause, s->pc);
-  });
+  uint32_t mpp = mstatus_get_mpp(cpu.mstatus);   // 这里用 mstate 承载的 mstatus
+  word_t code = (mpp == 0 ? 8 : mpp == 1 ? 9 : mpp == 2 ? 10 : 11);
+  s->dnpc = isa_raise_intr(code, s->pc);
+});
   //INSTPAT("0000000 00000 00000 000 00000 11100 11", ecall  , N, NEMUTRAP(s->pc, R(10)));
 INSTPAT("0011000 00010 00000 000 00000 11100 11", mret, N, s->dnpc = cpu.mepc);
 
