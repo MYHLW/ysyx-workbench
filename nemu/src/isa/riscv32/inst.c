@@ -176,7 +176,20 @@ static int decode_exec(Decode *s) {
   INSTPAT("??????? ????? ????? ??? ????? 01101 11", lui    , U, R(rd) = imm);  // U-type
   INSTPAT("??????? ????? ????? 001 ????? 11100 11", csrrw  , I, R(rd) = CSR(imm); CSR(imm) = src1);
   INSTPAT("??????? ????? ????? 010 ????? 11100 11", csrrs  , I, R(rd) = CSR(imm); CSR(imm) |= src1);
-  INSTPAT("0000000 00000 00000 000 00000 11100 11", ecall  , I, s->dnpc = isa_raise_intr(11, s->pc));
+  INSTPAT("0000000 00000 00000 000 00000 11100 11", ecall, I, {
+  // 取出 mstate[14:12] (对应 MPP 域)
+  uint32_t priv = (cpu.mstatus >> 12) & 0x3;
+  int cause;
+
+  switch (priv) {
+    case 0: cause = 8;  break;  // U-mode ecall
+    case 1: cause = 9;  break;  // S-mode ecall
+    case 3: cause = 11; break;  // M-mode ecall
+    default: cause = 11;        // 保底
+  }
+
+  s->dnpc = isa_raise_intr(cause, s->pc);
+  });
   //INSTPAT("0000000 00000 00000 000 00000 11100 11", ecall  , N, NEMUTRAP(s->pc, R(10)));
 INSTPAT("0011000 00010 00000 000 00000 11100 11", mret, N, s->dnpc = cpu.mepc);
 
