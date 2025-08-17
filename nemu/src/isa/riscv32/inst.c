@@ -62,16 +62,6 @@ static vaddr_t *csr_register(word_t imm) {
 #ifndef PRV_M
 #define PRV_M 3
 #endif
-// 放在头部或公共头文件里
-#ifndef MSTATUS_MPP_SHIFT
-#define MSTATUS_MPP_SHIFT 11
-#endif
-#ifndef MSTATUS_MPP_MASK
-#define MSTATUS_MPP_MASK  (3u << MSTATUS_MPP_SHIFT)
-#endif
-static inline uint32_t mstatus_get_mpp(word_t mstatus) {
-  return (mstatus & MSTATUS_MPP_MASK) >> MSTATUS_MPP_SHIFT;  // 取 [12:11]
-}
 
 #define src1R() do { *src1 = R(rs1); } while (0)
 #define src2R() do { *src2 = R(rs2); } while (0)
@@ -184,28 +174,46 @@ static int decode_exec(Decode *s) {
   
   // 特殊指令
   INSTPAT("??????? ????? ????? ??? ????? 01101 11", lui    , U, R(rd) = imm);  // U-type
-  INSTPAT("??????? ????? ????? 001 ????? 11100 11", csrrw  , I, R(rd) = CSR(imm); CSR(imm) = src1);
-  INSTPAT("??????? ????? ????? 010 ????? 11100 11", csrrs  , I, R(rd) = CSR(imm); CSR(imm) |= src1);
-  INSTPAT("0000000 00000 00000 000 00000 11100 11", ecall, I, {
-  uint32_t mpp = mstatus_get_mpp(cpu.mstatus);   // 这里用 mstate 承载的 mstatus
-  word_t code = (mpp == 0 ? 8 : mpp == 1 ? 9 : mpp == 2 ? 10 : 11);
-  s->dnpc = isa_raise_intr(code, s->pc);
+  INSTPAT("??????? ????? ????? 001 ????? 11100 11", csrrw  , I, {
+  uint32_t csr = BITS(s->isa.inst, 31, 20);        // 12-bit 无符号 CSR 编号
+  vaddr_t *csrptr = csr_register(csr);            // 返回 CSR 的地址
+  word_t old = *csrptr;
+  R(rd) = old;                                    // rd <- old CSR
+  *csrptr = src1;                                 // 写入 x[rs1]（包括 rs1==x0 写入 0）
 });
+  INSTPAT("??????? ????? ????? 010 ????? 11100 11", csrrs  , I, {
+  uint32_t csr = BITS(s->isa.inst, 31, 20);
+  vaddr_t *csrptr = csr_register(csr);
+  word_t old = *csrptr;
+  R(rd) = old;
+  // CSRRS: only write if rs1 != x0
+  if (BITS(s->isa.inst, 19, 15) != 0) { // 或者 if (src1 != 0)
+    *csrptr = old | src1;
+  }
+});
+  INSTPAT("0000000 00000 00000 000 00000 11100 11", ecall  , I, s->dnpc = isa_raise_intr(11, s->pc));
   //INSTPAT("0000000 00000 00000 000 00000 11100 11", ecall  , N, NEMUTRAP(s->pc, R(10)));
 INSTPAT("0011000 00010 00000 000 00000 11100 11", mret, N, {
-  // // 1) 恢复 MIE <- MPIE
-  // if (cpu.mstatus & MSTATUS_MPIE)
-  //     cpu.mstatus |= MSTATUS_MIE;
-  // else
-  //     cpu.mstatus &= ~MSTATUS_MIE;
+  /* 1) 先读取 MPP 的值以便恢复特权 */
+//   word_t mpp = (cpu.mstatus >> 11) & 0x3;
 
-  // // 2) MPIE <- 1
-  // cpu.mstatus |= MSTATUS_MPIE;
+//  #ifdef CPU_HAS_PRIV
+//    /* 2) 恢复特权级为 MPP */
+//    cpu.priv = (int)mpp;
+//  #endif
 
-  // // 3) 清除 MPP
-  // cpu.mstatus &= ~MSTATUS_MPP_MASK;
+  /* 3) 恢复 MIE <- MPIE */
+  word_t mpie = (cpu.mstatus >> 7) & 1;
+  if (mpie) cpu.mstatus |= MSTATUS_MIE;
+  else      cpu.mstatus &= ~MSTATUS_MIE;
 
-  // 4) 恢复 PC
+  /* 4) MPIE <- 1 */
+  cpu.mstatus |= MSTATUS_MPIE;
+
+  /* 5) 清除 MPP (MPP <- 0) */
+  cpu.mstatus &= ~MSTATUS_MPP_MASK;
+
+  /* 6) 恢复 PC */
   s->dnpc = cpu.mepc;
 });
 

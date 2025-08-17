@@ -25,29 +25,40 @@
 #define MSTATUS_MPP_MASK  (3UL << 11)
 #endif
 
-#ifndef PRV_U
-#define PRV_U 0   // User mode
-#define PRV_S 1   // Supervisor mode
-#define PRV_M 3   // Machine mode
+#ifndef PRV_M
+#define PRV_M 3
 #endif
 
-
 word_t isa_raise_intr(word_t NO, vaddr_t epc) {
-  cpu.mepc   = epc;
-  cpu.mcause = NO; // 完整 mcause 编码
+  /* 1) 保存 mepc / mcause */
+  cpu.mepc = epc;
+  cpu.mcause = NO; /* NO 应当是完整 mcause 编码（含 interrupt 位） */
+  #ifdef CONFIG_ETRACE
+    printf("\n[etrace] Trap! mcause = 0x%x, mepc = 0x%x\n", cpu.mcause, cpu.mepc);
+  #endif
 
-  // 2) MPIE <- MIE ; MIE <- 0
-  if (cpu.mstatus & MSTATUS_MIE)
-      cpu.mstatus |= MSTATUS_MPIE;  // trap 前允许中断
-  else
-      cpu.mstatus &= ~MSTATUS_MPIE;
+  /* 2) MPIE <- MIE ; MIE <- 0 */
+  if (cpu.mstatus & MSTATUS_MIE) cpu.mstatus |= MSTATUS_MPIE;
+  else                           cpu.mstatus &= ~MSTATUS_MPIE;
   cpu.mstatus &= ~MSTATUS_MIE;
 
-  // 3) 保存当前特权级到 MPP（PA不管priv，但要写入位）
-  cpu.mstatus = (cpu.mstatus & ~MSTATUS_MPP_MASK) | (PRV_U << 11); // 假设 trap 从 U 模式
-  // 如果是 S 模式 trap 就写 PRV_S，如果是 M 模式 trap 就写 PRV_M
+  cpu.mstatus = (cpu.mstatus & ~MSTATUS_MPP_MASK) | ((word_t)PRV_M << 11);
 
-  return cpu.mtvec; // trap 入口
+  /* 4) 根据 mtvec.mode 计算 trap 入口 */
+  word_t mtvec = cpu.mtvec;
+  word_t mode = mtvec & 0x3;        /* low 2 bits are mode */
+  word_t base = mtvec & ~((word_t)0x3);
+  word_t trap_pc;
+  if (mode == 1) { /* VECTORED: base + 4 * cause_index (cause low bits) */
+    /* 去掉 mcause 的 interrupt 高位来取索引 */
+    int xlen = sizeof(word_t) * 8;
+    word_t cause_index = cpu.mcause & (~((word_t)1 << (xlen-1)));
+    trap_pc = base + 4 * cause_index;
+  } else { /* DIRECT or reserved -> base */
+    trap_pc = base;
+  }
+
+  return trap_pc;
 }
 
 word_t isa_query_intr() {
