@@ -193,17 +193,17 @@ static int decode_exec(Decode *s) {
 });
   //INSTPAT("0000000 00000 00000 000 00000 11100 11", ecall  , N, NEMUTRAP(s->pc, R(10)));
 INSTPAT("0011000 00010 00000 000 00000 11100 11", mret, N, {
-  // 1) 恢复 MIE <- MPIE
-  if (cpu.mstatus & MSTATUS_MPIE)
-      cpu.mstatus |= MSTATUS_MIE;
-  else
-      cpu.mstatus &= ~MSTATUS_MIE;
+  // // 1) 恢复 MIE <- MPIE
+  // if (cpu.mstatus & MSTATUS_MPIE)
+  //     cpu.mstatus |= MSTATUS_MIE;
+  // else
+  //     cpu.mstatus &= ~MSTATUS_MIE;
 
-  // 2) MPIE <- 1
-  cpu.mstatus |= MSTATUS_MPIE;
+  // // 2) MPIE <- 1
+  // cpu.mstatus |= MSTATUS_MPIE;
 
-  // 3) 清除 MPP
-  cpu.mstatus &= ~MSTATUS_MPP_MASK;
+  // // 3) 清除 MPP
+  // cpu.mstatus &= ~MSTATUS_MPP_MASK;
 
   // 4) 恢复 PC
   s->dnpc = cpu.mepc;
