@@ -33,10 +33,14 @@ word_t isa_raise_intr(word_t NO, vaddr_t epc) {
   /* 1) 保存 mepc / mcause */
   cpu.mepc = epc;
   cpu.mcause = NO; /* NO 应当是完整 mcause 编码（含 interrupt 位） */
-  cpu.mstatus =0x1800; 
+  //cpu.mstatus =0x1800; 
   #ifdef CONFIG_ETRACE
     printf("\n[etrace] Trap! mcause = 0x%x, mepc = 0x%x\n", cpu.mcause, cpu.mepc);
   #endif
+  cpu.mstatus &= ~(1<<3); 
+	cpu.mstatus |= ((cpu.mstatus&(1<<7))>>4); 
+	cpu.mstatus |= (1<<7); 
+	cpu.mstatus &= ~((1<<11)+(1<<12));
   return cpu.mtvec; /* 2) 返回 mtvec */
 }
 
