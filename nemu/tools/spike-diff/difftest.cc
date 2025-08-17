@@ -1,157 +1,140 @@
-/***************************************************************************************
-* Copyright (c) 2014-2024 Zihao Yu, Nanjing University
-*
-* NEMU is licensed under Mulan PSL v2.
-* You can use this software according to the terms and conditions of the Mulan PSL v2.
-* You may obtain a copy of Mulan PSL v2 at:
-*          http://license.coscl.org.cn/MulanPSL2
-*
-* THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
-* EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
-* MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
-*
-* See the Mulan PSL v2 for more details.
-***************************************************************************************/
+#include <am.h>
+#include <klib.h>
+#include <rtthread.h>
 
-#include "mmu.h"
-#include "sim.h"
-#include "../../include/common.h"
-#include <difftest-def.h>
 
-#define NR_GPR MUXDEF(CONFIG_RVE, 16, 32)
+#define STACK_SIZE (4096 * 8)
+#define STACK_ALIGN 8
 
-static std::vector<std::pair<reg_t, abstract_device_t*>> difftest_plugin_devices;
-static std::vector<std::string> difftest_htif_args;
-static std::vector<std::pair<reg_t, mem_t*>> difftest_mem(
-    1, std::make_pair(reg_t(DRAM_BASE), new mem_t(CONFIG_MSIZE)));
-static debug_module_config_t difftest_dm_config = {
-  .progbufsize = 2,
-  .max_sba_data_width = 0,
-  .require_authentication = false,
-  .abstract_rti = 0,
-  .support_hasel = true,
-  .support_abstract_csr_access = true,
-  .support_abstract_fpr_access = true,
-  .support_haltgroups = true,
-  .support_impebreak = true
-};
+typedef struct {
+	Context **from;
+	Context **to;
+} SwitchInfo;
 
-struct diff_context_t {
-  word_t gpr[MUXDEF(CONFIG_RVE, 16, 32)];
-  word_t pc;
-  word_t mepc;  
-  word_t mcause;
-  word_t mtvec;
-  word_t mstatus;
-};
+// static uintptr_t global_from = 0;
+// static uintptr_t global_to = 0;	
 
-static sim_t* s = NULL;
-static processor_t *p = NULL;
-static state_t *state = NULL;
 
-void sim_t::diff_init(int port) {
-  p = get_core("0");
-  state = p->get_state();
+void rt_hw_context_switch_interrupt(void *context, rt_ubase_t from, rt_ubase_t to, struct rt_thread *to_thread) {
+  assert(0);
 }
 
-void sim_t::diff_step(uint64_t n) {
-  step(n);
+
+Context* ev_handler(Event e, Context *c) {
+    Context *next = c;  // Default to current context
+    switch (e.event) {
+      case EVENT_YIELD:
+        rt_thread_t current = rt_thread_self();
+        SwitchInfo *info = (SwitchInfo *)current->user_data;
+        if (info != NULL) {
+            if (info->from != NULL) {
+                *info->from = c;  // Save current context
+            }
+            next = *info->to;  // Switch to target context
+        }
+        break;
+      default:
+        printf("Unhandled event ID = %d\n", e.event);
+        // Instead of assert(0), handle error more gracefully
+        return NULL;  // Or some error state
+    }
+    return next;
 }
 
-void sim_t::diff_get_regs(void* diff_context) {
-  struct diff_context_t* ctx = (struct diff_context_t*)diff_context;
-  for (int i = 0; i < NR_GPR; i++) {
-    ctx->gpr[i] = state->XPR[i];
-  }
-  ctx->pc = state->pc;
-    /* 新增：同步 CSR 到 diff context */
-  /* --- CSR fields: use CSR object read() API --- */
-  if (state->mepc)   ctx->mepc   = state->mepc->read();
-  else               ctx->mepc   = 0;
-
-  if (state->mcause) ctx->mcause = state->mcause->read();
-  else               ctx->mcause = 0;
-
-  if (state->mtvec)  ctx->mtvec  = state->mtvec->read();
-  else               ctx->mtvec  = 0;
-
-  if (state->mstatus) ctx->mstatus = state->mstatus->read();
-  else                ctx->mstatus = 0;
+void __am_cte_init() {
+    cte_init(ev_handler);
 }
 
-void sim_t::diff_set_regs(void* diff_context) {
-  struct diff_context_t* ctx = (struct diff_context_t*)diff_context;
-  for (int i = 0; i < NR_GPR; i++) {
-    state->XPR.write(i, (sword_t)ctx->gpr[i]);
-  }
-  state->pc = ctx->pc;
-
-  /* --- CSR fields: use CSR object write() API --- */
-  if (state->mepc)   state->mepc->write((reg_t)ctx->mepc);
-  if (state->mcause) state->mcause->write((reg_t)ctx->mcause);
-  if (state->mtvec)  state->mtvec->write((reg_t)ctx->mtvec);
-  if (state->mstatus) state->mstatus->write((reg_t)ctx->mstatus);
+void rt_hw_context_switch_to(uintptr_t to) {
+    SwitchInfo info = { .from = NULL, .to = (Context **)to };
+    rt_thread_t current = rt_thread_self();
+    
+    // 强制类型转换，将 user_data 转换为 void * 类型
+    void *old = (void *)current->user_data;  
+    if (current != RT_NULL) current->user_data = (rt_ubase_t)&info;  // 将 SwitchInfo 指针赋给 user_data
+    yield();
+    current->user_data = (rt_ubase_t)old;  // 将旧的 user_data 恢复
 }
 
-void sim_t::diff_memcpy(reg_t dest, void* src, size_t n) {
-  mmu_t* mmu = p->get_mmu();
-  for (size_t i = 0; i < n; i++) {
-    mmu->store<uint8_t>(dest+i, *((uint8_t*)src+i));
-  }
+void rt_hw_context_switch(uintptr_t from, uintptr_t to) {
+    SwitchInfo info = { .from = (Context **)from, .to = (Context **)to };
+    rt_thread_t current = rt_thread_self();
+    
+    // 强制类型转换，将 user_data 转换为 void * 类型
+    void *old = (void *)current->user_data;  
+    if (current != RT_NULL) current->user_data = (rt_ubase_t)&info;  // 将 SwitchInfo 指针赋给 user_data
+    yield();
+    current->user_data = (rt_ubase_t)old;  // 将旧的 user_data 恢复
 }
 
-extern "C" {
+  
+//   void thread_wrapper(void *arg) {
+// 	void **params = (void **)arg;
+// 	void (*tentry)(void *) = (void (*)(void *))params[0];
+// 	void *parameter = params[1];
+// 	void (*texit)(void) = (void (*)(void))params[2];
+  
+// 	tentry(parameter);
+// 	texit();
+  
+// 	while (1);  // 线程结束后不能返回
+//   }
+  
+//   uint8_t* rt_hw_stack_init(void *tentry, void *parameter, uint8_t *stack_addr, void *texit) {
+// 	uintptr_t sp = (uintptr_t)stack_addr + STACK_SIZE;
+// 	sp &= ~(sizeof(uintptr_t) - 1);  // 栈对齐
+  
+// 	// 压入thread_wrapper需要的参数，顺序一定要和thread_wrapper解读顺序匹配
+// 	sp -= sizeof(void *);
+// 	*((void **)sp) = texit;
+// 	sp -= sizeof(void *);
+// 	*((void **)sp) = parameter;
+// 	sp -= sizeof(void *);
+// 	*((void **)sp) = tentry;
+  
+// 	Area kstack = {stack_addr, stack_addr + STACK_SIZE};
+// 	Context *ctx = kcontext(kstack, thread_wrapper, (void *)sp);
+  
+// 	return (uint8_t *)ctx;
+//   }
 
-__EXPORT void difftest_memcpy(paddr_t addr, void *buf, size_t n, bool direction) {
-  if (direction == DIFFTEST_TO_REF) {
-    s->diff_memcpy(addr, buf, n);
-  } else {
-    assert(0);
-  }
+typedef struct {
+	void (*tentry)(void *);
+	void *parameter;
+	void (*texit)(void);
+  } thread_startup_args_t;
+
+  static uintptr_t align_down(uintptr_t sp, size_t align) {
+	return sp & ~(align - 1);
 }
 
-__EXPORT void difftest_regcpy(void* dut, bool direction) {
-  if (direction == DIFFTEST_TO_REF) {
-    s->diff_set_regs(dut);
-  } else {
-    s->diff_get_regs(dut);
-  }
+void thread_wrapper(void *arg) {
+	thread_startup_args_t *args = (thread_startup_args_t *)arg;
+	args->tentry(args->parameter);
+	args->texit();
+	while (1);
 }
 
-__EXPORT void difftest_exec(uint64_t n) {
-  s->diff_step(n);
-}
+Context *kcontext(Area kstack, void (*entry)(void *), void *arg);
 
-__EXPORT void difftest_init(int port) {
-  difftest_htif_args.push_back("");
-  const char *isa = "RV" MUXDEF(CONFIG_RV64, "64", "32") MUXDEF(CONFIG_RVE, "E", "I") "MAFDC";
-  cfg_t cfg(/*default_initrd_bounds=*/std::make_pair((reg_t)0, (reg_t)0),
-            /*default_bootargs=*/nullptr,
-            /*default_isa=*/isa,
-            /*default_priv=*/DEFAULT_PRIV,
-            /*default_varch=*/DEFAULT_VARCH,
-            /*default_misaligned=*/false,
-            /*default_endianness*/endianness_little,
-            /*default_pmpregions=*/16,
-            /*default_mem_layout=*/std::vector<mem_cfg_t>(),
-            /*default_hartids=*/std::vector<size_t>(1),
-            /*default_real_time_clint=*/false,
-            /*default_trigger_count=*/4);
-  s = new sim_t(&cfg, false,
-      difftest_mem, difftest_plugin_devices, difftest_htif_args,
-      difftest_dm_config, nullptr, false, NULL,
-      false,
-      NULL,
-      true);
-  s->diff_init(port);
-  if (state && state->mstatus) {
-    state->mstatus->write((reg_t)0x1800);
-  }
-}
+// 重点改动在这里，确保参数和上下文都对齐并且不冲突
+uint8_t* rt_hw_stack_init(void *tentry, void *parameter, uint8_t *stack_addr, void *texit) {
+	uintptr_t sp = (uintptr_t)(stack_addr + STACK_SIZE);
 
-__EXPORT void difftest_raise_intr(uint64_t NO) {
-  trap_t t(NO);
-  p->take_trap_public(t, state->pc);
-}
+	// 对齐堆栈指针，保证thread_startup_args_t地址对齐
+	sp = align_down(sp - sizeof(thread_startup_args_t), STACK_ALIGN);
+	thread_startup_args_t *args = (thread_startup_args_t *)sp;
 
+	args->tentry = tentry;
+	args->parameter = parameter;
+	args->texit = texit;
+
+	// kcontext需要用剩余空间
+	Area kstack = { stack_addr, (uint8_t *)sp }; // 线程上下文空间不包含参数区
+
+	// 创建上下文，传入线程启动函数和参数
+	Context *ctx = kcontext(kstack, thread_wrapper, args);
+
+	return (uint8_t *)ctx;
 }
+  
