@@ -49,15 +49,16 @@ static vaddr_t *csr_register(word_t imm) {
 
 #define CSR(i) *csr_register(i)
 
-#ifndef MSTATUS_MIE
-#define MSTATUS_MIE       (1UL << 3)
-#endif
-#ifndef MSTATUS_MPIE
-#define MSTATUS_MPIE      (1UL << 7)
-#endif
-#ifndef MSTATUS_MPP_MASK
-#define MSTATUS_MPP_MASK  (3UL << 11)
-#endif
+// #ifndef MSTATUS_MIE
+// #define MSTATUS_MIE       (1UL << 3)
+// #endif
+// #ifndef MSTATUS_MPIE
+// #define MSTATUS_MPIE      (1UL << 7)
+// #endif
+// #ifndef MSTATUS_MPP_MASK
+// #define MSTATUS_MPP_MASK  (3UL << 11)
+// #endif
+
 
 #ifndef PRV_M
 #define PRV_M 3
@@ -174,48 +175,11 @@ static int decode_exec(Decode *s) {
   
   // 特殊指令
   INSTPAT("??????? ????? ????? ??? ????? 01101 11", lui    , U, R(rd) = imm);  // U-type
-  INSTPAT("??????? ????? ????? 001 ????? 11100 11", csrrw  , I, {
-  uint32_t csr = BITS(s->isa.inst, 31, 20);        // 12-bit 无符号 CSR 编号
-  vaddr_t *csrptr = csr_register(csr);            // 返回 CSR 的地址
-  word_t old = *csrptr;
-  R(rd) = old;                                    // rd <- old CSR
-  *csrptr = src1;                                 // 写入 x[rs1]（包括 rs1==x0 写入 0）
-});
-  INSTPAT("??????? ????? ????? 010 ????? 11100 11", csrrs  , I, {
-  uint32_t csr = BITS(s->isa.inst, 31, 20);
-  vaddr_t *csrptr = csr_register(csr);
-  word_t old = *csrptr;
-  R(rd) = old;
-  // CSRRS: only write if rs1 != x0
-  if (BITS(s->isa.inst, 19, 15) != 0) { // 或者 if (src1 != 0)
-    *csrptr = old | src1;
-  }
-});
+  INSTPAT("??????? ????? ????? 001 ????? 11100 11", csrrw  , I, R(rd) = CSR(imm); CSR(imm) = src1);
+  INSTPAT("??????? ????? ????? 010 ????? 11100 11", csrrs  , I, R(rd) = CSR(imm); CSR(imm) |= src1);
   INSTPAT("0000000 00000 00000 000 00000 11100 11", ecall  , I, s->dnpc = isa_raise_intr(11, s->pc));
   //INSTPAT("0000000 00000 00000 000 00000 11100 11", ecall  , N, NEMUTRAP(s->pc, R(10)));
-INSTPAT("0011000 00010 00000 000 00000 11100 11", mret, N, {
-  /* 1) 先读取 MPP 的值以便恢复特权 */
-//   word_t mpp = (cpu.mstatus >> 11) & 0x3;
-
-//  #ifdef CPU_HAS_PRIV
-//    /* 2) 恢复特权级为 MPP */
-//    cpu.priv = (int)mpp;
-//  #endif
-
-  /* 3) 恢复 MIE <- MPIE */
-  word_t mpie = (cpu.mstatus >> 7) & 1;
-  if (mpie) cpu.mstatus |= MSTATUS_MIE;
-  else      cpu.mstatus &= ~MSTATUS_MIE;
-
-  /* 4) MPIE <- 1 */
-  cpu.mstatus |= MSTATUS_MPIE;
-
-  /* 5) 清除 MPP (MPP <- 0) */
-  cpu.mstatus &= ~MSTATUS_MPP_MASK;
-
-  /* 6) 恢复 PC */
-  s->dnpc = cpu.mepc;
-});
+  INSTPAT("0011000 00010 00000 000 00000 11100 11", mret   , N, s->dnpc = cpu.mepc, cpu.mstatus = 0x1800);
 
   INSTPAT("0000000 00001 00000 000 00000 11100 11", ebreak , N, NEMUTRAP(s->pc, R(10))); // R(10) is $a0
   INSTPAT("??????? ????? ????? ??? ????? ????? ??", inv    , N, INV(s->pc));
