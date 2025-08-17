@@ -52,6 +52,7 @@ static state_t *state = NULL;
 void sim_t::diff_init(int port) {
   p = get_core("0");
   state = p->get_state();
+  p->put_csr(0x300, 0x1800);
 }
 
 void sim_t::diff_step(uint64_t n) {
@@ -144,9 +145,9 @@ __EXPORT void difftest_init(int port) {
       NULL,
       true);
   s->diff_init(port);
-  if (state && state->mstatus) {
-    state->mstatus->write((reg_t)0x1800);
-  }
+  // if (state && state->mstatus) {
+  //   state->mstatus->write((reg_t)0x1800);
+  // }
 }
 
 __EXPORT void difftest_raise_intr(uint64_t NO) {
