@@ -144,9 +144,9 @@ __EXPORT void difftest_init(int port) {
       NULL,
       true);
   s->diff_init(port);
-  // if (state && state->mstatus) {
-  //   state->mstatus->write((reg_t)0x1800);
-  // }
+  if (state && state->mstatus) {
+    state->mstatus->write((reg_t)0x1800);
+  }
 }
 
 __EXPORT void difftest_raise_intr(uint64_t NO) {
