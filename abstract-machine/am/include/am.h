@@ -60,6 +60,8 @@ void     yield       (void);
 bool     ienabled    (void);
 void     iset        (bool enable);
 Context *kcontext    (Area kstack, void (*entry)(void *), void *arg);
+// 在 am.h 中声明
+//void     yield_arg(Event ev, void *arg);
 
 // ----------------------- VME: Virtual Memory -----------------------
 bool     vme_init    (void *(*pgalloc)(int), void (*pgfree)(void *));

@@ -56,3 +56,11 @@ bool ienabled() {
 
 void iset(bool enable) {
 }
+// 在 CTE 实现文件中
+// void yield_arg(Event ev, void *arg) {
+//   // 通过汇编触发自陷，并传递arg参数
+//   asm volatile("mv a0, %0; mv a1, %1; ebreak" 
+//                : /* no output */ 
+//                : "r"(ev.event), "r"(arg)
+//                : "a0", "a1");
+// }
