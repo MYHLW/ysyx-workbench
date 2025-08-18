@@ -3,10 +3,12 @@
 #include <cstring>
 #include <sys/time.h>
 #include "memory.h"
+#include "difftest/difftest_check.h"
 #include "trace/itrace.h"
 
 // 定义内存访问错误码
 #define MEM_ACCESS_FAULT 0xdeadbeef
+volatile bool need_difftest_skip_ref = false;
 
 // 引用 main_new.cpp 中的全局变量
 extern bool sim_done;
@@ -48,63 +50,95 @@ uint64_t get_time() {
     return tv.tv_sec * 1000000 + tv.tv_usec;
 }
 
-extern "C" uint32_t pmem_read(uint32_t vaddr, int i) {  
+extern "C" uint32_t pmem_read(uint32_t vaddr, int i) {
     uint32_t value = 0;
-    
-    // 处理MMIO读取
+
+    // 处理 MMIO 读取
     if (vaddr == RTC_PORT) {
+        need_difftest_skip_ref = true;  // 设置跳过标志
         value = (uint32_t)get_time();
     }
     else if (vaddr == RTC_PORT + 4) {
+        need_difftest_skip_ref = true;
         value = (uint32_t)(get_time() >> 32);
     }
     // 处理普通内存读取
     else if (vaddr >= MEM_BASE && vaddr < MEM_BASE + MEM_SIZE) {
-        //printf("code:%d pmem_read: addr=0x%08X\n", i, vaddr);
         uint32_t off = vaddr - MEM_BASE;
         memcpy(&value, memory + off, sizeof(value));
     }
     else if (vaddr == SERIAL_PORT) {
+        need_difftest_skip_ref = true;
         value = 0;  // 串口读取，返回0表示可以写入
     }
     else if (vaddr == VGACTL_PORT) {
+        need_difftest_skip_ref = true;
         // 返回VGA控制寄存器的值（屏幕大小）
         return (300 << 16) | 400;
     }
     else if (vaddr == VGACTL_PORT + 4) {
+        need_difftest_skip_ref = true;
         // 返回同步状态，始终为1表示就绪
         return 1;
     }
     else if (vaddr >= FB_ADDR && vaddr < FB_ADDR + 400 * 300 * 4) {
-        // Framebuffer access, not implemented yet
-        // For now, return 0
-        return 0;
+        need_difftest_skip_ref = true;
+        // 从帧缓冲区读取像素数据
+        uint32_t fb_offset = vaddr - FB_ADDR;
+        uint32_t val;
+        memcpy(&val, memory + MEM_SIZE - (400 * 300 * 4) + fb_offset, sizeof(val));
+        return val;
     }
     else {
-        //printf("Invalid pmem_read address: 0x%08X\n", vaddr);
-        //npc_trap(MEM_ACCESS_FAULT); // 触发内存访问错误
-        return 0; // 或者返回一个错误值
+        printf("pmem_read: address out of bounds: 0x%08X\n", vaddr);
+        npc_trap(MEM_ACCESS_FAULT);
+       // return 0;
     }
+
     return value;
 }
 
-extern "C" void pmem_write(uint32_t vaddr, uint32_t data, int i) {
-    // 处理MMIO写入
-    if (vaddr == SERIAL_PORT) {
-        // 串口写入，直接打印字符
-        putchar(data);
+extern "C" void pmem_write(uint32_t addr, uint32_t data, uint8_t wmask) {
+    // 处理 MMIO 写入
+    if (addr == SERIAL_PORT) {
+        need_difftest_skip_ref = true;
+        putchar(data & 0xff);
+        fflush(stdout);
+    }
+    // 处理VGA控制器写入
+    else if (addr == VGACTL_PORT) {
+        need_difftest_skip_ref = true;
+        static uint32_t vgactl = 0;
+        vgactl = data;
+    }
+    else if (addr == VGACTL_PORT + 4) {
+        need_difftest_skip_ref = true;
+        // VGA同步信号
+    }
+    // 处理帧缓冲区写入
+    else if (addr >= FB_ADDR && addr < FB_ADDR + 400 * 300 * 4) {
+        need_difftest_skip_ref = true;
+        uint32_t fb_offset = addr - FB_ADDR;
+        uint8_t *fb_ptr = (uint8_t *)&data;
+        for (int i = 0; i < 4; i++) {
+            if (wmask & (1 << i)) {
+                memory[MEM_SIZE - (400 * 300 * 4) + fb_offset + i] = fb_ptr[i];
+            }
+        }
     }
     // 处理普通内存写入
-    else if (vaddr >= MEM_BASE && vaddr < MEM_BASE + MEM_SIZE) {
-        //printf("code:%d pmem_write: addr=0x%08X, data=0x%08X\n", i, vaddr, data);
-        uint32_t off = vaddr - MEM_BASE;
-        memcpy(memory + off, &data, sizeof(data));
-    }
-    else if (vaddr >= FB_ADDR && vaddr < FB_ADDR + 400 * 300 * 4) {
-        // Framebuffer access, not implemented yet
+    else if (addr >= MEM_BASE && addr < MEM_BASE + MEM_SIZE) {
+        uint32_t off_byte = addr - MEM_BASE;
+        uint32_t off_word = off_byte & ~0x3u;
+        uint8_t *p = memory + off_word;
+        for (int i = 0; i < 4; i++) {
+            if (wmask & (1u << i)) {
+                p[i] = uint8_t((data >> (i * 8)) & 0xFF);
+            }
+        }
     }
     else {
-        printf("Invalid pmem_write address: 0x%08X\n", vaddr);
-        npc_trap(MEM_ACCESS_FAULT); // 触发内存访问错误
+        printf("pmem_write: address out of bounds: 0x%08X\n", addr);
+        npc_trap(MEM_ACCESS_FAULT);
     }
 }
