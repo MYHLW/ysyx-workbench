@@ -52,7 +52,7 @@ VL_ATTR_COLD void Vysyx_25020059_top___024root___eval_settle(Vysyx_25020059_top_
 #ifdef VL_DEBUG
             Vysyx_25020059_top___024root___dump_triggers__stl(vlSelf);
 #endif
-            VL_FATAL_MT("/home/wang/ysyx-workbench/npc/vsrc/top.v", 4, "", "Settle region did not converge.");
+            VL_FATAL_MT("/home/wang/ysyx-workbench/npc/vsrc/top.v", 2, "", "Settle region did not converge.");
         }
         __VstlIterCount = ((IData)(1U) + __VstlIterCount);
         __VstlContinue = 0U;
@@ -190,6 +190,10 @@ VL_ATTR_COLD void Vysyx_25020059_top___024root___ctor_var_reset(Vysyx_25020059_t
     for (int __Vi0 = 0; __Vi0 < 32; ++__Vi0) {
         vlSelf->reg_f[__Vi0] = VL_RAND_RESET_I(32);
     }
+    vlSelf->o_mstatus = VL_RAND_RESET_I(32);
+    vlSelf->o_mtvec = VL_RAND_RESET_I(32);
+    vlSelf->o_mepc = VL_RAND_RESET_I(32);
+    vlSelf->o_mcause = VL_RAND_RESET_I(32);
     vlSelf->ysyx_25020059_top__DOT__rst_n = VL_RAND_RESET_I(1);
     vlSelf->ysyx_25020059_top__DOT__ena = VL_RAND_RESET_I(1);
     vlSelf->ysyx_25020059_top__DOT__beq_branch = VL_RAND_RESET_I(1);
@@ -219,9 +223,22 @@ VL_ATTR_COLD void Vysyx_25020059_top___024root___ctor_var_reset(Vysyx_25020059_t
     vlSelf->ysyx_25020059_top__DOT__mem_size = VL_RAND_RESET_I(2);
     vlSelf->ysyx_25020059_top__DOT__mem_unsigned = VL_RAND_RESET_I(1);
     vlSelf->ysyx_25020059_top__DOT__mem_rdata = VL_RAND_RESET_I(32);
+    vlSelf->ysyx_25020059_top__DOT__csr_read = VL_RAND_RESET_I(1);
+    vlSelf->ysyx_25020059_top__DOT__csr_write = VL_RAND_RESET_I(1);
+    vlSelf->ysyx_25020059_top__DOT__csr_addr = VL_RAND_RESET_I(12);
+    vlSelf->ysyx_25020059_top__DOT__csr_rs1_addr = VL_RAND_RESET_I(5);
+    vlSelf->ysyx_25020059_top__DOT__csr_mret = VL_RAND_RESET_I(1);
+    vlSelf->ysyx_25020059_top__DOT__csr_ecall = VL_RAND_RESET_I(1);
+    vlSelf->ysyx_25020059_top__DOT__csr_op = VL_RAND_RESET_I(2);
+    vlSelf->ysyx_25020059_top__DOT__csr_mstatus = VL_RAND_RESET_I(32);
+    vlSelf->ysyx_25020059_top__DOT__csr_mtvec = VL_RAND_RESET_I(32);
+    vlSelf->ysyx_25020059_top__DOT__csr_mepc = VL_RAND_RESET_I(32);
+    vlSelf->ysyx_25020059_top__DOT__csr_mcause = VL_RAND_RESET_I(32);
+    vlSelf->ysyx_25020059_top__DOT__next_pc_from_mux = VL_RAND_RESET_I(32);
+    vlSelf->ysyx_25020059_top__DOT__u_pc_reg_0__DOT__use_pc = VL_RAND_RESET_I(32);
     vlSelf->ysyx_25020059_top__DOT__u_mem_if_0__DOT__write_data = VL_RAND_RESET_I(32);
     vlSelf->ysyx_25020059_top__DOT__u_mem_if_0__DOT__raw = VL_RAND_RESET_I(32);
-    vlSelf->__Vfunc_pmem_read__2__Vfuncout = 0;
+    vlSelf->__Vfunc_pmem_read__1__Vfuncout = 0;
     vlSelf->__Vtrigprevexpr___TOP__clk__0 = VL_RAND_RESET_I(1);
     vlSelf->__Vtrigprevexpr___TOP__ysyx_25020059_top__DOT__rst_n__0 = VL_RAND_RESET_I(1);
     for (int __Vi0 = 0; __Vi0 < 2; ++__Vi0) {

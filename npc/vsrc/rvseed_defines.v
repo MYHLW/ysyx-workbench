@@ -39,7 +39,7 @@
 `define INST_JALR    `OPCODE_WIDTH'b1100111 // jalr
 `define INST_LUI     `OPCODE_WIDTH'b0110111 // lui
 `define INST_AUIPC   `OPCODE_WIDTH'b0010111 // auipc
-`define INST_TYPE_IE `OPCODE_WIDTH'b1110011 // ecall/ebreak
+`define INST_TYPE_IE `OPCODE_WIDTH'b1110011 // ecall/ebreak/csrrw/csrrs/csrrc/csrrwi/csrrsi/csrrci/mret
 
 // funct3
 // R-type
@@ -61,6 +61,13 @@
 `define INST_SRLI_SRAI `FUNCT3_WIDTH'h5 
 `define INST_SLTI      `FUNCT3_WIDTH'h2
 `define INST_SLTIU     `FUNCT3_WIDTH'h3
+// I-type csr
+`define INST_CSRRW     `FUNCT3_WIDTH'h1
+`define INST_CSRRS     `FUNCT3_WIDTH'h2
+`define INST_CSRRC     `FUNCT3_WIDTH'h3
+`define INST_CSRRWI    `FUNCT3_WIDTH'h5
+`define INST_CSRRSI    `FUNCT3_WIDTH'h6
+`define INST_CSRRCI    `FUNCT3_WIDTH'h7 
 // I-type load
 `define INST_LB        `FUNCT3_WIDTH'h0
 `define INST_LH        `FUNCT3_WIDTH'h1
@@ -86,6 +93,12 @@
 `define FUNCT7_WIDTH 7
 `define FUNCT7_INST_A  `FUNCT7_WIDTH'h00
 `define FUNCT7_INST_B  `FUNCT7_WIDTH'h20
+`define FUNCT7_INST_MRET `FUNCT7_WIDTH'h18 //mret/sret
+
+// funct12
+`define FUNCT12_WIDTH 12
+`define FUNCT12_ECALL `FUNCT12_WIDTH'h000
+`define FUNCT12_MRET  `FUNCT12_WIDTH'h302
 
 
 // ALU opcode
@@ -104,6 +117,8 @@
 `define ALU_BLTU `ALU_OP_WIDTH'b1011 // branch less than (unsigned)
 `define ALU_JAL  `ALU_OP_WIDTH'b1100  
 `define ALU_JALR `ALU_OP_WIDTH'b1101  
+`define ALU_CSR  `ALU_OP_WIDTH'b1110 // CSR operations
+`define ALU_ENV  `ALU_OP_WIDTH'b1111 // Environment and system instructions
 
 // ALU select soure
 `define ALU_SRC_WIDTH 2

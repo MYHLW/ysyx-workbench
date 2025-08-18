@@ -15,6 +15,10 @@ Vysyx_25020059_top::Vysyx_25020059_top(VerilatedContext* _vcontextp__, const cha
     , inst{vlSymsp->TOP.inst}
     , curr_pc{vlSymsp->TOP.curr_pc}
     , next_pc{vlSymsp->TOP.next_pc}
+    , o_mstatus{vlSymsp->TOP.o_mstatus}
+    , o_mtvec{vlSymsp->TOP.o_mtvec}
+    , o_mepc{vlSymsp->TOP.o_mepc}
+    , o_mcause{vlSymsp->TOP.o_mcause}
     , reg_f{vlSymsp->TOP.reg_f}
     , __PVT____024unit{vlSymsp->TOP.__PVT____024unit}
     , rootp{&(vlSymsp->TOP)}

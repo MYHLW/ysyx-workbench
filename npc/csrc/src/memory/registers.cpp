@@ -18,5 +18,11 @@ void get_regs() {
         cpu.gpr[i] = dut.reg_f[i];
     }
     cpu.pc = dut.curr_pc;
+    cpu.mcause = dut.o_mcause;
+    cpu.mtvec = dut.o_mtvec;
+    cpu.mepc = dut.o_mepc;
+    cpu.mstatus = dut.o_mstatus;
+    printf("mcause: 0x%08X, mtvec: 0x%08X, mepc: 0x%08X, mstatus: 0x%08X\n",
+           cpu.mcause, cpu.mtvec, cpu.mepc, cpu.mstatus);
     //printf("Current PC: 0x%08X\n", cpu.pc);
 }

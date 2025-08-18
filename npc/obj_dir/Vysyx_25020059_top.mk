@@ -49,11 +49,13 @@ VM_USER_CLASSES = \
 	cpu_operations \
 	loader \
 	dut \
+	dut_check \
 	dpi_functions \
 	memory \
 	registers \
 	cli \
 	itrace \
+	intr \
 	disasm \
 	log \
 
@@ -67,6 +69,7 @@ VM_USER_DIR = \
 	../csrc/src/memory \
 	../csrc/src/sdb \
 	../csrc/src/trace \
+	../csrc/src/trap \
 	../csrc/src/utils \
 
 
@@ -87,6 +90,8 @@ loader.o: /home/wang/ysyx-workbench/npc/csrc/src/cpu/loader.cpp
 	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST)  -c -o $@ $<
 dut.o: /home/wang/ysyx-workbench/npc/csrc/src/difftest/dut.c 
 	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST)  -c -o $@ $<
+dut_check.o: /home/wang/ysyx-workbench/npc/csrc/src/difftest/dut_check.c 
+	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST)  -c -o $@ $<
 dpi_functions.o: /home/wang/ysyx-workbench/npc/csrc/src/dpi/dpi_functions.cpp 
 	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST)  -c -o $@ $<
 memory.o: /home/wang/ysyx-workbench/npc/csrc/src/memory/memory.cpp 
@@ -96,6 +101,8 @@ registers.o: /home/wang/ysyx-workbench/npc/csrc/src/memory/registers.cpp
 cli.o: /home/wang/ysyx-workbench/npc/csrc/src/sdb/cli.cpp 
 	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST)  -c -o $@ $<
 itrace.o: /home/wang/ysyx-workbench/npc/csrc/src/trace/itrace.cpp 
+	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST)  -c -o $@ $<
+intr.o: /home/wang/ysyx-workbench/npc/csrc/src/trap/intr.c 
 	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST)  -c -o $@ $<
 disasm.o: /home/wang/ysyx-workbench/npc/csrc/src/utils/disasm.c 
 	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST)  -c -o $@ $<

@@ -15,19 +15,6 @@
 
 #include <isa.h>
 
-#ifndef MSTATUS_MIE
-#define MSTATUS_MIE       (1UL << 3)
-#endif
-#ifndef MSTATUS_MPIE
-#define MSTATUS_MPIE      (1UL << 7)
-#endif
-#ifndef MSTATUS_MPP_MASK
-#define MSTATUS_MPP_MASK  (3UL << 11)
-#endif
-
-#ifndef PRV_M
-#define PRV_M 3
-#endif
 
 word_t isa_raise_intr(word_t NO, vaddr_t epc) {
   /* 1) 保存 mepc / mcause */
@@ -37,10 +24,6 @@ word_t isa_raise_intr(word_t NO, vaddr_t epc) {
   #ifdef CONFIG_ETRACE
     printf("\n[etrace] Trap! mcause = 0x%x, mepc = 0x%x\n", cpu.mcause, cpu.mepc);
   #endif
-  // cpu.mstatus &= ~(1<<3); 
-	// cpu.mstatus |= ((cpu.mstatus&(1<<7))>>4); 
-	// cpu.mstatus |= (1<<7); 
-	// cpu.mstatus &= ~((1<<11)+(1<<12));
   return cpu.mtvec; /* 2) 返回 mtvec */
 }
 

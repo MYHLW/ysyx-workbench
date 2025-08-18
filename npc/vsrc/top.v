@@ -1,19 +1,22 @@
-//top.v  只实现了 ADDI 等算术／分支／跳转指令的最小子集 
-//如果后续要加 BEQ、LUI、AUIPC、JALR、Load/Store 等，再补相应控制信号和数据通路即可。
 `include "/home/wang/ysyx-workbench/npc/vsrc/rvseed_defines.v"
 module  ysyx_25020059_top(
-	input                         clk,
+    input                         clk,
     input                         rst,
-	output [31:0]                 inst,
-	output[`CPU_WIDTH-1:0]        curr_pc,
+    output [31:0]                 inst,
+    output[`CPU_WIDTH-1:0]        curr_pc,
     output[`CPU_WIDTH-1:0]        next_pc,
-    output[`CPU_WIDTH-1:0]        reg_f [`REG_DATA_DEPTH-1:0] // Register file array
+    output[`CPU_WIDTH-1:0]        reg_f [`REG_DATA_DEPTH-1:0], // Register file array
+
+    // expose CSR regs as top outputs (按你要求为 output reg [31:0]，我在 module body 用组合赋值把它们驱动)
+    output reg [31:0]             o_mstatus,
+    output reg [31:0]             o_mtvec,
+    output reg [31:0]             o_mepc,
+    output reg [31:0]             o_mcause
 );
+
 wire                         rst_n;
 assign                       rst_n = !rst; // active low reset
 wire                         ena;
-//wire [`CPU_WIDTH-1:0]        curr_pc;    // current pc addr
-//wire [`CPU_WIDTH-1:0]        next_pc;    // next pc addr
 
 wire                         beq_branch;     // beq branch flag
 wire                         bne_branch;     // bne branch flag
@@ -25,11 +28,9 @@ wire                         zero;       // alu result is zero
 wire                         jal_jump;       // jump flag
 wire                         jalr_jump;       // jalr jump flag
 
-//wire [`CPU_WIDTH-1:0]        inst;       // instruction
-
 wire                         reg_wen;    // register write enable
 wire [`REG_ADDR_WIDTH-1:0]   reg_waddr;  // register write address
-wire [`CPU_WIDTH-1:0]        reg_wdata;  // register write data
+wire [`CPU_WIDTH-1:0]        reg_wdata_internal;  // candidate write data
 wire [`REG_ADDR_WIDTH-1:0]   reg1_raddr; // register 1 read address
 wire [`REG_ADDR_WIDTH-1:0]   reg2_raddr; // register 2 read address
 wire [`CPU_WIDTH-1:0]        reg1_rdata; // register 1 read data
@@ -49,17 +50,43 @@ wire [1:0]                   mem_size;
 wire                         mem_unsigned;
 wire [`CPU_WIDTH-1:0]        mem_rdata;
 
-//wire [`CPU_WIDTH-1:0]        inst; // Instruction fetched from memory
+// CSR signals from ctrl
+wire                         csr_read;
+wire                         csr_write;
+wire [11:0]                  csr_addr;
+wire [`REG_ADDR_WIDTH-1:0]   csr_rs1_addr;
+wire                         csr_mret;
+wire                         csr_ecall;
+wire [1:0]                   csr_op;
 
+// CSR module outputs
+wire [`CPU_WIDTH-1:0]        csr_rdata;
+wire [`CPU_WIDTH-1:0]        csr_mstatus;
+wire [`CPU_WIDTH-1:0]        csr_mtvec;
+wire [`CPU_WIDTH-1:0]        csr_mepc;
+wire [`CPU_WIDTH-1:0]        csr_mcause;
 
-assign reg_wdata = (mem_valid && !mem_wen) ? mem_rdata : alu_res; // 如果是 load 指令，则写入读出的数据，否则写入 ALU 结果
+// next_pc from muxpc (normal next_pc); later pc_reg will choose mret/ecall override
+wire [`CPU_WIDTH-1:0]        next_pc_from_mux;
 
+// choose reg_wdata: CSR read (csrr*) has priority for writing back to rd
+assign reg_wdata_internal = (csr_read) ? csr_rdata :
+                            ((mem_valid && !mem_wen) ? mem_rdata : alu_res);
+
+// connect final outputs (reg_f is produced by reg_file)
+wire [`CPU_WIDTH-1:0]        reg_wdata = reg_wdata_internal;
+
+// instantiate modules
 pc_reg u_pc_reg_0(
     .clk                            ( clk                           ),
     .rst_n                          ( rst_n                         ),
-    .ena                            ( ena                           ),
-    .next_pc                        ( next_pc                       ),
+    .next_pc                        ( next_pc_from_mux              ),
+    .csr_mret                       ( csr_mret                      ),
+    .csr_ecall                      ( csr_ecall                     ),
+    .mepc                           ( csr_mepc                      ),
+    .mtvec                          ( csr_mtvec                     ),
     .curr_pc                        ( curr_pc                       ),
+    .ena                            ( ena                           ),
     .inst                           ( inst                          )
 );
 
@@ -77,14 +104,13 @@ muxpc u_mux_pc_0(
     .jalr_jump                      ( jalr_jump                     ),
     .imm                            ( imm                           ),
     .curr_pc                        ( curr_pc                       ),
-    .next_pc                        ( next_pc                       )
+    .next_pc                        ( next_pc_from_mux              )
 );
 
-
-
+// pass a0 as reg_f[10] like before; reg_f is an output from reg_file instance
 ctrl u_ctrl_0(
     .inst                           ( inst                          ),
-    .a0                             ( reg_f[10]                     ), // 假设 a0 寄存器为 reg_f[10]
+    .a0                             ( reg_f[10]                     ),
     .beq_branch                     ( beq_branch                    ),
     .bne_branch                     ( bne_branch                    ),
     .blt_branch                     ( blt_branch                    ),
@@ -100,12 +126,18 @@ ctrl u_ctrl_0(
     .imm_gen_op                     ( imm_gen_op                    ),
     .alu_op                         ( alu_op                        ),
     .alu_src_sel                    ( alu_src_sel                   ),
-    // …原有信号…
-    .mem_valid                      (mem_valid                      ),
-    .mem_wen                        (mem_wen                        ),
-    .mem_size                       (mem_size                       ),
-    .mem_unsigned                   (mem_unsigned                   )
-//    .mem_wdata                      (mem_wdata                      )
+    .mem_valid                      ( mem_valid                     ),
+    .mem_wen                        ( mem_wen                       ),
+    .mem_size                       ( mem_size                      ),
+    .mem_unsigned                   ( mem_unsigned                  ),
+    // CSR interface
+    .csr_read                       ( csr_read                      ),
+    .csr_write                      ( csr_write                     ),
+    .csr_addr                       ( csr_addr                      ),
+    .csr_rs1_addr                   ( csr_rs1_addr                  ),
+    .csr_mret                       ( csr_mret                      ),
+    .csr_ecall                      ( csr_ecall                     ),
+    .csr_op                         ( csr_op                        )
 );
 
 reg_file u_reg_file_0(
@@ -121,6 +153,27 @@ reg_file u_reg_file_0(
     .reg_f                          ( reg_f                         ) // Register file array
 );
 
+// CSR instance: use reg1_rdata as write source when ctrl requests write
+csr u_csr_0(
+    .clk                            ( clk                           ),
+    .rst_n                          ( rst_n                         ),
+    .csr_read                       ( csr_read                      ),
+    .csr_write                      ( csr_write                     ),
+    .csr_addr                       ( csr_addr                      ),
+    .csr_rs1_addr                   ( csr_rs1_addr                  ),
+    .reg1_rdata                     ( reg1_rdata                    ),
+    .csr_ecall                      ( csr_ecall                     ),
+    .csr_mret                       ( csr_mret                      ),
+    .curr_pc                        ( curr_pc                       ),
+    .csr_rdata                      ( csr_rdata                     ),
+    .mstatus                        ( csr_mstatus                   ),
+    .mtvec                          ( csr_mtvec                     ),
+    .mepc                           ( csr_mepc                      ),
+    .mcause                         ( csr_mcause                    ),
+    .csr_op                         ( csr_op                        )
+);
+
+// imm_gen, mux_alu, alu, memory_if unchanged:
 imm_gen u_imm_gen_0(
     .inst                           ( inst                          ),
     .imm_gen_op                     ( imm_gen_op                    ),
@@ -154,9 +207,18 @@ memory_if u_mem_if_0(
     .wdata                          (reg2_rdata), // 写数据来自寄存器 rs2
     .size                           (mem_size),
     .unsigned_load                  (mem_unsigned),
-    .rdata                          (mem_rdata) // 读出数据,应该要跟加法的写入做一个选择
+    .rdata                          (mem_rdata) // 读出数据
 );
 
+// drive top-level CSR outputs (you asked them to be output reg)
+always @(*) begin
+    o_mstatus = csr_mstatus;
+    o_mtvec   = csr_mtvec;
+    o_mepc    = csr_mepc;
+    o_mcause  = csr_mcause;
+end
 
+// For convenience expose next_pc as the mux output (note pc_reg may override when mret/ecall)
+assign next_pc = next_pc_from_mux;
 
 endmodule
