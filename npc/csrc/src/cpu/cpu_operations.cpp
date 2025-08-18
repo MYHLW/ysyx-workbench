@@ -49,7 +49,7 @@ void reset(int n) {
 
 void init_cycle() {    
     get_regs();
-    printf("6Current PC: 0x%08X\n", cpu.pc);
+    //printf("6Current PC: 0x%08X\n", cpu.pc);
     dut.clk = 0;
     dut.eval();
     tfp->dump(ctx->time());

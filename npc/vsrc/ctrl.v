@@ -89,10 +89,8 @@ always @(*) begin
     csr_op       = 2'b00; // NONE
 
     // ebreak 检测（原有）： imm12 == 1 -> ebreak
-    if (opcode == `INST_TYPE_IE && funct3 == `INST_ECALL && imm12 == 12'h001) begin
-        csr_ecall = 1'b1; // ecall 指令
-       // npc_trap(code);
-
+    if (opcode == `INST_TYPE_IE && funct3 == `INST_EBREAK && imm12 == 12'h001) begin
+       npc_trap(code);
     end
 
 
