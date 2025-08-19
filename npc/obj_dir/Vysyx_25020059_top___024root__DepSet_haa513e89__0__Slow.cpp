@@ -775,7 +775,7 @@ VL_ATTR_COLD void Vysyx_25020059_top___024root___stl_sequent__TOP__0(Vysyx_25020
     vlSelfRef.next_pc = vlSelfRef.ysyx_25020059_top__DOT__next_pc_from_mux;
     vlSelfRef.ysyx_25020059_top__DOT__u_pc_reg_0__DOT__use_pc 
         = ((IData)(vlSelfRef.ysyx_25020059_top__DOT__csr_mret)
-            ? vlSelfRef.ysyx_25020059_top__DOT__csr_mepc
+            ? ((IData)(4U) + vlSelfRef.ysyx_25020059_top__DOT__csr_mepc)
             : ((IData)(vlSelfRef.ysyx_25020059_top__DOT__csr_ecall)
                 ? vlSelfRef.ysyx_25020059_top__DOT__csr_mtvec
                 : vlSelfRef.ysyx_25020059_top__DOT__next_pc_from_mux));
