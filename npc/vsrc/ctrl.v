@@ -288,14 +288,29 @@ always @(*) begin
             csr_addr = imm12;
 
             case (funct3)
+                // funct3 == 0 : could be ECALL / EBREAK / MRET (distinguished by imm12)
                 `INST_ECALL: begin
-                    csr_ecall   = 1'b1;
-                    alu_op      = `ALU_ENV; // ecall 指令的 ALU 操作码
-                    alu_src_sel = `ALU_SRC_REG; // ecall 不使用 ALU 源，这里设置为默认值
-                    reg_wen     = 1'b0; // ecall 不写入通用寄存器
-                    csr_read    = 1'b0; // ecall 不直接读 CSR
-                    csr_write   = 1'b0; // ecall 不直接写 CSR
+                    // distinguish ECALL/EBREAK/MRET by imm12
+                    if (imm12 == `FUNCT12_MRET) begin
+                        // mret: let top level handle restoring PC / mstatus
+                        csr_mret    = 1'b1;
+                        alu_op      = `ALU_ENV;
+                        alu_src_sel = `ALU_SRC_REG;
+                        reg_wen     = 1'b0;
+                        csr_read    = 1'b0;
+                        csr_write   = 1'b0;
+                    end
+                    else if (imm12 == 12'h000) begin
+                        // default: this is ECALL (imm12 == 0) — environment call
+                        csr_ecall   = 1'b1;
+                        alu_op      = `ALU_ENV; // ecall 指令的 ALU 操作码（占位）
+                        alu_src_sel = `ALU_SRC_REG;
+                        reg_wen     = 1'b0; // ecall 不写通用寄存器
+                        csr_read    = 1'b0;
+                        csr_write   = 1'b0;
+                    end
                 end
+
 
                 // CSRRW: funct3 == 001
                 `INST_CSRRW: begin
@@ -332,18 +347,8 @@ always @(*) begin
                     end
                 end
 
-                // （可选）你之前在 defines 中还定义了 CSRRC/CSRRWI/CSRRSI 等，这里可以扩展类似处理。
                 default: begin
-                    // 对未显式处理的 system/csr 指令暂不做额外处理
-                    // 特殊指令 mret: imm12 == 12'h302（有些实现使用 funct7 检查，但 imm12 更保险）
-                    if (imm12 == `FUNCT12_MRET) begin
-                        csr_mret    = 1'b1; // 上层看到 csr_mret 后负责恢复 PC / mstatus
-                        alu_op      = `ALU_ENV; // mret 指令的 ALU 操作码
-                        alu_src_sel = `ALU_SRC_REG; // mret 不使用 ALU 源，这里设置为默认值
-                        reg_wen     = 1'b0; // mret 不写入通用寄存器
-                        csr_read    = 1'b0; // mret 不直接读 CSR
-                        csr_write   = 1'b0; // mret 不直接写 CSR
-                    end
+                    // 未覆盖到的 funct3 值 — 不做额外处理
                 end
             endcase
         end

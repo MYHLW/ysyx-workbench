@@ -86,7 +86,7 @@ always @(posedge clk or negedge rst_n) begin
                         | (( (mstatus & (1<<7)) >> 4))      // MPIE -> MIE
                         | (1<<7)                            // set MPIE = 1
                       ) & ~((1<<11) | (1<<12));              // clear MPP bits
-            mcause  <= 32'h0;
+            //mcause  <= 32'h0; bug!!
             // mepc unchanged here (pc will be set by top/pc_reg using mepc)
         end
     end
