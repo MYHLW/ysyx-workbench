@@ -20,7 +20,7 @@ reg [`CPU_WIDTH-1:0] use_pc;
 always @(*) begin
     // choose which PC to fetch: priority mret > ecall > normal next_pc
     if (csr_mret) begin
-        use_pc = mepc;
+        use_pc = mepc+4;
     end else if (csr_ecall) begin
         use_pc = mtvec;
     end else begin

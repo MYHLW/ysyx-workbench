@@ -23,7 +23,7 @@ extern uint8_t memory[];
 extern CPU_state cpu;
 extern void get_regs();
 
-#define MAX_CYCLE 10000000
+#define MAX_CYCLE 1000000000
 void init_cycle();  // 初始化周期
 void single_cycle();
 void reset(int n);

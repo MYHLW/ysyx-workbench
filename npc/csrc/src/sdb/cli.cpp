@@ -87,6 +87,10 @@ void cmd_info(const char* /*args*/) {
     for (int i = 0; i < 16; i++) {
         std::printf("%-5s  0x%08X\n", reg_names[i], (uint32_t)dut.reg_f[i]);
     }
+    printf("mstatus 0x%08X\n", (uint32_t)dut.o_mstatus);
+    printf("mtvec   0x%08X\n", (uint32_t)dut.o_mtvec);
+    printf("mepc    0x%08X\n", (uint32_t)dut.o_mepc);
+    printf("mcause  0x%08X\n", (uint32_t)dut.o_mcause);
 }
 
 // “help” 命令

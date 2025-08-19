@@ -73,7 +73,7 @@ always @(posedge clk or negedge rst_n) begin
 
         // 2) ecall handling (raise trap)
         if (csr_ecall) begin
-            mepc   <= curr_pc;
+            mepc   <= curr_pc; // <-- 关键：保存 ecall 的下一条指令地址
             mcause <= 32'd11;      // ecall from M-mode: cause=11
             // Follow NEMU's isa_raise_intr behavior:
             mstatus <= 32'h0000_1800;
