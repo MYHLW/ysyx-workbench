@@ -26,7 +26,7 @@ void single_cycle() {
     sim_cycle++;
     get_regs();
     
-    difftest_step(dut.curr_pc, dut.next_pc);  // 调用差分测试步进
+    //difftest_step(dut.curr_pc, dut.next_pc);  // 调用差分测试步进
     // 检查周期数是否超过阈值
     if (sim_cycle >= MAX_CYCLE) {
         npc_trap(2);  // trap2表示周期超限

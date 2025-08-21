@@ -137,6 +137,8 @@ always @(*) begin
                     alu_op = `ALU_SLTU;
                 `INST_ANDI:
                     alu_op = `ALU_AND;
+                `INST_ORI:
+                    alu_op = `ALU_OR;
                 `INST_SLLI: begin
                     alu_op = `ALU_SLL;
                     imm_gen_op = `IMM_GEN_SHAMT;
